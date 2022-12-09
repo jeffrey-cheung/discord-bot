@@ -1,3 +1,3 @@
 discord
 requests
-matplotlib.pyplot
+matplotlib.pyplot==3.6.2
