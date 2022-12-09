@@ -6,6 +6,8 @@ import io
 import os
 import matplotlib.pyplot as plt
 
+from keep_alive import keep_alive
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -94,4 +96,5 @@ hype_list = [
     "https://tenor.com/view/shummer-death_dive-dive-fail-failed-dive-dive-gif-12569456"
 ]
 
+keep_alive()
 client.run(os.getenv("TOKEN"))
