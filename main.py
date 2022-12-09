@@ -1,4 +1,4 @@
-import config
+#import config
 import discord
 import random
 import requests
