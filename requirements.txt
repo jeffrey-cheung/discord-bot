@@ -1,0 +1,7 @@
+git+https://github.com/jeffrey-cheung/discord-bot/blob/main/main.py@rewrite
+discord
+random
+requests
+io
+os
+matplotlib.pyplot
