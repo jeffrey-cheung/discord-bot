@@ -22,22 +22,22 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content == '.help':
+    if message.content == '!help':
         await message.channel.send(
             "```\n" +
-            ".help      prints this message\n" +
-            ".hype      HYPE\n" +
-            ".pitches   [league] [playerId] [optional:numberOfPitches]\n" +
-            ".random    random number between 1-1000\n" +
+            "!help      prints this message\n" +
+            "!hype      HYPE\n" +
+            "!pitches   [league] [playerId] [optional:numberOfPitches]\n" +
+            "!random    random number between 1-1000\n" +
             "```"
         )
 
-    if message.content.startswith('.pitches '):
+    if message.content.startswith('!pitches'):
         params = message.content[9:].split()
         if(len(params) < 2 or len(params) > 3):
             await message.channel.send(
                "```\n" +
-               ".pitches [league] [playerId] [optional:numberOfPitches]\n" +
+               "!pitches [league] [playerId] [optional:numberOfPitches]\n" +
                "```"
             )
             return
@@ -74,10 +74,10 @@ async def on_message(message):
         await message.channel.send(file=image)
         os.remove('graph.png')
 
-    if message.content == '.hype':
+    if message.content == '!hype':
         await message.channel.send(random.choice(hype_list))
 
-    if message.content == '.random':
+    if message.content == '!random':
         await message.channel.send(random.randint(1, 1000))
 
 hype_list = [
