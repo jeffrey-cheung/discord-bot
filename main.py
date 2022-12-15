@@ -5,6 +5,10 @@ import requests
 import io
 import os
 import matplotlib.pyplot as plt
+import praw
+from dhooks import Webhook
+import datetime
+import time
 
 from keep_alive import keep_alive
 
@@ -98,3 +102,52 @@ hype_list = [
 
 keep_alive()
 client.run(os.getenv("TOKEN"))
+
+
+
+
+
+#  Enter the search terms for your MLR and MiLR team in the quotes, for example 'Oakland A' or 'Philadelphia B'.
+search_term_mlr = 'Bay Area Goldfish'
+
+#  Create a webhook in your server by going to Server Settings > Integrations > Webhooks, and create a new Webhook. Set
+#  the name and channel, and add an icon if you'd like. Click the Copy Webhook URL button and paste it below inside the 
+#  quotes.
+
+#  test
+webhook_MLR = Webhook('https://discord.com/api/webhooks/1035843403365236736/-M_8Q9PMquQI7aElkcZWkokEC3GzCL2WpJqvAzp9ch5JHNL3FhJiKIZa9btZvp-7dP9R')
+
+#  To generate a client ID and secret, go here: https://www.reddit.com/prefs/apps scroll all the way to the bottom, and
+#  hit the create an app button. Enter something for name and redirect URL, and make sure the script radio button is
+#  selected. Hit the create app button, and then paste the client ID and secret below. The user_agent string literally
+#  just needs to have some text in it, does not matter what.
+reddit = praw.Reddit(
+    client_id='2ELD5IWJFclyRv6vpa0NqA',
+    client_secret='UyVX10AVwTCzIwqgXggmygf5RaGt0A',
+    user_agent='testapp'
+)
+
+
+# Don't change anything after here.
+
+
+def parse_comments():
+    for comment in reddit.subreddit('fakebaseball').stream.comments(skip_existing=True):
+        print(search_term_mlr.lower())
+        print(comment.link_title.lower())
+        if search_term_mlr.lower() in comment.link_title.lower():
+            update = '**/u/%s on [%s](<https://www.reddit.com%s>)**' % (comment.author, comment.link_title, comment.permalink)
+            update += '```%s```' % comment.body
+            update += '*Created at %s*' % (datetime.datetime.fromtimestamp(comment.created))
+            webhook_MLR.send(update)
+            print(update)
+
+
+while True:
+    try:
+        parse_comments()
+    except Exception as e:
+        print(e)
+        time.sleep(60)
+    else:
+        time.sleep(360)
