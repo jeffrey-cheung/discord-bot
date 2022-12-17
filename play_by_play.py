@@ -30,10 +30,12 @@ def parse_comments():
             parent_comment = parent_comment.parent()
 
         lines = parent_comment.body.splitlines()
-        last_line = lines[len(lines) - 1].lstrip()
+        while "" in lines:
+            lines.remove("")
+        third_line = lines[2].lstrip()
         team_abbreviation = "DEFAULT"
         if parent_comment.author == "FakeBaseball_Umpire":
-            team_abbreviation = last_line[0:3]
+            team_abbreviation = third_line[0:3]
         team_color = int(colors.get(team_abbreviation, "DEFAULT"), 16)
 
         embed = discord.Embed(title=comment.link_title,
