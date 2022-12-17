@@ -1,30 +1,34 @@
-#import config
+import config
+# from keep_alive import keep_alive
+import datetime
 import discord
+import io
+import matplotlib.pyplot as plt
+import os
 import random
 import requests
-import io
-import os
-import matplotlib.pyplot as plt
-import praw
-from dhooks import Webhook
-import datetime
-import time
 
-from keep_alive import keep_alive
+# keep_alive()
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
 
+
 @client.event
 async def on_ready():
     print(f'We have logged in as {client.user}')
+
 
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
+
+    if message.content.startswith('!'):
+        now = datetime.datetime.now()
+        print(now.strftime("%Y-%m-%d %H:%M:%S") + " " + message.author.name + " " + message.content)
 
     if message.content == '!help':
         await message.channel.send(
@@ -38,33 +42,34 @@ async def on_message(message):
 
     if message.content.startswith('!pitches'):
         params = message.content[9:].split()
-        if(len(params) < 2 or len(params) > 3):
+        if len(params) < 2 or len(params) > 3:
             await message.channel.send(
-               "```\n" +
-               "!pitches [league] [playerId] [optional:numberOfPitches]\n" +
-               "```"
+                "```\n" +
+                "!pitches [league] [playerId] [optional:numberOfPitches]\n" +
+                "```"
             )
             return
         league = params[0].upper()
-        pitcherid = params[1]
-        N = 50
-        if (len(params) == 3):
-            N = int(params[2])
-        player = (requests.get("https://www.swing420.com/api/players/id/" + pitcherid)).json()
-        response = (requests.get("https://www.swing420.com/api/plateappearances/pitching/" + league + "/" + pitcherid)).json()
+        pitcher_id = params[1]
+        n = 50
+        if len(params) == 3:
+            n = int(params[2])
+        player = (requests.get("https://www.swing420.com/api/players/id/" + pitcher_id)).json()
+        response = (
+            requests.get("https://www.swing420.com/api/plateappearances/pitching/" + league + "/" + pitcher_id)).json()
 
         pitches = []
         for x in response:
             if (x['pitch'] != 0) & (x['swing'] != 0) & (x['session'] != 0):
                 pitches.append(x['pitch'])
-        pitches = pitches[-N:]
+        pitches = pitches[-n:]
 
-        N = len(pitches)
-        list_of_numbers = list(range(1, N+1))
+        n = len(pitches)
+        list_of_numbers = list(range(1, n + 1))
 
-        plt.title(player['playerName'] + ' last ' + str(N) + " pitches in " + str(league))
+        plt.title(player['playerName'] + ' last ' + str(n) + " pitches in " + str(league))
         plt.ylim(0, 1000)
-        plt.xlim(0, N+1)
+        plt.xlim(0, n + 1)
         plt.grid(True)
         plt.plot(list_of_numbers, pitches, marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.savefig('graph.png')
@@ -84,6 +89,12 @@ async def on_message(message):
     if message.content == '!random':
         await message.channel.send(random.randint(1, 1000))
 
+    if message.content.startswith('!test'):
+        params = message.content[6:].split()
+        testparam = params[0].upper()
+        await message.channel.send("<@&1053398563939438663> its pong time!")
+
+
 hype_list = [
     "https://tenor.com/view/scuba-dive-dolphin-gif-9675090",
     "https://tenor.com/view/ok-scuba-diving-under-water-swimming-exploring-gif-11835155",
@@ -100,54 +111,4 @@ hype_list = [
     "https://tenor.com/view/shummer-death_dive-dive-fail-failed-dive-dive-gif-12569456"
 ]
 
-keep_alive()
 client.run(os.getenv("TOKEN"))
-
-
-
-
-
-#  Enter the search terms for your MLR and MiLR team in the quotes, for example 'Oakland A' or 'Philadelphia B'.
-search_term_mlr = 'Bay Area Goldfish'
-
-#  Create a webhook in your server by going to Server Settings > Integrations > Webhooks, and create a new Webhook. Set
-#  the name and channel, and add an icon if you'd like. Click the Copy Webhook URL button and paste it below inside the 
-#  quotes.
-
-#  test
-webhook_MLR = Webhook('https://discord.com/api/webhooks/1035843403365236736/-M_8Q9PMquQI7aElkcZWkokEC3GzCL2WpJqvAzp9ch5JHNL3FhJiKIZa9btZvp-7dP9R')
-
-#  To generate a client ID and secret, go here: https://www.reddit.com/prefs/apps scroll all the way to the bottom, and
-#  hit the create an app button. Enter something for name and redirect URL, and make sure the script radio button is
-#  selected. Hit the create app button, and then paste the client ID and secret below. The user_agent string literally
-#  just needs to have some text in it, does not matter what.
-reddit = praw.Reddit(
-    client_id='2ELD5IWJFclyRv6vpa0NqA',
-    client_secret='UyVX10AVwTCzIwqgXggmygf5RaGt0A',
-    user_agent='testapp'
-)
-
-
-# Don't change anything after here.
-
-
-def parse_comments():
-    for comment in reddit.subreddit('fakebaseball').stream.comments(skip_existing=True):
-        print(search_term_mlr.lower())
-        print(comment.link_title.lower())
-        if search_term_mlr.lower() in comment.link_title.lower():
-            update = '**/u/%s on [%s](<https://www.reddit.com%s>)**' % (comment.author, comment.link_title, comment.permalink)
-            update += '```%s```' % comment.body
-            update += '*Created at %s*' % (datetime.datetime.fromtimestamp(comment.created))
-            webhook_MLR.send(update)
-            print(update)
-
-
-while True:
-    try:
-        parse_comments()
-    except Exception as e:
-        print(e)
-        time.sleep(60)
-    else:
-        time.sleep(360)

@@ -1,3 +1,7 @@
 discord
 requests
 matplotlib
+DateTime
+Flask
+praw
+dhooks
