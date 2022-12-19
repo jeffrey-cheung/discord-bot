@@ -43,3 +43,49 @@ MLR_COLORS = '{' \
              '"PPM":"0xf83535",' \
              '"SCU":"0xfe0000"' \
              '}'
+
+MLR_ICONS = '{' \
+             '"DEFAULT":"https://media.discordapp.net/attachments/734950735418228756/911121370207911957/reddit.png",' \
+             '"ARI":"https://cdn.discordapp.com/emojis/346128660857749504.png",' \
+             '"ATL":"https://cdn.discordapp.com/emojis/346129142670163969.png",' \
+             '"BAL":"https://cdn.discordapp.com/emojis/401105517495189506.png",' \
+             '"BOS":"https://cdn.discordapp.com/emojis/499634152426045440.png",' \
+             '"CHC":"https://cdn.discordapp.com/emojis/346129821597827073.png",' \
+             '"CIN":"https://cdn.discordapp.com/emojis/346130383785689088.png",' \
+             '"CLE":"https://cdn.discordapp.com/emojis/784525920869941248.png",' \
+             '"COL":"https://cdn.discordapp.com/emojis/379071884525830147.png",' \
+             '"CWS":"https://cdn.discordapp.com/emojis/346130109490659328.png",' \
+             '"DET":"https://cdn.discordapp.com/emojis/448256770729836555.png",' \
+             '"HOU":"https://cdn.discordapp.com/emojis/609048188376186886.png",' \
+             '"KCR":"https://cdn.discordapp.com/emojis/346131312517709835.png",' \
+             '"LAA":"https://cdn.discordapp.com/emojis/784500199757447218.png",' \
+             '"LAD":"https://cdn.discordapp.com/emojis/346131701086552085.png",' \
+             '"MIA":"https://cdn.discordapp.com/emojis/502253257725313044.png",' \
+             '"MIL":"https://cdn.discordapp.com/emojis/694233532217688197.png",' \
+             '"MIN":"https://cdn.discordapp.com/emojis/594261258883301389.png",' \
+             '"MTL":"https://cdn.discordapp.com/emojis/378676843366055936.png",' \
+             '"NYM":"https://cdn.discordapp.com/emojis/896364407829983262.png",' \
+             '"NYY":"https://cdn.discordapp.com/emojis/893477513509105695.png",' \
+             '"OAK":"https://cdn.discordapp.com/emojis/346132384196067328.png",' \
+             '"PHI":"https://cdn.discordapp.com/emojis/1012071995116109884.png",' \
+             '"PIT":"https://cdn.discordapp.com/emojis/346132659719634944.png",' \
+             '"SDP":"https://cdn.discordapp.com/emojis/609070333923688448.png",' \
+             '"SEA":"https://cdn.discordapp.com/emojis/1017263282236698705.png",' \
+             '"SFG":"https://cdn.discordapp.com/emojis/712752224937443348.png",' \
+             '"STL":"https://cdn.discordapp.com/emojis/346133114701086730.png",' \
+             '"TBR":"https://cdn.discordapp.com/emojis/892600974437417041.png",' \
+             '"TEX":"https://cdn.discordapp.com/emojis/346133289012297728.png",' \
+             '"TOR":"https://cdn.discordapp.com/emojis/475322395003977728.png",' \
+             '"BAG":"https://cdn.discordapp.com/emojis/1021530631156531230.png",' \
+             '"BIS":"https://cdn.discordapp.com/emojis/1021529243915661452.png",' \
+             '"BLO":"https://cdn.discordapp.com/emojis/1021529629581914133.png",' \
+             '"CCD":"https://cdn.discordapp.com/emojis/1021530665709223957.png",' \
+             '"CDT":"https://cdn.discordapp.com/emojis/1021530664358662204.png",' \
+             '"GND":"https://cdn.discordapp.com/emojis/1021530667873484911.png",' \
+             '"LAC":"https://cdn.discordapp.com/emojis/1021530669094027405.png",' \
+             '"MKW":"https://cdn.discordapp.com/emojis/1021529960806109284.png",' \
+             '"MMM":"https://cdn.discordapp.com/emojis/1021529243915661452.png",' \
+             '"NXS":"https://cdn.discordapp.com/emojis/1021529344079835167.png",' \
+             '"PPM":"https://cdn.discordapp.com/emojis/1021530671392493598.png",' \
+             '"SCU":"https://cdn.discordapp.com/emojis/1017219807604645919.png"' \
+             '}'

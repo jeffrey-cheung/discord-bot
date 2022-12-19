@@ -21,6 +21,7 @@ reddit = praw.Reddit(
     user_agent=os.getenv("USER_AGENT")
 )
 colors = json.loads(constants.MLR_COLORS)
+icons = json.loads(constants.MLR_ICONS)
 
 
 def parse_comments():
@@ -32,11 +33,12 @@ def parse_comments():
         lines = parent_comment.body.splitlines()
         while "" in lines:
             lines.remove("")
-        third_line = lines[2].lstrip()
         team_abbreviation = "DEFAULT"
-        if parent_comment.author == "FakeBaseball_Umpire":
+        if parent_comment.author == "FakeBaseball_Umpire" and len(lines) >= 3:
+            third_line = lines[2].lstrip()
             team_abbreviation = third_line[0:3]
         team_color = int(colors.get(team_abbreviation, "DEFAULT"), 16)
+        team_icon = icons.get(team_abbreviation, "DEFAULT")
 
         embed = discord.Embed(title=comment.link_title,
                               url="https://old.reddit.com" + comment.permalink.rsplit('/', 2)[0],
@@ -45,7 +47,7 @@ def parse_comments():
 
         embed.set_author(name=str(comment.author),
                          url="https://www.reddit.com/u/" + str(comment.author),
-                         icon_url="https://media.discordapp.net/attachments/734950735418228756/911121370207911957/reddit.png")
+                         icon_url=team_icon)
 
         embed.set_footer(
             text='Comment posted to r/fakebaseball at %s PST' % (datetime.datetime.fromtimestamp(comment.created)))
