@@ -89,3 +89,21 @@ MLR_ICONS = '{' \
              '"PPM":"https://cdn.discordapp.com/emojis/1021530671392493598.png",' \
              '"SCU":"https://cdn.discordapp.com/emojis/1017219807604645919.png"' \
              '}'
+
+HYPE_LIST = [
+    "https://tenor.com/view/scuba-dive-dolphin-gif-9675090",
+    "https://tenor.com/view/ok-scuba-diving-under-water-swimming-exploring-gif-11835155",
+    "https://tenor.com/view/free-driving-wil-dasovich-scuba-diving-swimming-deep-diving-gif-25457081",
+    "https://tenor.com/view/current-scubadiving-notroublesjustbubbles-ntjb-gif-23024747",
+    "https://cdn.discordapp.com/attachments/1030138801986732134/1030142511013974036/image0.gif",
+    "https://tenor.com/view/vizil%C5%91-b%C5%B1v%C3%A1r-b%C5%B1v%C3%A1rbuli-nemjosszbuvar-nemj%C3%B6sszb%C5%B1v%C3%A1r-gif-25724207",
+    "https://tenor.com/view/dive-tub-summer-gif-5789350",
+    "https://tenor.com/view/the-book-of-pooh-pooh-scuba-diving-gear-swimming-gear-snorkeling-gif-22305904",
+    "https://cdn.discordapp.com/attachments/1030138801986732134/1030154255740457023/200w.gif",
+    "https://tenor.com/view/fish-dance-swim-scuba-shark-gif-16183268",
+    "https://tenor.com/view/pump-pump-it-pump-it-up-gif-22218192",
+    "https://tenor.com/view/snorkel-swimming-driving-ship-gif-10705072",
+    "https://tenor.com/view/shummer-death_dive-dive-fail-failed-dive-dive-gif-12569456"
+]
+
+GUILD_IDS = [1025523635877851166]

@@ -25,6 +25,7 @@ icons = json.loads(constants.MLR_ICONS)
 
 
 def parse_comments():
+    print("parsing")
     for comment in reddit.subreddit('fakebaseball').stream.comments(skip_existing=True):
         parent_comment = comment
         while parent_comment.parent_id[0:3] == "t1_":
@@ -40,17 +41,15 @@ def parse_comments():
         team_color = int(colors.get(team_abbreviation, "DEFAULT"), 16)
         team_icon = icons.get(team_abbreviation, "DEFAULT")
 
-        embed = discord.Embed(title=comment.link_title,
-                              url="https://old.reddit.com" + comment.permalink.rsplit('/', 2)[0],
-                              description=comment.body,
+        embed = discord.Embed(description=comment.body,
                               color=team_color)
 
-        embed.set_author(name=str(comment.author),
-                         url="https://www.reddit.com/u/" + str(comment.author),
+        embed.set_author(name=str(comment.link_title),
+                         url="https://old.reddit.com" + comment.permalink.rsplit('/', 2)[0],
                          icon_url=team_icon)
 
         embed.set_footer(
-            text='Comment posted to r/fakebaseball at %s PST' % (datetime.datetime.fromtimestamp(comment.created)))
+            text='/u/%s posted at %s PST' % (comment.author, datetime.datetime.fromtimestamp(comment.created)))
 
         if mlr_search_test.lower() in comment.link_title.lower():
             mlr_webhook_test.send(embed=embed)
