@@ -14,6 +14,8 @@ milr_search_test = os.getenv("MILR_SEARCH_TEST")
 milr_webhook_test = Webhook(os.getenv("MILR_WEBHOOK_TEST"))
 ump_search_test = os.getenv("UMP_SEARCH_TEST")
 ump_webhook_test = Webhook(os.getenv("UMP_WEBHOOK_TEST"))
+ump2_search_test = os.getenv("UMP2_SEARCH_TEST")
+ump2_webhook_test = Webhook(os.getenv("UMP2_WEBHOOK_TEST"))
 
 reddit = praw.Reddit(
     client_id=os.getenv("CLIENT_ID"),
@@ -57,6 +59,8 @@ def parse_comments():
             milr_webhook_test.send(embed=embed)
         elif ump_search_test.lower() in comment.link_title.lower():
             ump_webhook_test.send(embed=embed)
+        # elif ump2_search_test.lower() in comment.link_title.lower():
+        #     ump2_webhook_test.send(embed=embed)
 
 
 while True:
