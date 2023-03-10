@@ -1,10 +1,11 @@
 import config
 import constants
-import datetime
+from datetime import datetime
 import discord
 import json
 import os
 import praw
+import pytz
 import time
 from dhooks import Webhook
 
@@ -17,6 +18,9 @@ ump_webhook_test = Webhook(os.getenv("UMP_WEBHOOK_TEST"))
 ump2_search_test = os.getenv("UMP2_SEARCH_TEST")
 ump2_webhook_test = Webhook(os.getenv("UMP2_WEBHOOK_TEST"))
 
+pytz_utc = pytz.timezone('UTC')
+pytz_pst = pytz.timezone('America/Los_Angeles')
+
 reddit = praw.Reddit(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
@@ -27,7 +31,7 @@ icons = json.loads(constants.MLR_ICONS)
 
 
 def parse_comments():
-    print("parsing")
+    print('parsing')
     for comment in reddit.subreddit('fakebaseball').stream.comments(skip_existing=True):
         parent_comment = comment
         while parent_comment.parent_id[0:3] == "t1_":
@@ -51,7 +55,9 @@ def parse_comments():
                          icon_url=team_icon)
 
         embed.set_footer(
-            text='/u/%s posted at %s PST' % (comment.author, datetime.datetime.fromtimestamp(comment.created)))
+            text='/u/%s posted at %s PST' % (
+                comment.author,
+                datetime.fromtimestamp(comment.created).astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')))
 
         if mlr_search_test.lower() in comment.link_title.lower():
             mlr_webhook_test.send(embed=embed)

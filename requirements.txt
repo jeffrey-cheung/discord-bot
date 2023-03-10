@@ -5,3 +5,5 @@ DateTime
 Flask
 praw
 dhooks
+beautifulsoup4
+pytz
