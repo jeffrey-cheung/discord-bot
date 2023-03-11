@@ -1,3 +1,4 @@
+import asyncio
 import config
 import discord
 import os
@@ -14,8 +15,17 @@ bot = commands.Bot(command_prefix="!", help_command=commands.DefaultHelpCommand(
 async def on_ready():
     print(f"We have logged in as {bot.user}")
 
-for file in listdir('cogs/'):
-    if file.endswith('.py'):
-        bot.load_extension(f'cogs.{file[:-3]}')
 
-bot.run(os.getenv("TOKEN"))
+async def load_extensions():
+    for file in listdir('cogs/'):
+        if file.endswith('.py'):
+            await bot.load_extension(f'cogs.{file[:-3]}')
+
+
+async def main():
+    async with bot:
+        await load_extensions()
+        await bot.start(os.getenv("TOKEN"))
+
+
+asyncio.run(main())

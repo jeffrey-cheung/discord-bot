@@ -146,5 +146,5 @@ class MLR(commands.Cog):
         await ctx.send(rdm.choice(HYPE_LIST))
 
 
-def setup(bot):
-    bot.add_cog(MLR(bot))
+async def setup(bot):
+    await bot.add_cog(MLR(bot))
