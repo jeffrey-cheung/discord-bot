@@ -119,7 +119,7 @@ class MLR(commands.Cog):
             if player['tertPos'] != "":
                 position += "/" + player['tertPos']
 
-            team_color = int(colors.get(team_abbreviation, "DEFAULT"), 16)
+            team_color = int(colors.get(team_abbreviation, colors.get("DEFAULT")), 16)
             embed = discord.Embed(color=team_color)
 
             embed.set_author(name=player['playerName'])

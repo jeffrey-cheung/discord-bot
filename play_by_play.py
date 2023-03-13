@@ -40,12 +40,12 @@ def parse_comments():
         lines = parent_comment.body.splitlines()
         while "" in lines:
             lines.remove("")
-        team_abbreviation = "DEFAULT"
+        team_abbreviation = "0xffffff"
         if parent_comment.author == "FakeBaseball_Umpire" and len(lines) >= 3:
             third_line = lines[2].lstrip()
             team_abbreviation = third_line[0:3]
-        team_color = int(colors.get(team_abbreviation, "DEFAULT"), 16)
-        team_icon = icons.get(team_abbreviation, "DEFAULT")
+        team_color = int(colors.get(team_abbreviation, colors.get("DEFAULT")), 16)
+        team_icon = icons.get(team_abbreviation, icons.get("DEFAULT"))
 
         embed = discord.Embed(description=comment.body,
                               color=team_color)
