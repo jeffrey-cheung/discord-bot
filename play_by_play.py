@@ -1,12 +1,12 @@
 import config
 import constants
-from datetime import datetime
 import discord
 import json
 import os
 import praw
 import pytz
 import time
+from datetime import datetime
 from dhooks import Webhook
 
 mlr_search_test = os.getenv("MLR_SEARCH_TEST")
@@ -31,7 +31,6 @@ icons = json.loads(constants.MLR_ICONS)
 
 
 def parse_comments():
-    print('parsing')
     for comment in reddit.subreddit('fakebaseball').stream.comments(skip_existing=True):
         parent_comment = comment
         while parent_comment.parent_id[0:3] == "t1_":
@@ -71,6 +70,7 @@ def parse_comments():
 
 while True:
     try:
+        print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing comments")
         parse_comments()
     except Exception as e:
         print(e)
