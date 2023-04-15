@@ -58,14 +58,14 @@ def parse_comments():
                 comment.author,
                 datetime.fromtimestamp(comment.created).astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')))
 
-        if mlr_search_test.lower() in comment.link_title.lower():
+        if mlr_search_test != "" and mlr_search_test.lower() in comment.link_title.lower():
             mlr_webhook_test.send(embed=embed)
-        elif milr_search_test.lower() in comment.link_title.lower():
+        elif milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
             milr_webhook_test.send(embed=embed)
-        elif ump_search_test.lower() in comment.link_title.lower():
+        elif ump_search_test != "" and ump_search_test.lower() in comment.link_title.lower():
             ump_webhook_test.send(embed=embed)
-        # elif ump2_search_test.lower() in comment.link_title.lower():
-        #     ump2_webhook_test.send(embed=embed)
+        elif ump2_search_test != "" and ump2_search_test.lower() in comment.link_title.lower():
+            ump2_webhook_test.send(embed=embed)
 
 
 while True:
