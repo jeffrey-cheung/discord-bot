@@ -15,8 +15,6 @@ milr_search_test = os.getenv("MILR_SEARCH_TEST")
 milr_webhook_test = Webhook(os.getenv("MILR_WEBHOOK_TEST"))
 ump_search_test = os.getenv("UMP_SEARCH_TEST")
 ump_webhook_test = Webhook(os.getenv("UMP_WEBHOOK_TEST"))
-ump2_search_test = os.getenv("UMP2_SEARCH_TEST")
-ump2_webhook_test = Webhook(os.getenv("UMP2_WEBHOOK_TEST"))
 
 pytz_utc = pytz.timezone('UTC')
 pytz_pst = pytz.timezone('America/Los_Angeles')
@@ -64,8 +62,6 @@ def parse_comments():
             milr_webhook_test.send(embed=embed)
         elif ump_search_test != "" and ump_search_test.lower() in comment.link_title.lower():
             ump_webhook_test.send(embed=embed)
-        elif ump2_search_test != "" and ump2_search_test.lower() in comment.link_title.lower():
-            ump2_webhook_test.send(embed=embed)
 
 
 while True:
@@ -73,7 +69,7 @@ while True:
         print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing comments")
         parse_comments()
     except Exception as e:
-        print(e)
-        time.sleep(60)
+        print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
+        time.sleep(10)
     else:
-        time.sleep(360)
+        time.sleep(10)
