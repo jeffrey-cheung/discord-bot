@@ -7,3 +7,4 @@ praw
 dhooks
 beautifulsoup4
 pytz
+asyncpraw

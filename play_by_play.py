@@ -13,8 +13,6 @@ mlr_search_test = os.getenv("MLR_SEARCH_TEST")
 mlr_webhook_test = Webhook(os.getenv("MLR_WEBHOOK_TEST"))
 milr_search_test = os.getenv("MILR_SEARCH_TEST")
 milr_webhook_test = Webhook(os.getenv("MILR_WEBHOOK_TEST"))
-ump_search_test = os.getenv("UMP_SEARCH_TEST")
-ump_webhook_test = Webhook(os.getenv("UMP_WEBHOOK_TEST"))
 
 pytz_utc = pytz.timezone('UTC')
 pytz_pst = pytz.timezone('America/Los_Angeles')
@@ -22,7 +20,7 @@ pytz_pst = pytz.timezone('America/Los_Angeles')
 reddit = praw.Reddit(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
-    user_agent=os.getenv("USER_AGENT")
+    user_agent=os.getenv("USER_AGENT_PLAY_BY_PLAY")
 )
 colors = json.loads(constants.MLR_COLORS)
 icons = json.loads(constants.MLR_ICONS)
@@ -60,8 +58,6 @@ def parse_comments():
             mlr_webhook_test.send(embed=embed)
         elif milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
             milr_webhook_test.send(embed=embed)
-        elif ump_search_test != "" and ump_search_test.lower() in comment.link_title.lower():
-            ump_webhook_test.send(embed=embed)
 
 
 while True:

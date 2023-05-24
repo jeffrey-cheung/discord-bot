@@ -13,7 +13,7 @@ pytz_pst = pytz.timezone('America/Los_Angeles')
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix="!", help_command=commands.DefaultHelpCommand(), intents=intents)
+bot = commands.Bot(command_prefix="sb.", help_command=commands.DefaultHelpCommand(), intents=intents)
 
 
 @bot.event
@@ -22,15 +22,15 @@ async def on_ready():
 
 
 async def load_extensions():
-    for file in listdir('cogs/'):
+    for file in listdir('cogs_shadowballbot/'):
         if file.endswith('.py'):
-            await bot.load_extension(f'cogs.{file[:-3]}')
+            await bot.load_extension(f'cogs_shadowballbot.{file[:-3]}')
 
 
 async def main():
     async with bot:
         await load_extensions()
-        await bot.start(os.getenv("TOKEN_LUDABOT"))
+        await bot.start(os.getenv("TOKEN_SHADOWBALL"))
 
 
 asyncio.run(main())
