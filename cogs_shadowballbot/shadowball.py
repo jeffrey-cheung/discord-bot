@@ -115,10 +115,10 @@ class SHADOWBALL(commands.Cog):
                 third_line = lines[2].lstrip()
                 team_abbreviation = third_line[0:3]
 
-            if waiting_for_pitch is False and comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(lines) == 3:
+            if waiting_for_pitch is False and comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(lines) == 3 and team_abbreviation == "SCU":
                 waiting_for_pitch = True
                 await ctx.send(f"<@&1060698924584804416> AB Posted!```{comment.body}```")
-            elif waiting_for_pitch is True and comment.author == "FakeBaseball_Umpire" and len(lines) >= 5:
+            elif waiting_for_pitch is True and comment.author == "FakeBaseball_Umpire" and len(lines) >= 5 and team_abbreviation == "SCU":
                 fifth_to_last_line = lines[len(lines) - 5].lstrip()
                 if fifth_to_last_line[0:6] == "Pitch:":
                     pitch = fifth_to_last_line.split(" ")[1]
