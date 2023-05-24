@@ -2,9 +2,9 @@ import asyncpraw
 import os
 from discord.ext import commands
 
-game_started = False
 current_guesses = {}
 current_score = {}
+game_started = False
 usernames = {}
 waiting_for_pitch = False
 
@@ -37,14 +37,11 @@ def calculate_score(diff):
 
 def reset_game():
     global game_started
-    global current_guesses
-    global current_score
-    global usernames
     global waiting_for_pitch
+    current_guesses.clear()
+    current_score.clear()
     game_started = False
-    current_guesses = {}
-    current_score = {}
-    usernames = {}
+    usernames.clear()
     waiting_for_pitch = False
 
 
@@ -66,8 +63,7 @@ def display_scoreboard():
     return string
 
 
-def result_pitch(ctx, pitch):
-    global current_guesses
+def result_pitch(pitch):
     global waiting_for_pitch
     waiting_for_pitch = False
     for user in current_guesses:
@@ -77,8 +73,6 @@ def result_pitch(ctx, pitch):
             current_score.update({user: score})
         else:
             current_score.update({user: current_score[user] + score})
-    await ctx.send(f"Pitch was **{pitch}**.\n\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
-    current_guesses = {}
 
 
 class SHADOWBALL(commands.Cog):
@@ -102,11 +96,6 @@ class SHADOWBALL(commands.Cog):
 
         await ctx.send(f"New game started")
         game_started = True
-
-        # submission = await reddit.submission("13fm4bi")
-        # comments = await submission.comments()
-        # for top_level_comment in comments:
-        #     comment = top_level_comment
 
         subreddit = await reddit.subreddit("fakebaseball")
         async for comment in subreddit.stream.comments(skip_existing=True):
@@ -133,12 +122,13 @@ class SHADOWBALL(commands.Cog):
                 fifth_to_last_line = lines[len(lines) - 5].lstrip()
                 if fifth_to_last_line[0:6] == "Pitch:":
                     pitch = fifth_to_last_line.split(" ")[1]
-                    result_pitch(ctx, pitch)
+                    result_pitch(pitch)
+                    await ctx.send(f"Pitch was **{pitch}**.\n\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
+                    current_guesses.clear()
 
     @commands.command()
     async def end_game(self, ctx):
         """Ends a game of Shadow Ball"""
-        global game_started
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -149,8 +139,6 @@ class SHADOWBALL(commands.Cog):
     @commands.command()
     async def guess(self, ctx, guess):
         """Submit a guess"""
-        global game_started
-        global current_guesses
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -162,12 +150,13 @@ class SHADOWBALL(commands.Cog):
     @commands.command()
     async def pitch(self, ctx, pitch):
         """Submit pitch manually"""
-        global game_started
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
 
-        result_pitch(ctx, pitch)
+        result_pitch(pitch)
+        await ctx.send(f"Pitch was **{pitch}**.\n\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
+        current_guesses.clear()
 
 
 async def setup(bot):
