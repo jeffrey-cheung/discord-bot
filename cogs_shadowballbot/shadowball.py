@@ -1,12 +1,46 @@
 import asyncpraw
 import os
+import pickle
+import pytz
+import time
+from datetime import datetime
 from discord.ext import commands
+
+pytz_utc = pytz.timezone('UTC')
+pytz_pst = pytz.timezone('America/Los_Angeles')
+
+reddit = asyncpraw.Reddit(
+    client_id=os.getenv("CLIENT_ID"),
+    client_secret=os.getenv("CLIENT_SECRET"),
+    user_agent=os.getenv("USER_AGENT_SHADOW_BALL")
+)
 
 current_guesses = {}
 current_score = {}
 game_started = False
+submission_id = ""
 usernames = {}
-waiting_for_pitch = False
+
+
+def save_dict():
+    with open(submission_id + "-current_score.pickle", 'wb') as f:
+        pickle.dump(current_score, f, pickle.HIGHEST_PROTOCOL)
+    with open(submission_id + "-usernames.pickle", 'wb') as f:
+        pickle.dump(usernames, f, pickle.HIGHEST_PROTOCOL)
+
+
+def load_dict():
+    global current_score
+    global usernames
+
+    if submission_id == "":
+        return
+    if os.path.isfile(submission_id + "-current_score.pickle"):
+        with open(submission_id + "-current_score.pickle", 'rb') as f:
+            current_score = pickle.load(f)
+    if os.path.isfile(submission_id + "-usernames.pickle"):
+        with open(submission_id + "-usernames.pickle", 'rb') as f:
+            usernames = pickle.load(f)
 
 
 def calculate_diff(swing, pitch):
@@ -37,42 +71,44 @@ def calculate_score(diff):
 
 def reset_game():
     global game_started
-    global waiting_for_pitch
     current_guesses.clear()
     current_score.clear()
     game_started = False
     usernames.clear()
-    waiting_for_pitch = False
 
 
 def display_guess_results(pitch):
     if not current_guesses:
-        return "No one guessed"
-    string = ""
+        return "\nNo one guessed"
+    diff_results = {}
     for user in current_guesses:
         diff = calculate_diff(current_guesses[user], pitch)
-        score = calculate_score(diff)
-        string += f"**{usernames[user]}** guessed **{current_guesses[user]}**, for a diff of **{diff}**, scoring **{score}** points."
+        diff_results.update({user: diff})
+
+    string = ""
+    for user in sorted(diff_results, key=diff_results.get):
+        score = calculate_score(diff_results[user])
+        string += f"\n**{usernames[user]}** guessed **{current_guesses[user]}**, for a diff of **{diff_results[user]}**, scoring **{score}** points."
+
     return string
 
 
 def display_scoreboard():
     string = "**Scoreboard**:"
-    for user in current_score:
+    for user in sorted(current_score, key=current_score.get, reverse=True):
         string += f"```{usernames[user]}: {current_score[user]}```"
     return string
 
 
 def result_pitch(pitch):
-    global waiting_for_pitch
-    waiting_for_pitch = False
     for user in current_guesses:
         diff = calculate_diff(current_guesses[user], pitch)
         score = calculate_score(diff)
         if user not in current_score:
-            current_score.update({user: score})
+            current_score.update({user: int(score)})
         else:
-            current_score.update({user: current_score[user] + score})
+            current_score.update({user: int(current_score[user]) + int(score)})
+    save_dict()
 
 
 class SHADOWBALL(commands.Cog):
@@ -80,51 +116,61 @@ class SHADOWBALL(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def start_game(self, ctx):
+    async def start_game(self, ctx, _submission_id=""):
         """Starts a game of Shadow Ball"""
         global game_started
-        global waiting_for_pitch
+        global submission_id
         if game_started is True:
             await ctx.send(f"A game is currently in progress")
             return
 
-        reddit = asyncpraw.Reddit(
-            client_id=os.getenv("CLIENT_ID"),
-            client_secret=os.getenv("CLIENT_SECRET"),
-            user_agent=os.getenv("USER_AGENT_PLAY_BY_PLAY")
-        )
-
+        submission_id = _submission_id
+        load_dict()
         await ctx.send(f"New game started")
         game_started = True
+        while game_started is True:
+            try:
+                print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing comments")
+                subreddit = await reddit.subreddit("fakebaseball")
+                async for comment in subreddit.stream.comments(skip_existing=True):
+                    if game_started is False:
+                        await reddit.close()
+                        return
 
-        subreddit = await reddit.subreddit("fakebaseball")
-        async for comment in subreddit.stream.comments(skip_existing=True):
-            if game_started is False:
-                await reddit.close()
-                return
+                    parent_comment = comment
+                    await parent_comment.load()
+                    while parent_comment.parent_id[0:3] == "t1_":
+                        parent_comment = await parent_comment.parent()
+                        await parent_comment.load()
 
-            parent_comment = comment
-            while parent_comment.parent_id[0:3] == "t1_":
-                parent_comment = parent_comment.parent()
+                    comment_lines = comment.body.splitlines()
+                    while "" in comment_lines:
+                        comment_lines.remove("")
+                    parent_comment_lines = parent_comment.body.splitlines()
+                    while "" in parent_comment_lines:
+                        parent_comment_lines.remove("")
+                    team_abbreviation = "0xffffff"
+                    if parent_comment.author == "FakeBaseball_Umpire" and len(parent_comment_lines) >= 3:
+                        third_line = parent_comment_lines[2].lstrip()
+                        team_abbreviation = third_line[0:3]
 
-            lines = parent_comment.body.splitlines()
-            while "" in lines:
-                lines.remove("")
-            team_abbreviation = "0xffffff"
-            if parent_comment.author == "FakeBaseball_Umpire" and len(lines) >= 3:
-                third_line = lines[2].lstrip()
-                team_abbreviation = third_line[0:3]
-
-            if waiting_for_pitch is False and comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(lines) == 3 and team_abbreviation == "SCU":
-                waiting_for_pitch = True
-                await ctx.send(f"<@&1060698924584804416> AB Posted!```{comment.body}```")
-            elif waiting_for_pitch is True and comment.author == "FakeBaseball_Umpire" and len(lines) >= 5 and team_abbreviation == "SCU":
-                fifth_to_last_line = lines[len(lines) - 5].lstrip()
-                if fifth_to_last_line[0:6] == "Pitch:":
-                    pitch = fifth_to_last_line.split(" ")[1]
-                    result_pitch(pitch)
-                    await ctx.send(f"Pitch was **{pitch}**.\n\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
-                    current_guesses.clear()
+                    if comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(comment_lines) == 3 and (team_abbreviation == "SBD" or team_abbreviation == "SCU"):
+                        submission_id = comment.link_id.split("_")[1]
+                        await ctx.send(f"<@&1060698924584804416> AB Posted!```{comment.body}```")
+                    elif comment.author == "FakeBaseball_Umpire" and len(comment_lines) >= 5 and (team_abbreviation == "SBD" or team_abbreviation == "SCU"):
+                        fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
+                        if fifth_to_last_line[0:6] == "Pitch:":
+                            submission_id = comment.link_id.split("_")[1]
+                            pitch = fifth_to_last_line.split(" ")[1]
+                            result_pitch(pitch)
+                            await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
+                            current_guesses.clear()
+            except Exception as e:
+                print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
+                time.sleep(10)
+            else:
+                time.sleep(10)
+        await reddit.close()
 
     @commands.command()
     async def end_game(self, ctx):
@@ -133,8 +179,9 @@ class SHADOWBALL(commands.Cog):
             await ctx.send(f"There is no game in progress")
             return
 
+        await ctx.send(f"Game ended\n\n{display_scoreboard()}")
+        save_dict()
         reset_game()
-        await ctx.send(f"Game ended")
 
     @commands.command()
     async def guess(self, ctx, guess):
@@ -144,7 +191,10 @@ class SHADOWBALL(commands.Cog):
             return
 
         current_guesses.update({ctx.message.author.id: guess})
-        usernames.update({ctx.message.author.id: ctx.message.author.name})
+        if ctx.message.author.nick is not None:
+            usernames.update({ctx.message.author.id: ctx.message.author.nick})
+        else:
+            usernames.update({ctx.message.author.id: ctx.message.author.name})
         await ctx.send(f"Received your guess of **{guess}**")
 
     @commands.command()
@@ -155,7 +205,7 @@ class SHADOWBALL(commands.Cog):
             return
 
         result_pitch(pitch)
-        await ctx.send(f"Pitch was **{pitch}**.\n\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
+        await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
         current_guesses.clear()
 
 
