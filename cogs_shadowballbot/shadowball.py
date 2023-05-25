@@ -12,7 +12,7 @@ pytz_pst = pytz.timezone('America/Los_Angeles')
 reddit = asyncpraw.Reddit(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
-    user_agent=os.getenv("USER_AGENT_SHADOW_BALL")
+    user_agent=os.getenv("USER_AGENT_SHADOWBALLBOT")
 )
 
 current_guesses = {}
@@ -23,9 +23,9 @@ usernames = {}
 
 
 def save_dict():
-    with open(submission_id + "-current_score.pickle", 'wb') as f:
+    with open(f"pickle/{submission_id}-current_score.pickle", 'wb') as f:
         pickle.dump(current_score, f, pickle.HIGHEST_PROTOCOL)
-    with open(submission_id + "-usernames.pickle", 'wb') as f:
+    with open(f"pickle/{submission_id}-usernames.pickle", 'wb') as f:
         pickle.dump(usernames, f, pickle.HIGHEST_PROTOCOL)
 
 
@@ -35,11 +35,11 @@ def load_dict():
 
     if submission_id == "":
         return
-    if os.path.isfile(submission_id + "-current_score.pickle"):
-        with open(submission_id + "-current_score.pickle", 'rb') as f:
+    if os.path.isfile(f"pickle/{submission_id}-current_score.pickle"):
+        with open(f"pickle/{submission_id}-current_score.pickle", 'rb') as f:
             current_score = pickle.load(f)
-    if os.path.isfile(submission_id + "-usernames.pickle"):
-        with open(submission_id + "-usernames.pickle", 'rb') as f:
+    if os.path.isfile(f"pickle/{submission_id}-usernames.pickle"):
+        with open(f"pickle/{submission_id}-usernames.pickle", 'rb') as f:
             usernames = pickle.load(f)
 
 
@@ -156,7 +156,7 @@ class SHADOWBALL(commands.Cog):
 
                     if comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(comment_lines) == 3 and (team_abbreviation == "SBD" or team_abbreviation == "SCU"):
                         submission_id = comment.link_id.split("_")[1]
-                        await ctx.send(f"<@&1060698924584804416> AB Posted!```{comment.body}```")
+                        await ctx.send(f"<@&1060698924584804416> AB Posted```{comment.body}```")
                     elif comment.author == "FakeBaseball_Umpire" and len(comment_lines) >= 5 and (team_abbreviation == "SBD" or team_abbreviation == "SCU"):
                         fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
                         if fifth_to_last_line[0:6] == "Pitch:":
@@ -207,6 +207,15 @@ class SHADOWBALL(commands.Cog):
         result_pitch(pitch)
         await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
         current_guesses.clear()
+
+    @commands.command()
+    async def scoreboard(self, ctx):
+        """Shows current scoreboard"""
+        if game_started is False:
+            await ctx.send(f"There is no game in progress")
+            return
+
+        await ctx.send(f"-\n\n{display_scoreboard()}")
 
 
 async def setup(bot):

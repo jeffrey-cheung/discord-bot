@@ -22,9 +22,9 @@ async def on_ready():
 
 
 async def load_extensions():
-    for file in listdir('cogs/'):
+    for file in listdir('cogs_ludabot/'):
         if file.endswith('.py'):
-            await bot.load_extension(f'cogs.{file[:-3]}')
+            await bot.load_extension(f'cogs_ludabot.{file[:-3]}')
 
 
 async def main():

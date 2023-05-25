@@ -30,7 +30,7 @@ async def load_extensions():
 async def main():
     async with bot:
         await load_extensions()
-        await bot.start(os.getenv("TOKEN_SHADOWBALL"))
+        await bot.start(os.getenv("TOKEN_SHADOWBALLBOT"))
 
 
 asyncio.run(main())
