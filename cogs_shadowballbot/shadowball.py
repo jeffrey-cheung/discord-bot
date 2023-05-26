@@ -125,14 +125,14 @@ def result_pitch(pitch):
     save_dict()
 
 
-class SHADOWBALL(commands.Cog):
+class ShadowBall(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     @guild_only()
     async def startgame(self, ctx, _submission_id=""):
-        """Starts a game of Shadow Ball"""
+        """[optional:submissionId]"""
         global game_started
         global submission_id
         if game_started is True:
@@ -152,34 +152,35 @@ class SHADOWBALL(commands.Cog):
                         await reddit.close()
                         return
 
-                    parent_comment = comment
-                    await parent_comment.load()
-                    while parent_comment.parent_id[0:3] == "t1_":
-                        parent_comment = await parent_comment.parent()
+                    if comment.author == "FakeBaseball_Umpire":
+                        parent_comment = comment
                         await parent_comment.load()
+                        while parent_comment.parent_id[0:3] == "t1_":
+                            parent_comment = await parent_comment.parent()
+                            await parent_comment.load()
 
-                    comment_lines = comment.body.splitlines()
-                    while "" in comment_lines:
-                        comment_lines.remove("")
-                    parent_comment_lines = parent_comment.body.splitlines()
-                    while "" in parent_comment_lines:
-                        parent_comment_lines.remove("")
-                    team_abbreviation = "0xffffff"
-                    if parent_comment.author == "FakeBaseball_Umpire" and len(parent_comment_lines) >= 3:
-                        third_line = parent_comment_lines[2].lstrip()
-                        team_abbreviation = third_line[0:3]
+                        comment_lines = comment.body.splitlines()
+                        while "" in comment_lines:
+                            comment_lines.remove("")
+                        parent_comment_lines = parent_comment.body.splitlines()
+                        while "" in parent_comment_lines:
+                            parent_comment_lines.remove("")
+                        team_abbreviation = "0xffffff"
+                        if parent_comment.author == "FakeBaseball_Umpire" and len(parent_comment_lines) >= 3:
+                            third_line = parent_comment_lines[2].lstrip()
+                            team_abbreviation = third_line[0:3]
 
-                    if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(comment_lines) == 3:
-                        submission_id = comment.link_id.split("_")[1]
-                        await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")
-                    elif team_abbreviation == team_abbrev and comment.author == "FakeBaseball_Umpire" and len(comment_lines) >= 5:
-                        fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
-                        if fifth_to_last_line[0:6] == "Pitch:" and fifth_to_last_line.split(" ")[1].isdigit():
+                        if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and len(comment_lines) == 3:
                             submission_id = comment.link_id.split("_")[1]
-                            pitch = fifth_to_last_line.split(" ")[1]
-                            result_pitch(pitch)
-                            await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
-                            current_guesses.clear()
+                            await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")
+                        elif team_abbreviation == team_abbrev and len(comment_lines) >= 5:
+                            fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
+                            if fifth_to_last_line[0:6] == "Pitch:" and fifth_to_last_line.split(" ")[1].isdigit():
+                                submission_id = comment.link_id.split("_")[1]
+                                pitch = fifth_to_last_line.split(" ")[1]
+                                result_pitch(pitch)
+                                await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
+                                current_guesses.clear()
             except Exception as e:
                 print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
                 time.sleep(10)
@@ -202,7 +203,7 @@ class SHADOWBALL(commands.Cog):
     @commands.command()
     @guild_only()
     async def guess(self, ctx, guess):
-        """Submit a guess"""
+        """[guess]"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -221,7 +222,7 @@ class SHADOWBALL(commands.Cog):
     @commands.command()
     @guild_only()
     async def pitch(self, ctx, pitch):
-        """Submit pitch manually"""
+        """[pitch]"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -246,4 +247,4 @@ class SHADOWBALL(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(SHADOWBALL(bot))
+    await bot.add_cog(ShadowBall(bot))
