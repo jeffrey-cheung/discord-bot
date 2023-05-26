@@ -18,6 +18,10 @@ os.environ['MLR_WEBHOOK'] = ""
 os.environ['MILR_SEARCH'] = ""
 os.environ['MILR_WEBHOOK'] = ""
 
+# shadowball Credentials
+os.environ['ROLE_ID'] = ""
+os.environ['TEAM_ABBREV'] = ""
+
 # Discord Bot Credentials
 os.environ['TOKEN_LUDABOT'] = ""
 os.environ['TOKEN_SHADOWBALLBOT'] = ""
