@@ -5,6 +5,7 @@ import pytz
 import time
 from datetime import datetime
 from discord.ext import commands
+from discord.ext.commands import guild_only
 
 role_id = os.getenv("ROLE_ID")
 team_abbrev = os.getenv("TEAM_ABBREV")
@@ -129,6 +130,7 @@ class SHADOWBALL(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @guild_only()
     async def startgame(self, ctx, _submission_id=""):
         """Starts a game of Shadow Ball"""
         global game_started
@@ -186,6 +188,7 @@ class SHADOWBALL(commands.Cog):
         await reddit.close()
 
     @commands.command()
+    @guild_only()
     async def endgame(self, ctx):
         """Ends a game of Shadow Ball"""
         if game_started is False:
@@ -197,6 +200,7 @@ class SHADOWBALL(commands.Cog):
         reset_game()
 
     @commands.command()
+    @guild_only()
     async def guess(self, ctx, guess):
         """Submit a guess"""
         if game_started is False:
@@ -211,6 +215,7 @@ class SHADOWBALL(commands.Cog):
         await ctx.send(f"Received your guess of **{guess}**")
 
     @commands.command()
+    @guild_only()
     async def pitch(self, ctx, pitch):
         """Submit pitch manually"""
         if game_started is False:
@@ -222,6 +227,7 @@ class SHADOWBALL(commands.Cog):
         current_guesses.clear()
 
     @commands.command()
+    @guild_only()
     async def scoreboard(self, ctx):
         """Shows current scoreboard"""
         if game_started is False:

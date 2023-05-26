@@ -1,3 +1,5 @@
+from discord.ext.commands import guild_only
+
 import constants
 import discord
 import io
@@ -17,11 +19,13 @@ class MLR(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @guild_only()
     async def random(self, ctx):
         """Returns random number between 1 and 1000"""
         await ctx.send(rdm.randint(1, 1000))
 
     @commands.command()
+    @guild_only()
     async def pitches(self, ctx, league, player_id, number_of_pitches=50):
         """[league] [playerId] [optional:numberOfPitches]"""
         player = (requests.get("https://www.swing420.com/api/players/id/" + player_id)).json()
@@ -60,6 +64,7 @@ class MLR(commands.Cog):
         os.remove('graph.png')
 
     @commands.command()
+    @guild_only()
     async def swings(self, ctx, league, player_id, number_of_swings=50):
         """[league] [playerId] [optional:numberOfSwings]"""
         player = (requests.get("https://www.swing420.com/api/players/id/" + player_id)).json()
@@ -99,6 +104,7 @@ class MLR(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
+    @guild_only()
     async def player(self, ctx, *, name):
         """[name]"""
         playerList = (requests.get("https://www.swing420.com/api/players")).json()
@@ -141,6 +147,7 @@ class MLR(commands.Cog):
             await ctx.send(tooManyResults)
 
     @commands.command()
+    @guild_only()
     async def hype(self, ctx):
         """Returns random hype gif"""
         await ctx.send(rdm.choice(HYPE_LIST))
