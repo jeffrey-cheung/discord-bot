@@ -68,8 +68,18 @@ def calculate_score(diff):
         return 1
     elif diff <= 300:
         return 0
-    else:
+    elif diff <= 350:
         return -1
+    elif diff <= 410:
+        return -2
+    elif diff <= 440:
+        return -4
+    elif diff <= 470:
+        return -6
+    elif diff <= 500:
+        return -10
+    else:
+        return 0
 
 
 def reset_game():
