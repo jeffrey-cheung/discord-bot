@@ -6,6 +6,9 @@ import time
 from datetime import datetime
 from discord.ext import commands
 
+role_id = os.getenv("ROLE_ID")
+team_abbrev = os.getenv("TEAM_ABBREV")
+
 pytz_utc = pytz.timezone('UTC')
 pytz_pst = pytz.timezone('America/Los_Angeles')
 
@@ -154,10 +157,10 @@ class SHADOWBALL(commands.Cog):
                         third_line = parent_comment_lines[2].lstrip()
                         team_abbreviation = third_line[0:3]
 
-                    if comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(comment_lines) == 3 and (team_abbreviation == "SBD" or team_abbreviation == "SCU"):
+                    if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and comment.author == "FakeBaseball_Umpire" and len(comment_lines) == 3:
                         submission_id = comment.link_id.split("_")[1]
-                        await ctx.send(f"<@&1060698924584804416> AB Posted```{comment.body}```")
-                    elif comment.author == "FakeBaseball_Umpire" and len(comment_lines) >= 5 and (team_abbreviation == "SBD" or team_abbreviation == "SCU"):
+                        await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")
+                    elif team_abbreviation == team_abbrev and comment.author == "FakeBaseball_Umpire" and len(comment_lines) >= 5:
                         fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
                         if fifth_to_last_line[0:6] == "Pitch:":
                             submission_id = comment.link_id.split("_")[1]
