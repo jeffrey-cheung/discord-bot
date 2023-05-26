@@ -131,5 +131,4 @@ dmypy.json
 .idea/
 .DS_Store
 config.py
-.pickle
-pickle/.pickle
+*.pickle
