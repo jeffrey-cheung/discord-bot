@@ -174,7 +174,7 @@ class SHADOWBALL(commands.Cog):
                         await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")
                     elif team_abbreviation == team_abbrev and comment.author == "FakeBaseball_Umpire" and len(comment_lines) >= 5:
                         fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
-                        if fifth_to_last_line[0:6] == "Pitch:":
+                        if fifth_to_last_line[0:6] == "Pitch:" and fifth_to_last_line.split(" ")[1].isdigit():
                             submission_id = comment.link_id.split("_")[1]
                             pitch = fifth_to_last_line.split(" ")[1]
                             result_pitch(pitch)
@@ -207,6 +207,10 @@ class SHADOWBALL(commands.Cog):
             await ctx.send(f"There is no game in progress")
             return
 
+        if not guess.isdigit() or int(guess) < 1 or int(guess) > 1000:
+            await ctx.send(f"Invalid guess")
+            return
+
         current_guesses.update({ctx.message.author.id: guess})
         if ctx.message.author.nick is not None:
             usernames.update({ctx.message.author.id: ctx.message.author.nick})
@@ -220,6 +224,10 @@ class SHADOWBALL(commands.Cog):
         """Submit pitch manually"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
+            return
+
+        if not pitch.isdigit() or int(pitch) < 1 or int(pitch) > 1000:
+            await ctx.send(f"Invalid pitch")
             return
 
         result_pitch(pitch)
