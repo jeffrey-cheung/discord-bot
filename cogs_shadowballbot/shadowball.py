@@ -116,7 +116,7 @@ class SHADOWBALL(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def start_game(self, ctx, _submission_id=""):
+    async def startgame(self, ctx, _submission_id=""):
         """Starts a game of Shadow Ball"""
         global game_started
         global submission_id
@@ -173,7 +173,7 @@ class SHADOWBALL(commands.Cog):
         await reddit.close()
 
     @commands.command()
-    async def end_game(self, ctx):
+    async def endgame(self, ctx):
         """Ends a game of Shadow Ball"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
