@@ -1,5 +1,3 @@
-from discord.ext.commands import guild_only
-
 import constants
 import discord
 import io
@@ -8,7 +6,9 @@ import matplotlib.pyplot as plt
 import os
 import random as rdm
 import requests
+import sys
 from discord.ext import commands
+from discord.ext.commands import guild_only
 
 colors = json.loads(constants.MLR_COLORS)
 HYPE_LIST = constants.HYPE_LIST
@@ -26,26 +26,39 @@ class MLR(commands.Cog):
 
     @commands.command()
     @guild_only()
-    async def pitches(self, ctx, league, player_id, number_of_pitches=50):
+    async def pitches(self, ctx, league, player_id, number_of_pitches=None):
         """[league] [playerId] [optional:numberOfPitches]"""
+        if number_of_pitches is None:
+            number_of_pitches = 50
+
         player = (requests.get("https://www.swing420.com/api/players/id/" + player_id)).json()
         response = (
             requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{player_id}")).json()
 
         list_of_pitches = []
         list_of_swings = []
+        current_session = -1
         for x in response:
             if (x['pitch'] != 0) & (x['swing'] != 0) & (x['session'] != 0):
+                if number_of_pitches == "current" and x['session'] != current_session:
+                    current_session = x['session']
+                    list_of_pitches = []
+                    list_of_swings = []
                 list_of_pitches.append(x['pitch'])
                 list_of_swings.append(x['swing'])
-        list_of_pitches = list_of_pitches[-number_of_pitches:]
-        list_of_swings = list_of_swings[-number_of_pitches:]
+
+        if number_of_pitches != "current":
+            list_of_pitches = list_of_pitches[-number_of_pitches:]
+            list_of_swings = list_of_swings[-number_of_pitches:]
 
         number_of_pitches = len(list_of_pitches)
         list_of_numbers = list(range(1, number_of_pitches + 1))
 
         plt.figure(figsize=(10.0, 5.0))
-        plt.title(player['playerName'] + ' last ' + str(number_of_pitches) + " pitches in " + str(league))
+        if current_session != -1:
+            plt.title(player['playerName'] + " current game pitches in " + str(league))
+        else:
+            plt.title(player['playerName'] + " last " + str(number_of_pitches) + " pitches in " + str(league))
         plt.ylim(0, 1000)
         plt.xlim(0, number_of_pitches + 1)
         plt.grid(True)
