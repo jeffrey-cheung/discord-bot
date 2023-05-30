@@ -2,6 +2,7 @@ import asyncpraw
 import os
 import pickle
 import pytz
+import sys
 import time
 from datetime import datetime
 from discord.ext import commands
@@ -183,6 +184,9 @@ class ShadowBall(commands.Cog):
                                 current_guesses.clear()
             except Exception as e:
                 print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
                 time.sleep(10)
             else:
                 time.sleep(10)

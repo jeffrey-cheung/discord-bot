@@ -5,6 +5,7 @@ import json
 import os
 import praw
 import pytz
+import sys
 import time
 from datetime import datetime
 from dhooks import Webhook
@@ -56,8 +57,10 @@ def parse_comments():
 
         if mlr_search_test != "" and mlr_search_test.lower() in comment.link_title.lower():
             mlr_webhook_test.send(embed=embed)
+            mlr_webhook_test.close()
         elif milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
             milr_webhook_test.send(embed=embed)
+            milr_webhook_test.close()
 
 
 while True:
@@ -66,6 +69,9 @@ while True:
         parse_comments()
     except Exception as e:
         print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
         time.sleep(10)
     else:
         time.sleep(10)
