@@ -48,6 +48,7 @@ class MLR(commands.Cog):
                 list_of_swings.append(x['swing'])
 
         if number_of_pitches != "current":
+            number_of_pitches = int(number_of_pitches)
             list_of_pitches = list_of_pitches[-number_of_pitches:]
             list_of_swings = list_of_swings[-number_of_pitches:]
 
@@ -61,7 +62,8 @@ class MLR(commands.Cog):
             plt.title(player['playerName'] + " last " + str(number_of_pitches) + " pitches in " + str(league))
         plt.ylim(0, 1000)
         plt.xlim(0, number_of_pitches + 1)
-        plt.grid(True)
+        plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+        plt.grid(axis='y', alpha=0.7)
         plt.plot(list_of_numbers, list_of_pitches, color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.plot(list_of_numbers, list_of_swings, marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.legend(['Pitch', 'Swing'])
@@ -100,7 +102,8 @@ class MLR(commands.Cog):
         plt.title(player['playerName'] + ' last ' + str(number_of_swings) + " swings in " + str(league))
         plt.ylim(0, 1000)
         plt.xlim(0, number_of_swings + 1)
-        plt.grid(True)
+        plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+        plt.grid(axis='y', alpha=0.7)
         plt.plot(list_of_numbers, list_of_pitches, color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.plot(list_of_numbers, list_of_swings, marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.legend(['Pitch', 'Swing'])
