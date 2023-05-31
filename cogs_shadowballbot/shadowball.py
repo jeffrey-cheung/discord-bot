@@ -23,14 +23,13 @@ reddit = asyncpraw.Reddit(
 current_guesses = {}
 current_score = {}
 game_started = False
-submission_id = ""
 usernames = {}
 
 
 def save_dict():
-    with open(f"pickle/{submission_id}-current_score.pickle", 'wb') as f:
+    with open(f"pickle/current_score.pickle", 'wb') as f:
         pickle.dump(current_score, f, pickle.HIGHEST_PROTOCOL)
-    with open(f"pickle/{submission_id}-usernames.pickle", 'wb') as f:
+    with open(f"pickle/usernames.pickle", 'wb') as f:
         pickle.dump(usernames, f, pickle.HIGHEST_PROTOCOL)
 
 
@@ -38,13 +37,11 @@ def load_dict():
     global current_score
     global usernames
 
-    if submission_id == "":
-        return
-    if os.path.isfile(f"pickle/{submission_id}-current_score.pickle"):
-        with open(f"pickle/{submission_id}-current_score.pickle", 'rb') as f:
+    if os.path.isfile(f"pickle/current_score.pickle"):
+        with open(f"pickle/current_score.pickle", 'rb') as f:
             current_score = pickle.load(f)
-    if os.path.isfile(f"pickle/{submission_id}-usernames.pickle"):
-        with open(f"pickle/{submission_id}-usernames.pickle", 'rb') as f:
+    if os.path.isfile(f"pickle/usernames.pickle"):
+        with open(f"pickle/usernames.pickle", 'rb') as f:
             usernames = pickle.load(f)
 
 
@@ -91,6 +88,11 @@ def reset_game():
     game_started = False
     usernames.clear()
 
+    if os.path.isfile(f"pickle/current_score.pickle"):
+        os.remove(f"pickle/current_score.pickle")
+    if os.path.isfile(f"pickle/usernames.pickle"):
+        os.remove(f"pickle/usernames.pickle")
+
 
 def display_guess_results(pitch):
     if not current_guesses:
@@ -132,15 +134,13 @@ class ShadowBall(commands.Cog):
 
     @commands.command()
     @guild_only()
-    async def startgame(self, ctx, _submission_id=""):
-        """[optional:submissionId]"""
+    async def startgame(self, ctx):
+        """Starts a new game of Shadow Ball"""
         global game_started
-        global submission_id
         if game_started is True:
             await ctx.send(f"A game is currently in progress")
             return
 
-        submission_id = _submission_id
         load_dict()
         await ctx.send(f"New game started")
         game_started = True
@@ -172,12 +172,10 @@ class ShadowBall(commands.Cog):
                             team_abbreviation = third_line[0:3]
 
                         if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and len(comment_lines) == 3:
-                            submission_id = comment.link_id.split("_")[1]
                             await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")
                         elif team_abbreviation == team_abbrev and len(comment_lines) >= 5:
                             fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
                             if fifth_to_last_line[0:6] == "Pitch:" and fifth_to_last_line.split(" ")[1].isdigit():
-                                submission_id = comment.link_id.split("_")[1]
                                 pitch = fifth_to_last_line.split(" ")[1]
                                 result_pitch(pitch)
                                 await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
