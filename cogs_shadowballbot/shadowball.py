@@ -249,6 +249,23 @@ class ShadowBall(commands.Cog):
 
         await ctx.send(f"-\n\n{display_scoreboard()}")
 
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    @guild_only()
+    async def editscore(self, ctx, _user, _score):
+        if game_started is False:
+            await ctx.send(f"There is no game in progress")
+            return
+
+        current_score.update({int(_user): int(_score)})
+        save_dict()
+
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    @guild_only()
+    async def debug(self, ctx):
+        await ctx.send(f"```{current_score}```")
+
 
 async def setup(bot):
     await bot.add_cog(ShadowBall(bot))
