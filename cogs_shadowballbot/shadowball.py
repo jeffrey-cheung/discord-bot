@@ -75,6 +75,8 @@ def calculate_score(diff):
         return -4
     elif diff <= 470:
         return -6
+    elif diff <= 495:
+        return -8
     elif diff <= 500:
         return -10
     else:
@@ -205,7 +207,7 @@ class ShadowBall(commands.Cog):
     @commands.command()
     @guild_only()
     async def guess(self, ctx, guess):
-        """[guess]"""
+        """[guess] Submit/Update a guess"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -224,7 +226,7 @@ class ShadowBall(commands.Cog):
     @commands.command()
     @guild_only()
     async def pitch(self, ctx, pitch):
-        """[pitch]"""
+        """[pitch] Resolve a pitch manually"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
