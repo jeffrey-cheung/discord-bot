@@ -37,15 +37,26 @@ class MLR(commands.Cog):
 
         list_of_pitches = []
         list_of_swings = []
-        current_session = -1
+        current_season = -1
+        current_game = -1
         for x in response:
-            if (x['pitch'] != 0) & (x['swing'] != 0) & (x['session'] != 0):
-                if number_of_pitches == "current" and x['session'] != current_session:
-                    current_session = x['session']
-                    list_of_pitches = []
-                    list_of_swings = []
-                list_of_pitches.append(x['pitch'])
-                list_of_swings.append(x['swing'])
+            if (x['pitch'] != 0) & (x['swing'] != 0):
+                if number_of_pitches == "current":
+                    if int(x['season']) > int(current_season):
+                        list_of_pitches = []
+                        list_of_swings = []
+                        current_season = x['season']
+                        current_game = x['gameID']
+                    if int(x['gameID']) > int(current_game):
+                        list_of_pitches = []
+                        list_of_swings = []
+                        current_game = x['gameID']
+                    if int(x['season']) == int(current_season) and int(x['gameID']) == int(current_game):
+                        list_of_pitches.append(x['pitch'])
+                        list_of_swings.append(x['swing'])
+                else:
+                    list_of_pitches.append(x['pitch'])
+                    list_of_swings.append(x['swing'])
 
         if number_of_pitches != "current":
             number_of_pitches = int(number_of_pitches)
@@ -56,7 +67,7 @@ class MLR(commands.Cog):
         list_of_numbers = list(range(1, number_of_pitches + 1))
 
         plt.figure(figsize=(10.0, 5.0))
-        if current_session != -1:
+        if current_game != -1:
             plt.title(player['playerName'] + " current game pitches in " + str(league))
         else:
             plt.title(player['playerName'] + " last " + str(number_of_pitches) + " pitches in " + str(league))
@@ -89,7 +100,7 @@ class MLR(commands.Cog):
         list_of_pitches = []
         list_of_swings = []
         for x in response:
-            if (x['pitch'] != 0) & (x['swing'] != 0) & (x['session'] != 0):
+            if (x['pitch'] != 0) & (x['swing'] != 0):
                 list_of_pitches.append(x['pitch'])
                 list_of_swings.append(x['swing'])
         list_of_pitches = list_of_pitches[-number_of_swings:]
