@@ -6,7 +6,7 @@ from pprint import pprint
 reddit = praw.Reddit(
     client_id=os.getenv("CLIENT_ID"),
     client_secret=os.getenv("CLIENT_SECRET"),
-    user_agent=os.getenv("USER_AGENT_PLAY_BY_PLAY")
+    user_agent=os.getenv("USER_AGENT_FCFB")
 )
 
 submission_list = []
