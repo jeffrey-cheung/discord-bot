@@ -3,6 +3,7 @@ import os
 # Reddit Credentials
 os.environ['CLIENT_ID'] = ""
 os.environ['CLIENT_SECRET'] = ""
+os.environ['USER_AGENT_FCFB'] = ""
 os.environ['USER_AGENT_PLAY_BY_PLAY'] = ""
 os.environ['USER_AGENT_SHADOWBALLBOT'] = ""
 
