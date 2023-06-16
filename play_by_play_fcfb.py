@@ -1,5 +1,7 @@
 import config
+import constants
 import discord
+import json
 import os
 import praw
 import pytz
@@ -7,6 +9,7 @@ import sys
 import time
 from datetime import datetime
 from dhooks import Webhook
+from pprint import pprint
 
 fcfb_search_test = os.getenv("FCFB_SEARCH_TEST")
 fcfb_webhook_test = Webhook(os.getenv("FCFB_WEBHOOK_TEST"))
@@ -19,18 +22,21 @@ reddit = praw.Reddit(
     client_secret=os.getenv("CLIENT_SECRET"),
     user_agent=os.getenv("USER_AGENT_FCFB")
 )
+icons = json.loads(constants.MLR_ICONS)
 
 
 def parse_comments():
-    for comment in reddit.subreddit('FakeCollegeFootball').stream.comments(skip_existing=True):
-        embed = discord.Embed(description=comment.body)
+    for comment in reddit.subreddit("FakeCollegeFootball").stream.comments(skip_existing=True):
+        embed = discord.Embed(title=str(comment.link_title),
+                              url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}",
+                              description=comment.body)
 
-        embed.set_author(name=str(comment.link_title), url="https://old.reddit.com" + comment.permalink.rsplit('/', 2)[0])
+        embed.set_author(name=str(comment.author.name),
+                         url=f"https://www.reddit.com/user/{comment.author.name}",
+                         icon_url=icons.get("DEFAULT"))
 
-        embed.set_footer(
-            text='/u/%s posted at %s PST' % (
-                comment.author,
-                datetime.fromtimestamp(comment.created).astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')))
+        embed.add_field(name="",
+                        value=f"Comment posted to r/FakeCollegeFootball at <t:{int(comment.created)}:T>")
 
         if fcfb_search_test != "" and fcfb_search_test.lower() in comment.link_title.lower():
             fcfb_webhook_test.send(embed=embed)
