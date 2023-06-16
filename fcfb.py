@@ -11,14 +11,14 @@ reddit = praw.Reddit(
 
 submission_list = []
 
-comments = reddit.redditor("Chocolatesaurusrex").comments.new()
-
-for x in comments:
-    if x.link_author == "NFCAAOfficialRefBot":
-        last = x.body.split(' ')[-1]
-        if last.isdigit():
-            if x.link_id not in submission_list:
-                submission_list.insert(0, x.link_id)
+if len(submission_list) == 0:
+    comments = reddit.redditor("").comments.new()
+    for x in comments:
+        if x.link_author == "NFCAAOfficialRefBot":
+            last = x.body.split(' ')[-1]
+            if last.isdigit():
+                if x.link_id not in submission_list:
+                    submission_list.insert(0, x.link_id)
 
 for submission_id in submission_list:
     submission_comments = reddit.submission(submission_id[-7:]).comments.list()
