@@ -34,7 +34,7 @@ for submission_id in submission_list:
                     offense = y.split(" ")[1]
                 elif len(y) > 10 and y.split(" ")[0] == "Defense:" and y.split(" ")[1].isdigit():
                     defense = y.split(" ")[1]
-                elif len(y) > 13 and y.split(" ")[0] == "Difference:" and y.split(" ")[1].isdigit():
+                elif len(y) > 12 and y.split(" ")[0] == "Difference:" and y.split(" ")[1].isdigit():
                     difference = y.split(" ")[1]
             if offense != "0" and defense != "0":
                 parent_comment = x
