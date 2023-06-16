@@ -14,8 +14,8 @@ from pprint import pprint
 fcfb_search_test = os.getenv("FCFB_SEARCH_TEST")
 fcfb_webhook_test = Webhook(os.getenv("FCFB_WEBHOOK_TEST"))
 
-pytz_utc = pytz.timezone('UTC')
-pytz_pst = pytz.timezone('America/Los_Angeles')
+pytz_utc = pytz.timezone("UTC")
+pytz_pst = pytz.timezone("America/Los_Angeles")
 
 reddit = praw.Reddit(
     client_id=os.getenv("CLIENT_ID"),
