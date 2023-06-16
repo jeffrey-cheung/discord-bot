@@ -18,7 +18,7 @@ for x in comments:
         last = x.body.split(' ')[-1]
         if last.isdigit():
             if x.link_id not in submission_list:
-                submission_list.append(x.link_id)
+                submission_list.insert(0, x.link_id)
 
 for submission_id in submission_list:
     submission_comments = reddit.submission(submission_id[-7:]).comments.list()
@@ -42,4 +42,4 @@ for submission_id in submission_list:
                     parent_comment = parent_comment.parent()
                 parent_first = parent_comment.body.splitlines()
                 if "has submitted their number." in parent_first[0] and "you're up." in parent_first[0]:
-                    print(f"{parent_first[0].split(' ')[0]},{offense},{defense},{difference}")
+                    print(f"{x.link_id},{parent_first[0].split(' ')[0]},{offense},{defense},{difference}")
