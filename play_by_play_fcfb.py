@@ -27,9 +27,20 @@ icons = json.loads(constants.MLR_ICONS)
 
 def parse_comments():
     for comment in reddit.subreddit("FakeCollegeFootball").stream.comments(skip_existing=True):
+        parent_comment = comment
+        while parent_comment.parent_id[0:3] == "t1_":
+            parent_comment = parent_comment.parent()
+
+        lines = parent_comment.body.splitlines()
+
+        team_color = int("0x800203", 16)
+        if lines[0].split(" ")[0].lower() == "lafayette":
+            team_color = int("0xffffff", 16)
+
         embed = discord.Embed(title=str(comment.link_title),
                               url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}",
-                              description=comment.body)
+                              description=comment.body,
+                              color=team_color)
 
         embed.set_author(name=str(comment.author.name),
                          url=f"https://www.reddit.com/user/{comment.author.name}",
