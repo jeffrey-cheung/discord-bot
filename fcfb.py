@@ -30,9 +30,9 @@ for submission_id in submission_list:
             defense = "0"
             difference = "0"
             for y in lines:
-                if len(y) > 10 and y.split(" ")[0] == "Offense:" and y.split(" ")[1].isdigit():
+                if len(y) > 9 and y.split(" ")[0] == "Offense:" and y.split(" ")[1].isdigit():
                     offense = y.split(" ")[1]
-                elif len(y) > 10 and y.split(" ")[0] == "Defense:" and y.split(" ")[1].isdigit():
+                elif len(y) > 9 and y.split(" ")[0] == "Defense:" and y.split(" ")[1].isdigit():
                     defense = y.split(" ")[1]
                 elif len(y) > 12 and y.split(" ")[0] == "Difference:" and y.split(" ")[1].isdigit():
                     difference = y.split(" ")[1]
