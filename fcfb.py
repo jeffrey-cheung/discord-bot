@@ -22,6 +22,7 @@ if len(submission_list) == 0:
 
 for submission_id in submission_list:
     submission_comments = reddit.submission(submission_id[-7:]).comments.list()
+    submission_comments.sort(key=lambda y: y.created)
 
     for x in submission_comments:
         if x.author.name == "NFCAAOfficialRefBot":
