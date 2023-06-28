@@ -25,7 +25,7 @@ for submission_id in submission_list:
     submission_comments.sort(key=lambda y: y.created)
 
     for x in submission_comments:
-        if x.author.name == "NFCAAOfficialRefBot":
+        if x.author is not None and x.author.name == "NFCAAOfficialRefBot":
             lines = x.body.splitlines()
             offense = "0"
             defense = "0"
