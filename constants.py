@@ -1,5 +1,6 @@
 MLR_COLORS = '{' \
              '"DEFAULT":"0xffffff",' \
+             '"ANA":"0x6cace3",' \
              '"ARI":"0xa71831",' \
              '"ATL":"0x13264e",' \
              '"BAL":"0xdf4600",' \
@@ -12,7 +13,6 @@ MLR_COLORS = '{' \
              '"DET":"0x0c2340",' \
              '"HOU":"0xfe7f01",' \
              '"KCR":"0x004687",' \
-             '"LAA":"0xba0021",' \
              '"LAD":"0x1f90ff",' \
              '"MIA":"0xc15db4",' \
              '"MIL":"0xf7d600",' \
