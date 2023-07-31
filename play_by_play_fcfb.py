@@ -38,7 +38,7 @@ def parse_comments():
             team_color = int("0xffffff", 16)
 
         embed = discord.Embed(title=str(comment.link_title),
-                              url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}?sort=new",
+                              url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}/?sort=new",
                               description=comment.body,
                               color=team_color)
 
