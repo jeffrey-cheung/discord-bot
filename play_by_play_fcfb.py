@@ -39,15 +39,16 @@ def parse_comments():
 
         embed = discord.Embed(title=str(comment.link_title),
                               url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}/?sort=new",
-                              description=comment.body,
                               color=team_color)
 
         embed.set_author(name=str(comment.author.name),
                          url=f"https://www.reddit.com/user/{comment.author.name}",
                          icon_url=icons.get("DEFAULT"))
 
-        embed.add_field(name="",
-                        value=f"Comment posted to r/FakeCollegeFootball at <t:{int(comment.created)}:T>")
+        embed.set_thumbnail(url=str(comment.author.icon_img))
+
+        embed.add_field(name="", value=comment.body, inline=False)
+        embed.add_field(name="", value=f"Comment posted to r/FakeCollegeFootball at <t:{int(comment.created)}:T>", inline=False)
 
         if fcfb_search_test != "" and fcfb_search_test.lower() in comment.link_title.lower():
             fcfb_webhook_test.send(embed=embed)
