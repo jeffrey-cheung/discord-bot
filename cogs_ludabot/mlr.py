@@ -11,12 +11,11 @@ from discord.ext import commands
 from discord.ext.commands import guild_only
 
 colors = json.loads(constants.MLR_COLORS)
-HYPE_LIST = constants.HYPE_LIST
 
 
 class MLR(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, client):
+        self.client = client
 
     @commands.command()
     @guild_only()
@@ -173,12 +172,6 @@ class MLR(commands.Cog):
         else:
             await ctx.send(tooManyResults)
 
-    @commands.command()
-    @guild_only()
-    async def hype(self, ctx):
-        """Returns random hype gif"""
-        await ctx.send(rdm.choice(HYPE_LIST))
 
-
-async def setup(bot):
-    await bot.add_cog(MLR(bot))
+async def setup(client):
+    await client.add_cog(MLR(client))

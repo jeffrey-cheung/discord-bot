@@ -13,24 +13,26 @@ pytz_pst = pytz.timezone('America/Los_Angeles')
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix="!", case_insensitive=True, help_command=commands.DefaultHelpCommand(), intents=intents)
+client = commands.Bot(command_prefix="!", case_insensitive=True, help_command=commands.DefaultHelpCommand(), intents=intents)
 
 
-@bot.event
+@client.event
 async def on_ready():
-    print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} Logged in as {bot.user}")
+    print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} Logged in as {client.user}")
+    for guild in client.guilds:
+        print(guild)
 
 
 async def load_extensions():
     for file in listdir('cogs_ludabot/'):
         if file.endswith('.py'):
-            await bot.load_extension(f'cogs_ludabot.{file[:-3]}')
+            await client.load_extension(f'cogs_ludabot.{file[:-3]}')
 
 
 async def main():
-    async with bot:
+    async with client:
         await load_extensions()
-        await bot.start(os.getenv("TOKEN_LUDABOT"))
+        await client.start(os.getenv("TOKEN_LUDABOT"))
 
 
 asyncio.run(main())
