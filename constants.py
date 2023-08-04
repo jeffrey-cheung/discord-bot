@@ -72,14 +72,6 @@ MLR_ICONS = '{' \
              '"TBR":"https://cdn.discordapp.com/emojis/892600974437417041.png",' \
              '"TEX":"https://cdn.discordapp.com/emojis/346133289012297728.png",' \
              '"TOR":"https://cdn.discordapp.com/emojis/475322395003977728.png",' \
-             '"CC":"https://cdn.discordapp.com/emojis/1077347288843833444.png",' \
-             '"ESP":"https://cdn.discordapp.com/emojis/1077346270621995058.png",' \
-             '"MOB":"https://cdn.discordapp.com/emojis/1077351124509659178.png",' \
-             '"NUT":"https://cdn.discordapp.com/emojis/1077348129105510521.png",' \
-             '"QQ":"https://cdn.discordapp.com/emojis/1077346315433947156.png",' \
-             '"SBD":"https://cdn.discordapp.com/emojis/1077347323975311490.png",' \
-             '"SCU":"https://cdn.discordapp.com/emojis/1017219807604645919.png",' \
-             '"TXR":"https://cdn.discordapp.com/emojis/1077346596976611428.png"' \
              '}'
 
 
