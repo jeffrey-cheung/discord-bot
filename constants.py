@@ -42,6 +42,7 @@ MLR_COLORS = '{' \
 
 MLR_ICONS = '{' \
              '"DEFAULT":"https://media.discordapp.net/attachments/734950735418228756/911121370207911957/reddit.png",' \
+             '"ANA":"https://cdn.discordapp.com/emojis/1119066649451053108.png",' \
              '"ARI":"https://cdn.discordapp.com/emojis/346128660857749504.png",' \
              '"ATL":"https://cdn.discordapp.com/emojis/346129142670163969.png",' \
              '"BAL":"https://cdn.discordapp.com/emojis/401105517495189506.png",' \
@@ -54,7 +55,6 @@ MLR_ICONS = '{' \
              '"DET":"https://cdn.discordapp.com/emojis/448256770729836555.png",' \
              '"HOU":"https://cdn.discordapp.com/emojis/609048188376186886.png",' \
              '"KCR":"https://cdn.discordapp.com/emojis/346131312517709835.png",' \
-             '"LAA":"https://cdn.discordapp.com/emojis/784500199757447218.png",' \
              '"LAD":"https://cdn.discordapp.com/emojis/346131701086552085.png",' \
              '"MIA":"https://cdn.discordapp.com/emojis/502253257725313044.png",' \
              '"MIL":"https://cdn.discordapp.com/emojis/694233532217688197.png",' \
