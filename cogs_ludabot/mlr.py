@@ -74,9 +74,9 @@ class MLR(commands.Cog):
         plt.xlim(0, number_of_pitches + 1)
         plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
         plt.grid(axis='y', alpha=0.7)
-        plt.plot(list_of_numbers, list_of_pitches, color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(list_of_numbers, list_of_swings, marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.legend(['Pitch', 'Swing'])
+        plt.plot(list_of_numbers, list_of_pitches, label='Pitch', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(list_of_numbers, list_of_swings, label='Swing', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.legend()
         plt.savefig('graph.png')
         plt.close()
 
