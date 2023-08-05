@@ -1,20 +1,15 @@
-import urllib
-import urllib.request, json, re, requests
-import plotly.graph_objects as go
 import constants
 import discord
 import io
 import json
 import matplotlib.pyplot as plt
 import os
+import plotly.graph_objects as go
 import random as rdm
 import requests
 import sys
 from discord.ext import commands
 from discord.ext.commands import guild_only
-
-colors = json.loads(constants.MLR_COLORS)
-
 
 class ScoutBot(commands.Cog):
     def __init__(self, client):
@@ -111,11 +106,15 @@ class ScoutBot(commands.Cog):
         # END GRIDLINES
         fig.subplots_adjust(top=.92, bottom=0.2)
         fig.tight_layout()
-        plt.savefig("images/beforeafter.png", bbox_inches='tight')
+        plt.savefig("graph.png", bbox_inches='tight')
 
-        with open('images/beforeafter.png', 'rb') as fp:
-            f = discord.File(fp, filename='images/beforeafter.png')
-        await ctx.send(file=f)
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
 
     @commands.command()
     @guild_only()
@@ -195,10 +194,15 @@ class ScoutBot(commands.Cog):
         fig.update_yaxes(dtick=100)
         fig.update_traces(colorbar=dict(title="Num pitches"))
         fig.update_layout(annotations=annotations)
-        fig.write_image("images/heatmap.png")
-        with open('images/heatmap.png', 'rb') as fp:
-            f = discord.File(fp, filename='images/heatmap.png')
-        await ctx.send(file=f)
+        fig.write_image("graph.png")
+
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
 
     @commands.command()
     @guild_only()
@@ -322,10 +326,15 @@ class ScoutBot(commands.Cog):
             plt.suptitle(title, y=1.0, fontsize=17)
             fig.subplots_adjust(top=.92, bottom=0.2)
             fig.tight_layout()
-            plt.savefig("images/plog.png", bbox_inches='tight')
-            with open('images/plog.png', 'rb') as fp:
-                f = discord.File(fp, filename='images/plog.png')
-                await ctx.send(file=f)
+            plt.savefig("graph.png", bbox_inches='tight')
+
+            with open('graph.png', 'rb') as f:
+                file = io.BytesIO(f.read())
+
+            image = discord.File(file, filename='graph.png')
+
+            await ctx.send(file=image)
+            os.remove('graph.png')
 
         else:
             await ctx.send("No pitching data for Pitcher ID " + pitcherID + ". Please try again.")
@@ -545,10 +554,15 @@ class ScoutBot(commands.Cog):
             # plt.show()
 
             fig.tight_layout()
-            plt.savefig("images/deltas.png", bbox_inches='tight')
-            with open('images/deltas.png', 'rb') as fp:
-                f = discord.File(fp, filename='images/deltas.png')
-                await ctx.send(file=f)
+            plt.savefig("graph.png", bbox_inches='tight')
+
+            with open('graph.png', 'rb') as f:
+                file = io.BytesIO(f.read())
+
+            image = discord.File(file, filename='graph.png')
+
+            await ctx.send(file=image)
+            os.remove('graph.png')
 
         else:
             await ctx.send("No pitching data for Pitcher ID " + pitcherID + ". Please try again.")
@@ -707,10 +721,15 @@ class ScoutBot(commands.Cog):
             plt.suptitle(title, y=1.0, fontsize=17)
             fig.subplots_adjust(top=.92, bottom=0.2)
             fig.tight_layout()
-            plt.savefig("images/sitch.png", bbox_inches='tight')
-            with open('images/sitch.png', 'rb') as fp:
-                f = discord.File(fp, filename='images/sitch.png')
-            await ctx.send(file=f)
+            plt.savefig("graph.png", bbox_inches='tight')
+
+            with open('graph.png', 'rb') as f:
+                file = io.BytesIO(f.read())
+
+            image = discord.File(file, filename='graph.png')
+
+            await ctx.send(file=image)
+            os.remove('graph.png')
         else:
             await ctx.send("This player has not thrown a pitch in" + leaguetitle + " yet.")
 
@@ -813,10 +832,15 @@ class ScoutBot(commands.Cog):
             ## END GRIDLINES
             fig.subplots_adjust(top=.92, bottom=0.2)
             fig.tight_layout()
-            plt.savefig("images/slog.png", bbox_inches='tight')
-            with open('images/slog.png', 'rb') as fp:
-                f = discord.File(fp, filename='images/slog.png')
-                await ctx.send(file=f)
+            plt.savefig("graph.png", bbox_inches='tight')
+
+            with open('graph.png', 'rb') as f:
+                file = io.BytesIO(f.read())
+
+            image = discord.File(file, filename='graph.png')
+
+            await ctx.send(file=image)
+            os.remove('graph.png')
         else:
             await ctx.send("No swing history for Player ID " + playerID + ". Please try again.")
 
