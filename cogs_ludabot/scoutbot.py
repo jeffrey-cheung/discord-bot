@@ -330,5 +330,228 @@ class ScoutBot(commands.Cog):
         else:
             await ctx.send("No pitching data for Pitcher ID " + pitcherID + ". Please try again.")
 
+    @commands.command()
+    @guild_only()
+    async def deltas(self, ctx, pitcherID, league):
+        """!deltas <Pitcher ID> <League> [optional:\"inning\" <#>, \"season\" <#>, \"hr\", \"corners\", \"loaded\", \"empty\", \"risp\", \"2out\", \"1out\", \"0out\", \"steal\"]. Delta histograms."""
+        totaldelta = 0
+        deltacount = 0
+        inningno = 0  # Will only change if they gave "inning <#>" args
+        cmd = ""
+
+        data = (
+            requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
+
+        res = len(data)
+        if res > 0:
+            # Grab player name for chart
+            pname = data[0]['pitcherName']
+            await ctx.send('You asked to see deltas for {} in {}'.format(pname, league))
+            pitch = []  # actual pitch
+            delta = []  # pitch deltas
+            inning = []  # inning, for x-axis display
+            firstbase = []  # occupied or not
+            secondbase = []  # occupied or not
+            thirdbase = []  # occupied or not
+            result = []  # PA result
+            outs = []  # how many outs at time of pitch
+            season = []
+
+            i = 0
+            # Read it all in
+            for p in data:
+                if p['pitch'] != None:  # there was a pitch (not an auto)
+                    pitch.append(p['pitch'])
+                    obc = p['obc']
+                    if obc == 1 or obc == 4 or obc == 5 or obc == 7:
+                        firstbase.append(True)
+                    else:
+                        firstbase.append(False)
+                    if obc == 2 or obc == 4 or obc == 6 or obc == 7:
+                        secondbase.append(True)
+                    else:
+                        secondbase.append(False)
+                    if obc == 3 or obc == 5 or obc == 5 or obc == 7:
+                        thirdbase.append(True)
+                    else:
+                        thirdbase.append(False)
+                    result.append(p['exactResult'])
+                    outs.append(p['outs'])
+                    inning.append(p['inning'])
+                    season.append(p['season'])
+                    i = i + 1
+
+            # now let's calculate deltas
+            subtitle = ""
+            for p in range(i - 1):
+                # see what "cmd" was issued as args[2]
+                if cmd.lower() == "hr":  # they want to see deltas after a HR
+                    if result[p] == "HR":
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        print(str(pitchDelta))
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "corners":  # they want to see deltas with runners on the corners
+                    subtitle = "with runners on the corners."
+                    if firstbase[p] == True and secondbase[p] == False and thirdbase[p] == True:
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "loaded":  # they want to see deltas with bases loaded
+                    subtitle = "with the bases loaded."
+                    if firstbase[p] == True and secondbase[p] == True and thirdbase[p] == True:
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "empty":  # they want to see deltas with bases empty
+                    subtitle = "with the bases empty."
+                    if firstbase[p] == False and secondbase[p] == False and thirdbase[p] == False:
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "season" and int(theseason) > 0:  # they specified a season
+                    subtitle = "in season " + str(theseason) + " only."
+                    if season[p] == int(theseason):
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "risp":  # they want to see deltas with runners in scoring position
+                    subtitle = "with runners in scoring position."
+                    if secondbase[p] == True or thirdbase[p] == True:
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "2out":  # they want to see deltas with 2 outs
+                    subtitle = "with 2 outs."
+                    if outs[p] == 2:
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "1out":  # they want to see deltas with 1 out
+                    subtitle = "with 1 out."
+                    if outs[p] == 1:
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "0out":  # they want to see deltas with 0 outs
+                    subtitle = "with runners nobody out."
+                    if outs[p] == 0:
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "steal":  # they want to see deltas after a steal
+                    subtitle = "after a steal"
+                    if result[p] == "Steal 2B" or result[p] == "Steal 3B":
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                elif cmd.lower() == "inning" and int(inningno) > 0:  # arg[3] = inning number
+                    subtitle = "in inning # " + inningno + "."
+                    if (inning[p] == "T" + str(inningno) or inning[p] == "B" + str(inningno)) and (
+                            inning[p + 1] == "T" + str(inningno) or inning[p + 1] == "B" + str(
+                            inningno)):  # only the same inning
+                        beforePitch = pitch[p]
+                        afterPitch = pitch[p + 1]
+                        pitchDelta = abs(beforePitch - afterPitch)
+                        if pitchDelta > 500:
+                            pitchDelta = 1000 - pitchDelta
+                        delta.append(pitchDelta)
+                        totaldelta = totaldelta + pitchDelta
+                        deltacount = deltacount + 1
+                else:  # they didn't specify anything, so get them all
+                    subtitle = "(all situations)"
+                    beforePitch = pitch[p]
+                    afterPitch = pitch[p + 1]
+                    pitchDelta = abs(beforePitch - afterPitch)
+                    if pitchDelta > 500:
+                        pitchDelta = 1000 - pitchDelta
+                    delta.append(pitchDelta)
+                    totaldelta = totaldelta + pitchDelta
+                    deltacount = deltacount + 1
+
+            if deltacount == 0:
+                nonefound = "No pitches for " + pname + " in " + league
+                if cmd.lower() == "season":
+                    nonefound = nonefound + " for S" + str(season)
+                nonefound = nonefound + " " + subtitle + "."
+                await ctx.send(nonefound)
+            avgdelta = round(totaldelta / deltacount)
+            title = "Deltas for " + pname + " in " + league + ". " + str(
+                len(delta)) + " total deltas " + subtitle + " (avg delta=" + str(avgdelta) + ")"
+            x = delta
+            num_bins = 10
+            fig, ax = plt.subplots()
+
+            # the histogram of the data
+            n, bins, patches = ax.hist(x, num_bins, density=False, rwidth=.8)
+            xticks = [(bins[idx + 1] + value) / 2 for idx, value in enumerate(bins[:-1])]
+            xticks_labels = ["{:.0f}\nto\n{:.0f}".format(value, bins[idx + 1]) for idx, value in
+                             enumerate(bins[:-1])]
+            plt.xticks(xticks, labels=xticks_labels)
+
+            ax.set_xlabel('Deltas')
+            ax.set_title(title)
+            # Tweak spacing to prevent clipping of ylabel
+            fig.tight_layout()
+            # plt.show()
+
+            fig.tight_layout()
+            plt.savefig("images/deltas.png", bbox_inches='tight')
+            with open('images/deltas.png', 'rb') as fp:
+                f = discord.File(fp, filename='images/deltas.png')
+                await ctx.send(file=f)
+
+        else:
+            await ctx.send("No pitching data for Pitcher ID " + pitcherID + ". Please try again.")
+
 async def setup(client):
     await client.add_cog(ScoutBot(client))
