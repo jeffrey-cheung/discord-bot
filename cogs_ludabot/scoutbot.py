@@ -1,6 +1,6 @@
 import urllib
 import urllib.request, json, re, requests
-
+import plotly.graph_objects as go
 import constants
 import discord
 import io
@@ -115,6 +115,89 @@ class ScoutBot(commands.Cog):
 
         with open('images/beforeafter.png', 'rb') as fp:
             f = discord.File(fp, filename='images/beforeafter.png')
+        await ctx.send(file=f)
+
+    @commands.command()
+    @guild_only()
+    async def hm(self, ctx, league, pitcherID):
+        """[league] [playerId] [optional:hr, loaded, empty, corners, risp, inning #, 2out, 1out, 0out]. MLR heatmaps."""
+        if league.lower() == "milr":
+            leaguetitle = "MiLR"
+        else:
+            leaguetitle = "MLR"
+
+        data = (
+            requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
+
+        validpitches = []
+        y = []
+        x = []
+        result = []
+        inning = []
+        first = []
+        second = []
+        third = []
+        outs = []
+        i = 0
+        pitcher = "Nobody"
+        for p in data:
+            pitcher = p['pitcherName']
+            if p['pitch'] is not None:
+                thepitch = int(p['pitch'])
+                y.append(int(thepitch / 100) * 100)  # 100s on the y axis of heatmap
+                x.append(int(thepitch % 100))  # 10s/1s on the x axis of heatmap
+                result.append(p['exactResult'])  # result (ie: 1B, 2B, HR, RGO, etc.)
+                inning.append(p['inning'])  # inning (T# for top of inning, B# for bottom of inning)
+                obc = p['obc']
+                if obc == 1 or obc == 4 or obc == 5 or obc == 7:
+                    first.append(True)
+                else:
+                    first.append(False)
+                if obc == 2 or obc == 4 or obc == 6 or obc == 7:
+                    second.append(True)
+                else:
+                    second.append(False)
+                if obc == 3 or obc == 5 or obc == 5 or obc == 7:
+                    third.append(True)
+                else:
+                    third.append(False)
+                outs.append(p['outs'])  # Number of outs at time of pitch
+                validpitches.append(i)
+                i = i + 1
+
+        # Defaults for graph (if no arguments given... ie: all pitches, wide open)
+        title = leaguetitle + " heatmap for " + pitcher + " (all " + str(i) + " pitches)"
+
+        annotations = [dict(xref='paper', yref='paper', x=0.0, y=1.05,
+                            xanchor='left', yanchor='bottom',
+                            text=title,
+                            font=dict(family='Arial',
+                                      size=18,
+                                      color='rgb(37,37,37)'),
+                            showarrow=False)]
+        fig = go.Figure()
+        fig.add_trace(go.Histogram2d(
+            colorscale=[[0, 'rgb(253,34,5)'], [0.25, 'rgb(253,192,5)'], [0.5, 'rgb(233,253,5)'],
+                        [0.75, 'rgb(113,196,5)'], [1, 'rgb(5,196,19)']],
+            reversescale=True,
+            xbingroup=4,
+            ybingroup=10,
+            ygap=2,
+            xgap=2,
+            autobinx=False,
+            xbins=dict(start=0, end=99, size=25),
+            autobiny=False,
+            ybins=dict(start=0, end=1000, size=100),
+            x=x,
+            y=y
+        ))
+        fig.update_xaxes(dtick=25)
+        fig.update_yaxes(dtick=100)
+        fig.update_traces(colorbar=dict(title="Num pitches"))
+        fig.update_layout(annotations=annotations)
+        fig.write_image("images/heatmap.png")
+        with open('images/heatmap.png', 'rb') as fp:
+            f = discord.File(fp, filename='images/heatmap.png')
         await ctx.send(file=f)
 
 
