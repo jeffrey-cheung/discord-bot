@@ -66,8 +66,14 @@ for submission_id in submission_list:
                         play = "pass"
                     elif "run " in user_comment[0].lower():
                         play = "run"
-                    elif "pat " in user_comment[0].lower():
+                    elif down == "pat" and "pat " in user_comment[0].lower():
                         play = "pat"
-                    elif down == "kickoff":
-                        play = "kickoff"
+                    elif down == "pat" and "two point " in user_comment[0].lower():
+                        play = "two point"
+                    elif down == "kickoff" and "onside " in user_comment[0].lower():
+                        play = "onside"
+                    elif down == "kickoff" and "normal " in user_comment[0].lower():
+                        play = "normal"
+                    elif down == "kickoff" and "squib " in user_comment[0].lower():
+                        play = "squib"
                     print(f"{x.link_id},{parent_first[0].split(' ')[0]},{offense},{defense},{difference},{down},{play}")
