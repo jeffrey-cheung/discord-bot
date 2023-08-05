@@ -714,5 +714,24 @@ class ScoutBot(commands.Cog):
         else:
             await ctx.send("This player has not thrown a pitch in" + leaguetitle + " yet.")
 
+    @commands.command()
+    @guild_only()
+    async def hmmmm(self, ctx):
+        """Helps you think"""
+        think_quotes = [
+            'Whatever you\'re thinking - I\'M IN!',
+            '...yes?',
+            'Hmmmm indeed.',
+            ':thinking:'
+        ]
+
+        await ctx.send(rdm.choice(think_quotes))
+
+    @commands.command()
+    @guild_only()
+    async def rando(self, ctx):
+        """Gives you a random number"""
+        await ctx.send(rdm.randint(1, 1000))
+
 async def setup(client):
     await client.add_cog(ScoutBot(client))
