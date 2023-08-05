@@ -200,6 +200,135 @@ class ScoutBot(commands.Cog):
             f = discord.File(fp, filename='images/heatmap.png')
         await ctx.send(file=f)
 
+    @commands.command()
+    @guild_only()
+    async def chart(self, ctx, pitcherID, league, season=None):
+        """!chart <Pitcher ID> <League> <Season #> [option: \"inning\" <#>] shows pitch/delta sequences."""
+        totaldelta = 0
+        deltacount = 0
+        inningno = 0
+
+        data = (
+            requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
+
+        res = len(data)
+        if res > 0:
+            # Grab player name for chart
+            pname = data[0]['pitcherName']
+            await ctx.send(
+                'You asked to see the pitch/delta details for {} ({})'.format(pname, league))
+            pitch = []  # actual pitch
+            swing = []  # actual swing
+            diff = []  # actual diff
+            pitchseq = []  # x-axis zero-indexed
+            pitchno = []  # x-axis 1-indexed (to display in human friendly on the graph)
+            delta = []  # pitch deltas
+            xlegend = []  # x-axis to display pitch and delta values
+            inning = []  # inning, for x-axis display
+            seasons = []  # season for x-axis display
+            sessions = []  # session for x-axis display
+            delta.append(0)
+            i = 0
+
+            # Read it all in
+            for p in data:
+                if p['pitch'] != None:  # there was a pitch (not an auto)
+                    if season is not None:  # they specified a season
+                        if p['season'] == int(season):  # so limit to that season only
+                            pitch.append(p['pitch'])
+                            swing.append(p['swing'])
+                            diff.append(p['diff'])
+                            inning.append(p['inning'])
+                            seasons.append(p['season'])
+                            sessions.append(p['session'])
+                            i = i + 1
+                    else:  # they didn't specify a season, so get them all
+                        pitch.append(p['pitch'])
+                        swing.append(p['swing'])
+                        diff.append(p['diff'])
+                        inning.append(p['inning'])
+                        seasons.append(p['season'])
+                        sessions.append(p['session'])
+                        i = i + 1
+
+            # they want to limit to a specific inning for the given season.
+            # This requires a different graph, with overlayed game sequences,
+            # like the old Excel pivot chart
+            if int(inningno) > 0:
+                limgame = 0
+                for t in pitch:
+                    if inning[limgame] == "B" + str(inningno) or inning[limgame] == "T" + str(inningno):
+                        pass  # need to flesh this out
+                    limgame = limgame + 1
+
+            # populate with the number of PAs/pitches
+            for s in range(i):
+                pitchseq.append(s)
+                pitchno.append(s + 1)  # for x-axis of the chart
+
+            # calculate diffs
+            for d in range(
+                    len(pitch)):  # range -> just the pitches picked up from the opposing pitcher (does not include autos)
+                if (d > 0):
+                    pitchd = abs(pitch[d] - pitch[d - 1])
+                    if pitchd > 500:
+                        pitchd = 1000 - pitchd
+                    delta.append(pitchd)
+                    totaldelta = totaldelta + pitchd
+                    deltacount = deltacount + 1
+
+            if deltacount == 0:
+                nonefound = "No pitches for " + pname + " in " + league
+                if len(args) == 3:
+                    nonefound = nonefound + " for S" + str(season)
+                nonefound = nonefound + "."
+                await ctx.send(nonefound)
+            avgdelta = round(totaldelta / deltacount)
+            title = "Pitch sequence for " + pname + " in " + league + ". " + str(i) + " pitches" + " (avg delta=" + str(
+                avgdelta) + ")"
+            if season is not None:
+                title = title + " (S" + str(season) + " only)"
+            for p in range(len(swing)):
+                if pitch[p] < 10:
+                    thep = "   " + str(pitch[p])
+                elif pitch[p] < 100:
+                    thep = " " + str(pitch[p])
+                else:
+                    thep = str(pitch[p])
+
+                if delta[p] < 10:
+                    thed = "   " + str(delta[p])
+                elif delta[p] < 100:
+                    thed = " " + str(delta[p])
+                else:
+                    thed = str(delta[p])
+                xlegend.append("S" + str(seasons[p]) + "." + str(sessions[p]) + "   \n" + inning[
+                    p] + "     \nP: " + thep + "\nD: " + thed)
+            data1 = pitch
+            data2 = delta
+            x_axis = xlegend
+            fig = plt.figure(figsize=(len(pitch) / 1.5, 5))  # Creates a new figure
+
+            ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
+            pitch = ax1.plot(data1, 'bo-', label='Pitch')  # no need for str(x_axis)
+            delta = ax1.plot(data2, 'k--', label='Delta')
+            plt.xticks(range(len(data2)), x_axis, size='small')
+            ax1.set_ylim(0, 1050)
+
+            # Assigning labels
+            lines = pitch + delta
+            labels = [l.get_label() for l in lines]
+            plt.setp(ax1.get_xticklabels(), visible=True)
+            plt.suptitle(title, y=1.0, fontsize=17)
+            fig.subplots_adjust(top=.92, bottom=0.2)
+            fig.tight_layout()
+            plt.savefig("images/plog.png", bbox_inches='tight')
+            with open('images/plog.png', 'rb') as fp:
+                f = discord.File(fp, filename='images/plog.png')
+                await ctx.send(file=f)
+
+        else:
+            await ctx.send("No pitching data for Pitcher ID " + pitcherID + ". Please try again.")
 
 async def setup(client):
     await client.add_cog(ScoutBot(client))
