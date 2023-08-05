@@ -553,5 +553,166 @@ class ScoutBot(commands.Cog):
         else:
             await ctx.send("No pitching data for Pitcher ID " + pitcherID + ". Please try again.")
 
+    @commands.command()
+    @guild_only()
+    async def last(self, ctx, league, numberofpitches, situation, pitcherID):
+        """!last <league> <# pitches> <\"all\", \"empty\", \"loaded\", \"corners\", \"risp\", \"0out\", \"1out\", \"2out\"> <Pitcher ID>"""
+        situationalpitch = []
+        result = []
+        inning = []
+        xlegend = []
+        season = []
+        session = []
+        sitch = ""
+        i = 0
+
+        if league.lower() == "milr":
+            leaguetitle = "MiLR"
+        elif league.lower() == "mlr":
+            leaguetitle = "MLR"
+        else:
+            leaguetitle = " a league I don't know about "
+
+        data = (
+            requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
+
+        pitcher = "Nobody"
+        if len(data) > 0:
+            for p in data:
+                pitcher = p['pitcherName']
+                ################
+                # BASES EMPTY  #
+                ################
+                if situation.lower() == "empty":  # and i < numberofpitches:
+                    sitch = "with bases empty"
+                    if p['obc'] == 0:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+                #################
+                # BASES LOADED  #
+                #################
+                elif situation.lower() == "loaded":  # and i < numberofpitches:
+                    sitch = "with bases loaded"
+                    if p['obc'] == 7:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+                #######################
+                # RUNNERS ON CORNERS  #
+                #######################
+                elif situation.lower() == "corners":  # and i < numberofpitches:
+                    sitch = "with runners on the corners"
+                    if p['obc'] == 5:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+                #########
+                # RISP  #
+                #########
+                elif situation.lower() == "risp":  # and i < numberofpitches:
+                    sitch = "with runners in scoring position"
+                    if p['obc'] > 2:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+                #################
+                # 0 OUTS        #
+                #################
+                elif situation.lower() == "0out":  # and i < numberofpitches:
+                    sitch = "with no outs"
+                    if p['outs'] == 0:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+                #################
+                # 1 OUT         #
+                #################
+                elif situation.lower() == "1out":  # and i < numberofpitches:
+                    sitch = "with one out"
+                    if p['outs'] == 1:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+                #################
+                # 2 OUTS        #
+                #################
+                elif situation.lower() == "2out":  # and i < numberofpitches:
+                    sitch = "with two outs"
+                    if p['outs'] == 2:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+                ##########################
+                # DEFAULT - no situation #
+                ##########################
+                elif situation.lower() == "all":  # just show them all
+                    sitch = ""
+                    if p['pitch'] is not None:
+                        situationalpitch.append(p['pitch'])
+                        season.append(str(p['season']))
+                        session.append(str(p['session']))
+                        inning.append(p['inning'])
+                        result.append(p['exactResult'])
+                        i = i + 1
+
+            situationalpitch.reverse()
+            season.reverse()
+            session.reverse()
+            inning.reverse()
+            # partial list of all situational pitches - limited to # pitches in args
+            limpitch = []
+
+            j = 0
+            if int(numberofpitches) > i:
+                numberofpitches = i
+            for t in range(int(numberofpitches)):
+                if j <= t:
+                    xlegend.append("S" + str(season[t]) + "." + str(session[t]) + "\n" + inning[t] + "\nP: " + str(
+                        situationalpitch[t]))
+                    limpitch.append(situationalpitch[t])
+                    j = j + 1
+            limpitch.reverse()
+            xlegend.reverse()
+            title = leaguetitle + ": Last " + str(numberofpitches) + " pitches from " + pitcher + " " + sitch
+            data1 = limpitch
+            x_axis = xlegend
+            fig = plt.figure(figsize=(len(limpitch) / 1.5, 5))  # Creates a new figure
+            ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
+            ax1.plot(data1, 'bo-', label='Pitch')
+            plt.xticks(range(len(data1)), x_axis, size='small')
+            ax1.set_ylim(0, 1050)
+            plt.setp(ax1.get_xticklabels(), visible=True)
+            plt.suptitle(title, y=1.0, fontsize=17)
+            fig.subplots_adjust(top=.92, bottom=0.2)
+            fig.tight_layout()
+            plt.savefig("images/sitch.png", bbox_inches='tight')
+            with open('images/sitch.png', 'rb') as fp:
+                f = discord.File(fp, filename='images/sitch.png')
+            await ctx.send(file=f)
+        else:
+            await ctx.send("This player has not thrown a pitch in" + leaguetitle + " yet.")
+
 async def setup(client):
     await client.add_cog(ScoutBot(client))
