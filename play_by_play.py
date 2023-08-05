@@ -11,6 +11,8 @@ from datetime import datetime
 from dhooks import Webhook
 from pprint import pprint
 
+mlr_search = os.getenv("MLR_SEARCH")
+mlr_webhook = Webhook(os.getenv("MLR_WEBHOOK"))
 mlr_search_test = os.getenv("MLR_SEARCH_TEST")
 mlr_webhook_test = Webhook(os.getenv("MLR_WEBHOOK_TEST"))
 milr_search_test = os.getenv("MILR_SEARCH_TEST")
@@ -57,7 +59,10 @@ def parse_comments():
         embed.add_field(name="", value=comment.body, inline=False)
         embed.add_field(name="", value=f"Comment posted to r/fakebaseball at <t:{int(comment.created)}:T>", inline=False)
 
-        if mlr_search_test != "" and mlr_search_test.lower() in comment.link_title.lower():
+        if mlr_search != "" and mlr_search.lower() in comment.link_title.lower():
+            mlr_webhook.send(embed=embed)
+            mlr_webhook.close()
+        elif mlr_search_test != "" and mlr_search_test.lower() in comment.link_title.lower():
             mlr_webhook_test.send(embed=embed)
             mlr_webhook_test.close()
         elif milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
