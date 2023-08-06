@@ -1,7 +1,6 @@
 import constants
 import discord
 import io
-import json
 import matplotlib.pyplot as plt
 import os
 import plotly.graph_objects as go
@@ -11,29 +10,38 @@ import sys
 from discord.ext import commands
 from discord.ext.commands import guild_only
 
+
 class ScoutBot(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     @commands.command()
     @guild_only()
-    async def react(self, ctx, pitcherID, league, lowerpitch, upperpitch):
-        """[playerId] [league] [lowerPitch] [upperPitch]"""
-        lower = int(lowerpitch)
-        upper = int(upperpitch)
+    async def react(self,
+                    ctx,
+                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                    lower_pitch: int = commands.parameter(default=None, description="Lower Pitch"),
+                    upper_pitch: int = commands.parameter(default=None, description="Upper Pitch")):
+        """
+            <pitcher_id> <league> <lower_pitch> <upper_pitch>
+            Reactions after pitch range
+        """
+        if pitcher_id is None or lower_pitch is None or upper_pitch is None or league is None:
+            await ctx.send(f"Missing parameter(s)")
+            return
+
         xlegend = []
         pitch = []  # all non-autoed pitches
         inning = []  # all non-autoed innings
         session = []  # all non-autoed sessions
         result = []  # all non-autoed results
         season = []  # all non-autoed seasons
-        obc = []  # bases occupied
         pitcher = ""
         i = 0
         ii = 0
 
-        data = (
-            requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
         for p in data:
@@ -44,18 +52,17 @@ class ScoutBot(commands.Cog):
                 session.append(p['session'])
                 result.append(p['oldResult'])
                 season.append(p['season'])
-                obc.append(['obc'])
 
         before = []  # pitch before the match
         match = []  # the match
         after = []  # pitch after the match
         # now let's go through and look for matches
         for p in range(len(pitch) - 1):
-            if upper < lower:
-                switch = upper
-                upper = lower
-                lower = switch
-            if upper >= int(pitch[p]) >= lower:  # it's a match for a range
+            if upper_pitch < lower_pitch:
+                switch = upper_pitch
+                upper_pitch = lower_pitch
+                lower_pitch = switch
+            if upper_pitch >= int(pitch[p]) >= lower_pitch:  # it's a match for a range
                 legend = f"S{str(season[p])}.{str(session[p])}\n{str(inning[p])}"
                 if p > 0:
                     before.append(pitch[p - 1])
@@ -76,11 +83,15 @@ class ScoutBot(commands.Cog):
 
             ii = ii + 1  # count all pitches
 
+        if i == 0:
+            await ctx.send(f"No matches")
+            return
+
         # Quick check to report reactions
-        ranger = f"{str(lower)} - {str(upper)}"
+        ranger = f"{lower_pitch} - {upper_pitch}"
         await ctx.send(f"You asked for pitches from {pitcher} before & after pitching {ranger}")
 
-        title = f"Pitches from {pitcher} before & after pitching {ranger} ({str(i)} matches)"
+        title = f"Pitches from {pitcher} before & after pitching {ranger} ({i} matches)"
         fig = plt.figure(figsize=(i / 1.5, 5))  # Creates a new figure
         ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
         ax1.plot(match, color='blue', label='Match', marker='o', linestyle='dashed', linewidth=1, markersize=7)
@@ -823,6 +834,7 @@ class ScoutBot(commands.Cog):
             os.remove('graph.png')
         else:
             await ctx.send("No swing history for Player ID " + playerID + ". Please try again.")
+
 
 async def setup(client):
     await client.add_cog(ScoutBot(client))
