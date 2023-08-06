@@ -27,42 +27,39 @@ class ScoutBot(commands.Cog):
             <pitcher_id> <league> <lower_pitch> <upper_pitch>
             Reactions after pitch range
         """
-        if pitcher_id is None or lower_pitch is None or upper_pitch is None or league is None:
+        if pitcher_id is None or league is None or lower_pitch is None:
             await ctx.send(f"Missing parameter(s)")
             return
 
+        if upper_pitch is None:
+            upper_pitch = lower_pitch
+
         xlegend = []
         pitch = []  # all non-autoed pitches
-        inning = []  # all non-autoed innings
-        session = []  # all non-autoed sessions
-        result = []  # all non-autoed results
         season = []  # all non-autoed seasons
-        pitcher = ""
-        i = 0
-        ii = 0
+        session = []  # all non-autoed sessions
+        inning = []  # all non-autoed innings
+        pitcher_name = ""
+        matches_count = 0
 
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
         for p in data:
-            pitcher = p['pitcherName']
+            pitcher_name = p['pitcherName']
             if (p['pitch'] is not None) & (p['swing'] is not None) & (p['pitch'] != 0) & (p['swing'] != 0):  # just skip the non/auto resulted pitches
                 pitch.append(p['pitch'])
-                inning.append(p['inning'])
-                session.append(p['session'])
-                result.append(p['oldResult'])
                 season.append(p['season'])
+                session.append(p['session'])
+                inning.append(p['inning'])
 
         before = []  # pitch before the match
         match = []  # the match
         after = []  # pitch after the match
+
         # now let's go through and look for matches
         for p in range(len(pitch) - 1):
-            if upper_pitch < lower_pitch:
-                switch = upper_pitch
-                upper_pitch = lower_pitch
-                lower_pitch = switch
-            if upper_pitch >= int(pitch[p]) >= lower_pitch:  # it's a match for a range
+            if ((upper_pitch >= lower_pitch) & (upper_pitch >= int(pitch[p]) >= lower_pitch)) or ((upper_pitch < lower_pitch) & (upper_pitch >= int(pitch[p]) or (lower_pitch <= int(pitch[p])))):  # it's a match for a range
                 legend = f"S{str(season[p])}.{str(session[p])}\n{str(inning[p])}"
                 if p > 0:
                     before.append(pitch[p - 1])
@@ -78,26 +75,24 @@ class ScoutBot(commands.Cog):
                 else:
                     after.append(None)
                     legend = legend + "\nA: "
-                i = i + 1  # count matches
+                matches_count += 1  # count matches
                 xlegend.append(legend)
 
-            ii = ii + 1  # count all pitches
-
-        if i == 0:
+        if matches_count == 0:
             await ctx.send(f"No matches")
             return
 
         # Quick check to report reactions
-        ranger = f"{lower_pitch} - {upper_pitch}"
-        await ctx.send(f"You asked for pitches from {pitcher} before & after pitching {ranger}")
+        range_title = f"{lower_pitch} - {upper_pitch}"
+        await ctx.send(f"You asked for pitches from {pitcher_name} before & after pitching {range_title}")
 
-        title = f"Pitches from {pitcher} before & after pitching {ranger} ({i} matches)"
-        fig = plt.figure(figsize=(i / 1.5, 5))  # Creates a new figure
+        title = f"Pitches from {pitcher_name} before & after pitching {range_title} ({matches_count} matches)"
+        fig = plt.figure(figsize=(matches_count / 1.5, 5))  # Creates a new figure
         ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
-        ax1.plot(match, color='blue', label='Match', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        ax1.plot(after, color='black', label='After', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        ax1.plot(before, color='red', label='Before', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.xticks(range(i), xlegend, size='small')
+        ax1.plot(before, color='black', label='Before', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.7)
+        ax1.plot(match, color='blue', label='Match', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.7)
+        ax1.plot(after, color='red', label='After', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.xticks(range(matches_count), xlegend, size='small')
         plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
         plt.grid(axis='y', alpha=0.7)
         ax1.set_ylim(0, 1000)
@@ -117,10 +112,38 @@ class ScoutBot(commands.Cog):
 
     @commands.command()
     @guild_only()
-    async def hm(self, ctx, league, pitcherID):
-        """[league] [playerId] [optional:hr, loaded, empty, corners, risp, inning #, 2out, 1out, 0out]. MLR heatmaps."""
-        data = (
-            requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
+    async def hm(self,
+                 ctx,
+                 league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                 pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                 situation: str = commands.parameter(default="all", description="Situation [all, empty, onbase, risp, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
+        """
+            <league> <pitcher_id> [situation:all, empty, onbase, risp, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
+            Pitcher heatmap
+            Situations:
+            all - All pitches
+            empty - Bases are empty
+            onbase - At least 1 runner on base
+            risp - Runner on 2nd and/or 3rd
+            dp - Runner on 1st with less than 2 outs
+            hit - After allowing a hit (walks included)
+            out - After getting an out
+            hr - After allowing a Home Run
+            3b - After allowing a Triple
+            2b - After allowing a Double
+            1b - After allowing a Single
+            bb - After allowing a Walk
+            0out - 0 out(s)
+            1out - 1 out(s)
+            2out - 2 out(s)
+            firstgame - First pitch of game
+            firstinning - First pitch of inning
+        """
+        if pitcher_id is None or league is None:
+            await ctx.send(f"Missing parameter(s)")
+            return
+
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         validpitches = []
         y = []
@@ -135,7 +158,7 @@ class ScoutBot(commands.Cog):
         pitcher = "Nobody"
         for p in data:
             pitcher = p['pitcherName']
-            if p['pitch'] is not None:
+            if (p['pitch'] is not None) & (p['swing'] is not None) & (p['pitch'] != 0) & (p['swing'] != 0):
                 thepitch = int(p['pitch'])
                 y.append(int(thepitch / 100) * 100)  # 100s on the y axis of heatmap
                 x.append(int(thepitch % 100))  # 10s/1s on the x axis of heatmap
