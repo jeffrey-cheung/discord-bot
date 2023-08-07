@@ -153,12 +153,14 @@ class ScoutBot(commands.Cog):
         second = []
         third = []
         outs = []
+        pitch = []
         i = 0
         pitcher = "Nobody"
         for p in data:
             pitcher = p['pitcherName']
             if (p['pitch'] is not None) & (p['swing'] is not None) & (p['pitch'] != 0) & (p['swing'] != 0):
                 thepitch = int(p['pitch'])
+                pitch.append(thepitch)
                 y.append(int(thepitch / 100) * 100)  # 100s on the y axis of heatmap
                 x.append(int(thepitch % 100))  # 10s/1s on the x axis of heatmap
                 result.append(p['exactResult'])  # result (ie: 1B, 2B, HR, RGO, etc.)
@@ -181,7 +183,7 @@ class ScoutBot(commands.Cog):
                 i = i + 1
 
         # Defaults for graph (if no arguments given... ie: all pitches, wide open)
-        title = league + " heatmap for " + pitcher + " (all " + str(i) + " pitches)"
+        title = f"{league} heatmap for {pitcher} (all {i} pitches)"
 
         annotations = [dict(xref='paper', yref='paper', x=0.0, y=1.05,
                             xanchor='left', yanchor='bottom',
@@ -211,6 +213,25 @@ class ScoutBot(commands.Cog):
         fig.update_traces(colorbar=dict(title="Num pitches"))
         fig.update_layout(annotations=annotations)
         fig.write_image("graph.png")
+
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
+
+        plt.figure(figsize=(10.0, 5.0))
+        plt.title(title)
+        plt.xlim(1, 1000)
+        plt.xticks(rotation=90)
+        plt.xticks([0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000])
+        values, bins, bars = plt.hist(pitch, bins=range(1, 1025, 25), density=False, rwidth=0.8)
+        plt.bar_label(bars)
+        plt.tight_layout()
+        plt.savefig('graph.png')
+        plt.close()
 
         with open('graph.png', 'rb') as f:
             file = io.BytesIO(f.read())
