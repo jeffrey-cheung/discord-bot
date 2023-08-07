@@ -25,10 +25,10 @@ class ScoutBot(commands.Cog):
                     upper_pitch: int = commands.parameter(default=None, description="Upper Pitch")):
         """
             <pitcher_id> <league> <lower_pitch> <upper_pitch>
-            Reactions after pitch range
+            Reactions before & after pitching a certain range
         """
         if pitcher_id is None or league is None or lower_pitch is None:
-            await ctx.send(f"Missing parameter(s)")
+            await ctx.send(f"Missing argument(s)")
             return
 
         if upper_pitch is None:
@@ -60,23 +60,23 @@ class ScoutBot(commands.Cog):
         # now let's go through and look for matches
         for p in range(len(pitch) - 1):
             if ((upper_pitch >= lower_pitch) & (upper_pitch >= int(pitch[p]) >= lower_pitch)) or ((upper_pitch < lower_pitch) & (upper_pitch >= int(pitch[p]) or (lower_pitch <= int(pitch[p])))):  # it's a match for a range
-                legend = f"S{str(season[p])}.{str(session[p])}\n{str(inning[p])}"
-                if p > 0:
-                    before.append(pitch[p - 1])
-                    legend = legend + f"\nB: {str(pitch[p - 1])}"
-                else:
-                    before.append(None)
-                    legend = legend + "\nB: "
-                match.append(pitch[p])
-                legend = legend + f"\nM: {str(pitch[p])}"
-                if p < len(pitch) - 1:
+                if (p < len(pitch) - 1) & (season[p] == season[p + 1]) & (session[p] == session[p + 1]):
+                    legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
+                    if (p > 0) & (season[p] == season[p - 1]) & (session[p] == session[p - 1]):
+                        before.append(pitch[p - 1])
+                        legend += f"\nB: {pitch[p - 1]}"
+                    else:
+                        before.append(None)
+                        legend += "\nB: "
+
+                    match.append(pitch[p])
+                    legend += f"\nM: {pitch[p]}"
+
                     after.append(pitch[p + 1])
-                    legend = legend + f"\nA: {str(pitch[p + 1])}"
-                else:
-                    after.append(None)
-                    legend = legend + "\nA: "
-                matches_count += 1  # count matches
-                xlegend.append(legend)
+                    legend += f"\nA: {pitch[p + 1]}"
+
+                    matches_count += 1  # count matches
+                    xlegend.append(legend)
 
         if matches_count == 0:
             await ctx.send(f"No matches")
@@ -84,23 +84,21 @@ class ScoutBot(commands.Cog):
 
         # Quick check to report reactions
         range_title = f"{lower_pitch} - {upper_pitch}"
-        await ctx.send(f"You asked for pitches from {pitcher_name} before & after pitching {range_title}")
+        await ctx.send(f"You asked for pitches from {pitcher_name} before & after pitching {range_title}. ({league})")
 
-        title = f"Pitches from {pitcher_name} before & after pitching {range_title} ({matches_count} matches)"
-        fig = plt.figure(figsize=(matches_count / 1.5, 5))  # Creates a new figure
-        ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
-        ax1.plot(before, color='black', label='Before', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.7)
-        ax1.plot(match, color='blue', label='Match', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.7)
-        ax1.plot(after, color='red', label='After', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.xticks(range(matches_count), xlegend, size='small')
+        plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
+        plt.title(f"Pitches from {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
+        plt.ylim(0, 1000)
         plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
         plt.grid(axis='y', alpha=0.7)
-        ax1.set_ylim(0, 1000)
-        plt.setp(ax1.get_xticklabels(), visible=True)
-        plt.title(title)
+        plt.xticks(range(matches_count), xlegend, size='small')
+        plt.plot(after, label='After', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
+        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
         plt.legend()
-        fig.tight_layout()
+        plt.tight_layout()
         plt.savefig("graph.png", bbox_inches='tight')
+        plt.close()
 
         with open('graph.png', 'rb') as f:
             file = io.BytesIO(f.read())
@@ -120,9 +118,10 @@ class ScoutBot(commands.Cog):
         """
             <league> <pitcher_id> [situation:all, empty, onbase, risp, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
             Pitcher heatmap
+
             Situations:
             all - All pitches
-            empty - Bases are empty
+            empty - Bases empty
             onbase - At least 1 runner on base
             risp - Runner on 2nd and/or 3rd
             dp - Runner on 1st with less than 2 outs
@@ -140,7 +139,7 @@ class ScoutBot(commands.Cog):
             firstinning - First pitch of inning
         """
         if pitcher_id is None or league is None:
-            await ctx.send(f"Missing parameter(s)")
+            await ctx.send(f"Missing argument(s)")
             return
 
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
@@ -229,15 +228,13 @@ class ScoutBot(commands.Cog):
         deltacount = 0
         inningno = 0
 
-        data = (
-            requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcherID}")).json()
 
         res = len(data)
         if res > 0:
             # Grab player name for chart
             pname = data[0]['pitcherName']
-            await ctx.send(
-                'You asked to see the pitch/delta details for {} ({})'.format(pname, league))
+            await ctx.send(f"You asked to see the pitch/delta details for {pname} ({league})")
             pitch = []  # actual pitch
             swing = []  # actual swing
             diff = []  # actual diff
@@ -253,7 +250,7 @@ class ScoutBot(commands.Cog):
 
             # Read it all in
             for p in data:
-                if p['pitch'] != None:  # there was a pitch (not an auto)
+                if p['pitch'] is not None:  # there was a pitch (not an auto)
                     if season is not None:  # they specified a season
                         if p['season'] == int(season):  # so limit to that season only
                             pitch.append(p['pitch'])
@@ -326,22 +323,19 @@ class ScoutBot(commands.Cog):
             data1 = pitch
             data2 = delta
             x_axis = xlegend
-            fig = plt.figure(figsize=(len(pitch) / 1.5, 5))  # Creates a new figure
 
-            ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
-            pitch = ax1.plot(data1, 'bo-', label='Pitch')  # no need for str(x_axis)
-            delta = ax1.plot(data2, 'k--', label='Delta')
+            plt.figure(figsize=(max(len(pitch) / 1.5, 10.0), 5.0))  # Creates a new figure
+            plt.title(title)
+            plt.ylim(0, 1000)
+            plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+            plt.grid(axis='y', alpha=0.7)
             plt.xticks(range(len(data2)), x_axis, size='small')
-            ax1.set_ylim(0, 1050)
-
-            # Assigning labels
-            lines = pitch + delta
-            labels = [l.get_label() for l in lines]
-            plt.setp(ax1.get_xticklabels(), visible=True)
-            plt.suptitle(title, y=1.0, fontsize=17)
-            fig.subplots_adjust(top=.92, bottom=0.2)
-            fig.tight_layout()
+            plt.plot(data1, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+            plt.plot(data2, label='Delta', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+            plt.legend()
+            plt.tight_layout()
             plt.savefig("graph.png", bbox_inches='tight')
+            plt.close()
 
             with open('graph.png', 'rb') as f:
                 file = io.BytesIO(f.read())
