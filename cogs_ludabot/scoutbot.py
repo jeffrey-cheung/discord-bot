@@ -34,7 +34,7 @@ class ScoutBot(commands.Cog):
         if upper_pitch is None:
             upper_pitch = lower_pitch
 
-        xlegend = []
+        x_legend = []
         pitch = []  # all non-autoed pitches
         season = []  # all non-autoed seasons
         session = []  # all non-autoed sessions
@@ -76,7 +76,7 @@ class ScoutBot(commands.Cog):
                     legend += f"\nA: {pitch[p + 1]}"
 
                     matches_count += 1  # count matches
-                    xlegend.append(legend)
+                    x_legend.append(legend)
 
         if matches_count == 0:
             await ctx.send(f"No matches")
@@ -91,7 +91,7 @@ class ScoutBot(commands.Cog):
         plt.ylim(0, 1000)
         plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
         plt.grid(axis='y', alpha=0.7)
-        plt.xticks(range(matches_count), xlegend, size='small')
+        plt.xticks(range(matches_count), x_legend, size='small')
         plt.plot(after, label='After', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
         plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
@@ -330,7 +330,7 @@ class ScoutBot(commands.Cog):
             pitchseq = []  # x-axis zero-indexed
             pitchno = []  # x-axis 1-indexed (to display in human friendly on the graph)
             delta = []  # pitch deltas
-            xlegend = []  # x-axis to display pitch and delta values
+            x_legend = []  # x-axis to display pitch and delta values
             inning = []  # inning, for x-axis display
             seasons = []  # season for x-axis display
             sessions = []  # session for x-axis display
@@ -407,11 +407,11 @@ class ScoutBot(commands.Cog):
                     thed = " " + str(delta[p])
                 else:
                     thed = str(delta[p])
-                xlegend.append("S" + str(seasons[p]) + "." + str(sessions[p]) + "   \n" + inning[
+                x_legend.append("S" + str(seasons[p]) + "." + str(sessions[p]) + "   \n" + inning[
                     p] + "     \nP: " + thep + "\nD: " + thed)
             data1 = pitch
             data2 = delta
-            x_axis = xlegend
+            x_axis = x_legend
 
             plt.figure(figsize=(max(len(pitch) / 1.5, 10.0), 5.0))  # Creates a new figure
             plt.title(title)
@@ -591,7 +591,7 @@ class ScoutBot(commands.Cog):
         situationalpitch = []
         result = []
         inning = []
-        xlegend = []
+        x_legend = []
         season = []
         session = []
         sitch = ""
@@ -720,15 +720,15 @@ class ScoutBot(commands.Cog):
                 numberofpitches = i
             for t in range(int(numberofpitches)):
                 if j <= t:
-                    xlegend.append("S" + str(season[t]) + "." + str(session[t]) + "\n" + inning[t] + "\nP: " + str(
+                    x_legend.append("S" + str(season[t]) + "." + str(session[t]) + "\n" + inning[t] + "\nP: " + str(
                         situationalpitch[t]))
                     limpitch.append(situationalpitch[t])
                     j = j + 1
             limpitch.reverse()
-            xlegend.reverse()
+            x_legend.reverse()
             title = leaguetitle + ": Last " + str(numberofpitches) + " pitches from " + pitcher + " " + sitch
             data1 = limpitch
-            x_axis = xlegend
+            x_axis = x_legend
             fig = plt.figure(figsize=(len(limpitch) / 1.5, 5))  # Creates a new figure
             ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
             ax1.plot(data1, 'bo-', label='Pitch')
@@ -786,7 +786,7 @@ class ScoutBot(commands.Cog):
             await ctx.send('You asked to see the swing/diff details for {} in {}'.format(bname, league))
             swing = []  # actual swing
             diff = []  # swing diffs
-            xlegend = []  # x-axis to display pitch and delta values
+            x_legend = []  # x-axis to display pitch and delta values
             i = 0
             for p in data:
                 if p['pitch'] is not None:  # there was a pitch (not an auto)
@@ -822,10 +822,10 @@ class ScoutBot(commands.Cog):
                     thed = " " + str(diff[p])
                 else:
                     thed = str(diff[p])
-                xlegend.append("S: " + thes + "\nD: " + thed)
+                x_legend.append("S: " + thes + "\nD: " + thed)
             data1 = swing
             data2 = diff
-            x_axis = xlegend
+            x_axis = x_legend
             fig = plt.figure(figsize=(len(swing) / 1.5, 5))  # Creates a new figure
 
             ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
