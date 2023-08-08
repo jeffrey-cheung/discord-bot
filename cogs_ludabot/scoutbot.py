@@ -84,10 +84,10 @@ class ScoutBot(commands.Cog):
 
         # Quick check to report reactions
         range_title = f"{lower_pitch} - {upper_pitch}"
-        await ctx.send(f"You asked for pitches from {pitcher_name} before & after pitching {range_title}. ({league})")
+        await ctx.send(f"You asked for pitches for {pitcher_name} before & after pitching {range_title}. ({league})")
 
         plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
-        plt.title(f"Pitches from {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
+        plt.title(f"Pitches for {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
         plt.ylim(0, 1000)
         plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
         plt.grid(axis='y', alpha=0.7)
@@ -114,11 +114,11 @@ class ScoutBot(commands.Cog):
     @guild_only()
     async def hm(self,
                  ctx,
-                 league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                  pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
-                 situation: str = commands.parameter(default="all", description="Situation [all, empty, onbase, risp, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
+                 league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                 situation: str = commands.parameter(default="all", description="Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
-            <league> <pitcher_id> [situation:all, empty, onbase, risp, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
+            <pitcher_id> <league> [situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
             Pitcher heatmap
 
             Situations:
@@ -126,6 +126,8 @@ class ScoutBot(commands.Cog):
             empty - Bases empty
             onbase - At least 1 runner on base
             risp - Runner on 2nd and/or 3rd
+            corners - Runner on 1st and 3rd
+            loaded - Bases load
             dp - Runner on 1st with less than 2 outs
             hit - After allowing a hit (walks included)
             out - After getting an out
@@ -152,16 +154,55 @@ class ScoutBot(commands.Cog):
         inning = []
         pitch = []
         matches_count = 0
-        pitcher = "Nobody"
-        for p in data:
+        pitcher = ""
+        for i, p in enumerate(data):
             pitcher = p['pitcherName']
             if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:
-                if situation == "empty" and int(p['obc']) >= 1:
+                outs = int(p['outs'])
+                obc = int(p['obc'])
+                same_game = False
+                if i > 0:
+                    same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                    previous_result = data[i - 1]['exactResult']
+                if situation == "empty" and obc >= 1:
                     continue
-                elif situation == "onbase" and int(p['obc']) == 0:
+                elif situation == "onbase" and obc == 0:
                     continue
-                elif situation == "risp" and int(p['obc']) <= 1:
+                elif situation == "risp" and obc <= 1:
                     continue
+                elif situation == "corners" and obc != 5:
+                    continue
+                elif situation == "loaded" and obc <= 6:
+                    continue
+                elif situation == "dp" and (outs == 2 or not (obc == 1 or obc == 4 or obc == 5 or obc == 7)):
+                    continue
+                elif situation == "hit" and (i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB")):
+                    continue
+                elif situation == "out" and (i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB")):
+                    continue
+                elif situation == "hr" and (i == 0 or not same_game or previous_result != "HR"):
+                    continue
+                elif situation == "3b" and (i == 0 or not same_game or previous_result != "3B"):
+                    continue
+                elif situation == "2b" and (i == 0 or not same_game or previous_result != "2B"):
+                    continue
+                elif situation == "1b" and (i == 0 or not same_game or previous_result != "1B"):
+                    continue
+                elif situation == "bb" and (i == 0 or not same_game or previous_result != "BB"):
+                    continue
+                elif situation == "0out" and outs != 0:
+                    continue
+                elif situation == "1out" and outs != 1:
+                    continue
+                elif situation == "2out" and outs != 2:
+                    continue
+                elif situation == "firstgame" and same_game:
+                    continue
+                elif situation == "firstinning" and (outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning'])):
+                    continue
+                elif situation != "all":
+                    continue
+
                 the_pitch = int(p['pitch'])
                 pitch.append(the_pitch)
                 y.append(int(the_pitch / 100) * 100)  # 100s on the y axis of heatmap
@@ -170,9 +211,13 @@ class ScoutBot(commands.Cog):
                 inning.append(p['inning'])  # inning (T# for top of inning, B# for bottom of inning)
                 matches_count += 1
 
-        # Defaults for graph (if no arguments given... ie: all pitches, wide open)
-        title = f"{league} heatmap for {pitcher} (all {matches_count} pitches)"
+        if matches_count == 0:
+            await ctx.send(f"No matches")
+            return
 
+        await ctx.send(f"You asked for heatmap for {pitcher}. ({league}) ({situation})")
+
+        title = f"Heatmap for {pitcher}. ({league}) ({situation}) ({matches_count} pitches)"
         annotations = [dict(xref='paper', yref='paper', x=0.0, y=1.05,
                             xanchor='left', yanchor='bottom',
                             text=title,
