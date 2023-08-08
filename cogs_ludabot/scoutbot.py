@@ -95,6 +95,8 @@ class ScoutBot(commands.Cog):
         plt.plot(after, label='After', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
         plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
+        # for i, txt in enumerate(after):
+        #     plt.annotate(txt, (i, after[i]))
         plt.legend()
         plt.tight_layout()
         plt.savefig("graph.png", bbox_inches='tight')
@@ -202,7 +204,7 @@ class ScoutBot(commands.Cog):
             ygap=2,
             xgap=2,
             autobinx=False,
-            xbins=dict(start=0, end=99, size=25),
+            xbins=dict(start=1, end=100, size=25),
             autobiny=False,
             ybins=dict(start=0, end=1000, size=100),
             x=x,
