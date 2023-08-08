@@ -39,7 +39,7 @@ class MLR(commands.Cog):
         current_season = -1
         current_game = -1
         for x in response:
-            if (x['pitch'] != 0) & (x['swing'] != 0):
+            if x['pitch'] != 0 and x['swing'] != 0:
                 if number_of_pitches == "current":
                     if int(x['season']) > int(current_season):
                         list_of_pitches = []
@@ -100,7 +100,7 @@ class MLR(commands.Cog):
         list_of_pitches = []
         list_of_swings = []
         for x in response:
-            if (x['pitch'] != 0) & (x['swing'] != 0):
+            if x['pitch'] != 0 and x['swing'] != 0:
                 list_of_pitches.append(x['pitch'])
                 list_of_swings.append(x['swing'])
         list_of_pitches = list_of_pitches[-number_of_swings:]

@@ -47,7 +47,7 @@ class ScoutBot(commands.Cog):
         # get pitcher name and read it all in
         for p in data:
             pitcher_name = p['pitcherName']
-            if (p['pitch'] is not None) & (p['swing'] is not None) & (p['pitch'] != 0) & (p['swing'] != 0):  # just skip the non/auto resulted pitches
+            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
                 pitch.append(p['pitch'])
                 season.append(p['season'])
                 session.append(p['session'])
@@ -59,10 +59,10 @@ class ScoutBot(commands.Cog):
 
         # now let's go through and look for matches
         for p in range(len(pitch) - 1):
-            if ((upper_pitch >= lower_pitch) & (upper_pitch >= int(pitch[p]) >= lower_pitch)) or ((upper_pitch < lower_pitch) & (upper_pitch >= int(pitch[p]) or (lower_pitch <= int(pitch[p])))):  # it's a match for a range
-                if (p < len(pitch) - 1) & (season[p] == season[p + 1]) & (session[p] == session[p + 1]):
+            if (upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (upper_pitch < lower_pitch and (upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p]))):  # it's a match for a range
+                if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
                     legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
-                    if (p > 0) & (season[p] == season[p - 1]) & (session[p] == session[p - 1]):
+                    if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
                         before.append(pitch[p - 1])
                         legend += f"\nB: {pitch[p - 1]}"
                     else:
@@ -146,46 +146,32 @@ class ScoutBot(commands.Cog):
 
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
-        validpitches = []
         y = []
         x = []
         result = []
         inning = []
-        first = []
-        second = []
-        third = []
-        outs = []
         pitch = []
-        i = 0
+        matches_count = 0
         pitcher = "Nobody"
         for p in data:
             pitcher = p['pitcherName']
-            if (p['pitch'] is not None) & (p['swing'] is not None) & (p['pitch'] != 0) & (p['swing'] != 0):
-                thepitch = int(p['pitch'])
-                pitch.append(thepitch)
-                y.append(int(thepitch / 100) * 100)  # 100s on the y axis of heatmap
-                x.append(int(thepitch % 100))  # 10s/1s on the x axis of heatmap
+            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:
+                if situation == "empty" and int(p['obc']) >= 1:
+                    continue
+                elif situation == "onbase" and int(p['obc']) == 0:
+                    continue
+                elif situation == "risp" and int(p['obc']) <= 1:
+                    continue
+                the_pitch = int(p['pitch'])
+                pitch.append(the_pitch)
+                y.append(int(the_pitch / 100) * 100)  # 100s on the y axis of heatmap
+                x.append(int(the_pitch % 100))  # 10s/1s on the x axis of heatmap
                 result.append(p['exactResult'])  # result (ie: 1B, 2B, HR, RGO, etc.)
                 inning.append(p['inning'])  # inning (T# for top of inning, B# for bottom of inning)
-                obc = p['obc']
-                if obc == 1 or obc == 4 or obc == 5 or obc == 7:
-                    first.append(True)
-                else:
-                    first.append(False)
-                if obc == 2 or obc == 4 or obc == 6 or obc == 7:
-                    second.append(True)
-                else:
-                    second.append(False)
-                if obc == 3 or obc == 5 or obc == 5 or obc == 7:
-                    third.append(True)
-                else:
-                    third.append(False)
-                outs.append(p['outs'])  # Number of outs at time of pitch
-                validpitches.append(i)
-                i = i + 1
+                matches_count += 1
 
         # Defaults for graph (if no arguments given... ie: all pitches, wide open)
-        title = f"{league} heatmap for {pitcher} (all {i} pitches)"
+        title = f"{league} heatmap for {pitcher} (all {matches_count} pitches)"
 
         annotations = [dict(xref='paper', yref='paper', x=0.0, y=1.05,
                             xanchor='left', yanchor='bottom',
