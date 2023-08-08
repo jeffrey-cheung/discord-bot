@@ -45,13 +45,15 @@ class ScoutBot(commands.Cog):
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
-        for p in data:
+        for i, p in enumerate(data):
             pitcher_name = p['pitcherName']
             if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
                 pitch.append(p['pitch'])
                 season.append(p['season'])
                 session.append(p['session'])
                 inning.append(p['inning'])
+            else:
+                data.pop(i)
 
         before = []  # pitch before the match
         match = []  # the match
@@ -156,84 +158,87 @@ class ScoutBot(commands.Cog):
         matches_count = 0
         pitcher = ""
         for i, p in enumerate(data):
+            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:  # just skip the non/auto resulted pitches
+                data.pop(i)
+
+        for i, p in enumerate(data):
             pitcher = p['pitcherName']
-            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:
-                outs = int(p['outs'])
-                obc = int(p['obc'])
-                same_game = False
-                previous_result = None
-                if i > 0:
-                    same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
-                    previous_result = data[i - 1]['exactResult']
+            outs = int(p['outs'])
+            obc = int(p['obc'])
+            same_game = False
+            previous_result = None
+            if i > 0:
+                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                previous_result = data[i - 1]['exactResult']
 
-                match situation:
-                    case "all":
-                        pass
-                    case "empty":
-                        if obc >= 1:
-                            continue
-                    case "onbase":
-                        if obc == 0:
-                            continue
-                    case "risp":
-                        if obc <= 1:
-                            continue
-                    case "corners":
-                        if obc != 5:
-                            continue
-                    case "loaded":
-                        if obc <= 6:
-                            continue
-                    case "dp":
-                        if outs == 2 or not (obc == 1 or obc == 4 or obc == 5 or obc == 7):
-                            continue
-                    case "hit":
-                        if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
-                            continue
-                    case "out":
-                        if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
-                            continue
-                    case "hr":
-                        if i == 0 or not same_game or previous_result != "HR":
-                            continue
-                    case "3b":
-                        if i == 0 or not same_game or previous_result != "3B":
-                            continue
-                    case "2b":
-                        if i == 0 or not same_game or previous_result != "2B":
-                            continue
-                    case "1b":
-                        if i == 0 or not same_game or previous_result != "1B":
-                            continue
-                    case "bb":
-                        if i == 0 or not same_game or previous_result != "BB":
-                            continue
-                    case "0out":
-                        if outs != 0:
-                            continue
-                    case "1out":
-                        if outs != 1:
-                            continue
-                    case "2out":
-                        if outs != 2:
-                            continue
-                    case "firstgame":
-                        if same_game:
-                            continue
-                    case "firstinning":
-                        if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
-                            continue
-                    case _:
-                        await ctx.send(f"Unrecognized situation")
-                        return
+            match situation:
+                case "all":
+                    pass
+                case "empty":
+                    if obc >= 1:
+                        continue
+                case "onbase":
+                    if obc == 0:
+                        continue
+                case "risp":
+                    if obc <= 1:
+                        continue
+                case "corners":
+                    if obc != 5:
+                        continue
+                case "loaded":
+                    if obc <= 6:
+                        continue
+                case "dp":
+                    if outs == 2 or not (obc == 1 or obc == 4 or obc == 5 or obc == 7):
+                        continue
+                case "hit":
+                    if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "out":
+                    if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "hr":
+                    if i == 0 or not same_game or previous_result != "HR":
+                        continue
+                case "3b":
+                    if i == 0 or not same_game or previous_result != "3B":
+                        continue
+                case "2b":
+                    if i == 0 or not same_game or previous_result != "2B":
+                        continue
+                case "1b":
+                    if i == 0 or not same_game or previous_result != "1B":
+                        continue
+                case "bb":
+                    if i == 0 or not same_game or previous_result != "BB":
+                        continue
+                case "0out":
+                    if outs != 0:
+                        continue
+                case "1out":
+                    if outs != 1:
+                        continue
+                case "2out":
+                    if outs != 2:
+                        continue
+                case "firstgame":
+                    if same_game:
+                        continue
+                case "firstinning":
+                    if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
+                        continue
+                case _:
+                    await ctx.send(f"Unrecognized situation")
+                    return
 
-                the_pitch = int(p['pitch'])
-                pitch.append(the_pitch)
-                y.append(int(the_pitch / 100) * 100)  # 100s on the y axis of heatmap
-                x.append(int(the_pitch % 100))  # 10s/1s on the x axis of heatmap
-                result.append(p['exactResult'])  # result (ie: 1B, 2B, HR, RGO, etc.)
-                inning.append(p['inning'])  # inning (T# for top of inning, B# for bottom of inning)
-                matches_count += 1
+            the_pitch = int(p['pitch'])
+            pitch.append(the_pitch)
+            y.append(int(the_pitch / 100) * 100)  # 100s on the y axis of heatmap
+            x.append(int(the_pitch % 100))  # 10s/1s on the x axis of heatmap
+            result.append(p['exactResult'])  # result (ie: 1B, 2B, HR, RGO, etc.)
+            inning.append(p['inning'])  # inning (T# for top of inning, B# for bottom of inning)
+            matches_count += 1
 
         if matches_count == 0:
             await ctx.send(f"No matches")
@@ -478,83 +483,86 @@ class ScoutBot(commands.Cog):
         matches_count = 0
         pitcher = ""
         for i, p in enumerate(data):
+            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
+                data.pop(i)
+
+        for i, p in enumerate(data):
             pitcher = p['pitcherName']
-            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:
-                outs = int(p['outs'])
-                obc = int(p['obc'])
-                same_game = False
-                previous_result = None
-                previous_pitch = None
-                if i > 0:
-                    same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1][
-                        'session']
-                    previous_result = data[i - 1]['exactResult']
-                    previous_pitch = int(data[i - 1]['pitch'])
+            outs = int(p['outs'])
+            obc = int(p['obc'])
+            same_game = False
+            previous_result = None
+            previous_pitch = None
+            if i > 0:
+                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1][
+                    'session']
+                previous_result = data[i - 1]['exactResult']
+                previous_pitch = int(data[i - 1]['pitch'])
 
-                match situation:
-                    case "all":
-                        if i == 0 or not same_game:
-                            continue
-                    case "empty":
-                        if i == 0 or not same_game or obc >= 1:
-                            continue
-                    case "onbase":
-                        if i == 0 or not same_game or obc == 0:
-                            continue
-                    case "risp":
-                        if i == 0 or not same_game or obc <= 1:
-                            continue
-                    case "corners":
-                        if i == 0 or not same_game or obc != 5:
-                            continue
-                    case "loaded":
-                        if i == 0 or not same_game or obc <= 6:
-                            continue
-                    case "dp":
-                        if (i == 0 or not same_game) or (outs == 2 or not (obc == 1 or obc == 4 or obc == 5 or obc == 7)):
-                            continue
-                    case "hit":
-                        if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
-                            continue
-                    case "out":
-                        if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
-                            continue
-                    case "hr":
-                        if i == 0 or not same_game or previous_result != "HR":
-                            continue
-                    case "3b":
-                        if i == 0 or not same_game or previous_result != "3B":
-                            continue
-                    case "2b":
-                        if i == 0 or not same_game or previous_result != "2B":
-                            continue
-                    case "1b":
-                        if i == 0 or not same_game or previous_result != "1B":
-                            continue
-                    case "bb":
-                        if i == 0 or not same_game or previous_result != "BB":
-                            continue
-                    case "0out":
-                        if i == 0 or not same_game or outs != 0:
-                            continue
-                    case "1out":
-                        if i == 0 or not same_game or outs != 1:
-                            continue
-                    case "2out":
-                        if i == 0 or not same_game or outs != 2:
-                            continue
-                    case "firstinning":
-                        if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
-                            continue
-                    case _:
-                        await ctx.send(f"Unrecognized situation")
-                        return
+            match situation:
+                case "all":
+                    if i == 0 or not same_game:
+                        continue
+                case "empty":
+                    if i == 0 or not same_game or obc >= 1:
+                        continue
+                case "onbase":
+                    if i == 0 or not same_game or obc == 0:
+                        continue
+                case "risp":
+                    if i == 0 or not same_game or obc <= 1:
+                        continue
+                case "corners":
+                    if i == 0 or not same_game or obc != 5:
+                        continue
+                case "loaded":
+                    if i == 0 or not same_game or obc <= 6:
+                        continue
+                case "dp":
+                    if (i == 0 or not same_game) or (outs == 2 or not (obc == 1 or obc == 4 or obc == 5 or obc == 7)):
+                        continue
+                case "hit":
+                    if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "out":
+                    if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "hr":
+                    if i == 0 or not same_game or previous_result != "HR":
+                        continue
+                case "3b":
+                    if i == 0 or not same_game or previous_result != "3B":
+                        continue
+                case "2b":
+                    if i == 0 or not same_game or previous_result != "2B":
+                        continue
+                case "1b":
+                    if i == 0 or not same_game or previous_result != "1B":
+                        continue
+                case "bb":
+                    if i == 0 or not same_game or previous_result != "BB":
+                        continue
+                case "0out":
+                    if i == 0 or not same_game or outs != 0:
+                        continue
+                case "1out":
+                    if i == 0 or not same_game or outs != 1:
+                        continue
+                case "2out":
+                    if i == 0 or not same_game or outs != 2:
+                        continue
+                case "firstinning":
+                    if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
+                        continue
+                case _:
+                    await ctx.send(f"Unrecognized situation")
+                    return
 
-                delta = abs(int(p['pitch']) - previous_pitch)
-                if delta > 500:
-                    delta = 1000 - delta
-                deltas.append(delta)
-                matches_count += 1
+            delta = abs(int(p['pitch']) - previous_pitch)
+            if delta > 500:
+                delta = 1000 - delta
+            deltas.append(delta)
+            matches_count += 1
 
         if matches_count == 0:
             await ctx.send(f"No matches")
