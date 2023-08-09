@@ -4,7 +4,6 @@ import io
 import matplotlib.pyplot as plt
 import os
 import plotly.graph_objects as go
-import random as rdm
 import requests
 import sys
 from discord.ext import commands
