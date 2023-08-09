@@ -771,6 +771,8 @@ class Pitchers(commands.Cog):
         plt.plot(after, label='After', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.plot(match, label='Match', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        for i, txt in enumerate(after):
+            plt.annotate(f" {txt}", (i, after[i]))
         plt.legend()
         plt.tight_layout()
         plt.savefig("graph.png", bbox_inches='tight')
