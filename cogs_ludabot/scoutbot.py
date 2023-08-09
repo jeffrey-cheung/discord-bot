@@ -316,11 +316,11 @@ class ScoutBot(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+
         totaldelta = 0
         deltacount = 0
         inningno = 0
-
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         res = len(data)
         if res > 0:
@@ -377,9 +377,8 @@ class ScoutBot(commands.Cog):
                 pitchno.append(s + 1)  # for x-axis of the chart
 
             # calculate diffs
-            for d in range(
-                    len(pitch)):  # range -> just the pitches picked up from the opposing pitcher (does not include autos)
-                if (d > 0):
+            for d in range(len(pitch)):  # range -> just the pitches picked up from the opposing pitcher (does not include autos)
+                if d > 0:
                     pitchd = abs(pitch[d] - pitch[d - 1])
                     if pitchd > 500:
                         pitchd = 1000 - pitchd
