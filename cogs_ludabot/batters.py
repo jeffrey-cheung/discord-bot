@@ -19,95 +19,72 @@ class Batters(commands.Cog):
 
     @commands.command(aliases=['swings'])
     @guild_only()
-    async def swing(self, ctx, playerID, league, season=None):
-        """!swing <Player ID> <League> shows swing/diff sequences"""
-        totaldiff = 0
-        diffcount = 0
+    async def swing(self,
+                    ctx,
+                    batter_id: int = commands.parameter(default=None, description="Batter ID"),
+                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                    season: int = commands.parameter(default=None, description="Season #")):
+        """
+            <batter_id> <league> [optional:season]
+            Shows batter swing/pitch/diff sequences
+        """
+        if batter_id is None or league is None:
+            await ctx.send(f"Missing argument(s)")
+            return
 
-        data = (
-            requests.get(f"https://www.swing420.com/api/plateappearances/batting/{league}/{playerID}")).json()
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/batting/{league}/{batter_id}")).json()
 
-        res = len(data)
-        if res > 0:
-            # Grab player name for chart
-            bname = data[0]['hitterName']
-            await ctx.send('You asked to see the swing/diff details for {} in {}'.format(bname, league))
-            swing = []  # actual swing
-            diff = []  # swing diffs
-            x_legend = []  # x-axis to display pitch and delta values
-            i = 0
-            for p in data:
-                if p['pitch'] is not None:  # there was a pitch (not an auto)
-                    if season is not None:  # they specified a season
-                        if p['season'] == int(season):  # so limit to that season only
-                            swing.append(p['swing'])
-                            diff.append(p['diff'])
-                            totaldiff = totaldiff + p['diff']
-                            diffcount = diffcount + 1
-                            i = i + 1
-                    else:  # they didn't specify a season, so get them all
-                        swing.append(p['swing'])
-                        diff.append(p['diff'])
-                        totaldiff = totaldiff + p['diff']
-                        diffcount = diffcount + 1
-                        i = i + 1
-            avgdiff = round(totaldiff / i)
-            title = "Swing history for " + bname + " in " + league + ": " + str(
-                i) + " swings " + " (avg diff=" + str(avgdiff) + ")"
-            if season is not None:
-                title = title + " (S" + str(season) + " only)"
-            for p in range(len(swing)):
-                if swing[p] < 10:
-                    thes = "   " + str(swing[p])
-                elif swing[p] < 100:
-                    thes = " " + str(swing[p])
-                else:
-                    thes = str(swing[p])
+        for p in data[:]:
+            if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (season is not None and season != int(p['season'])):
+                data.remove(p)
 
-                if diff[p] < 10:
-                    thed = "   " + str(diff[p])
-                elif diff[p] < 100:
-                    thed = " " + str(diff[p])
-                else:
-                    thed = str(diff[p])
-                x_legend.append("S: " + thes + "\nD: " + thed)
-            data1 = swing
-            data2 = diff
-            x_axis = x_legend
-            fig = plt.figure(figsize=(len(swing) / 1.5, 5))  # Creates a new figure
+        x_legend = []
+        pitches = []
+        swings = []
+        diffs = []
+        hitter_name = ""
 
-            ax1 = fig.add_subplot(111)  # Plot with: 1 row, 1 column, first subplot.
-            pitch = ax1.plot(data1, 'bo-', label='Swing')  # no need for str(x_axis)
-            delta = ax1.plot(data2, 'k--', label='Diff')
-            plt.xticks(range(len(data2)), x_axis, size='small')
-            ax1.set_ylim(0, 1050)
+        for i, p in enumerate(data):
+            hitter_name = p['hitterName']
+            pitches.append(p['pitch'])
+            swings.append(p['swing'])
+            diffs.append(p['diff'])
+            x_legend.append(f"S: {p['swing']}\nD: {p['diff']}")
 
-            # Assigning labels
-            lines = pitch + delta  # +line3
-            labels = [l.get_label() for l in lines]
-            plt.setp(ax1.get_xticklabels(), visible=True)
-            plt.suptitle(title, y=1.0, fontsize=17)
-            ## GRIDLINES FOR EASIER READING
-            plt.hlines(0, 0, len(data1), color='#b3b3b3', linestyle='dashed', label='', data=None)
-            plt.hlines(200, 0, len(data1), color='#b3b3b3', linestyle='dashed', label='', data=None)
-            plt.hlines(400, 0, len(data1), color='#b3b3b3', linestyle='dashed', label='', data=None)
-            plt.hlines(600, 0, len(data1), color='#b3b3b3', linestyle='dashed', label='', data=None)
-            plt.hlines(800, 0, len(data1), color='#b3b3b3', linestyle='dashed', label='', data=None)
-            plt.hlines(1000, 0, len(data1), color='#b3b3b3', linestyle='dashed', label='', data=None)
-            ## END GRIDLINES
-            fig.subplots_adjust(top=.92, bottom=0.2)
-            fig.tight_layout()
-            plt.savefig("graph.png", bbox_inches='tight')
+        number_of_pitches = len(pitches)
 
-            with open('graph.png', 'rb') as f:
-                file = io.BytesIO(f.read())
+        if number_of_pitches == 0:
+            await ctx.send(f"No matches")
+            return
 
-            image = discord.File(file, filename='graph.png')
+        if season is None:
+            season = "all"
 
-            await ctx.send(file=image)
-            os.remove('graph.png')
-        else:
-            await ctx.send("No swing history for Player ID " + playerID + ". Please try again.")
+        await ctx.send(f"You asked to see the swing/pitch/diff details for {hitter_name}. ({league}) ({season})")
+
+        plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
+        plt.title(f"Swing/pitch/diff details for {hitter_name}. ({league}) ({season})")
+        plt.ylim(0, 1000)
+        plt.yticks(grid_ticks)
+        plt.grid(axis='y', alpha=0.7)
+        plt.xticks(range(number_of_pitches), x_legend, size='small')
+        plt.plot(swings, label='Swing', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(pitches, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(diffs, label='Diff', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        for i, txt in enumerate(swings):
+            plt.annotate(f" {txt}", (i, swings[i]))
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig('graph.png')
+        plt.close()
+
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
 
 
 async def setup(client):
