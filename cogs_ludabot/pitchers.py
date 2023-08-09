@@ -18,6 +18,95 @@ class Pitchers(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    @commands.command(aliases=['current', 'currentgame'])
+    @guild_only()
+    async def cg(self,
+                 ctx,
+                 pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                 league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]")):
+        """
+            <pitcher_id> <league>
+            Shows current game pitcher pitch/delta sequences
+        """
+        if pitcher_id is None or league is None:
+            await ctx.send(f"Missing argument(s)")
+            return
+
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+
+        for p in data[:]:
+            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
+                data.remove(p)
+
+        x_legend = []
+        pitches = []
+        deltas = []
+        pitcher_name = ""
+        current_season = -1
+        current_game = -1
+
+        for i, p in enumerate(data):
+            pitcher_name = p['pitcherName']
+            same_game = False
+            previous_pitch = None
+            if i > 0:
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                previous_pitch = int(data[i - 1]['pitch'])
+
+            if int(p['season']) > int(current_season):
+                pitches = []
+                deltas = []
+                x_legend = []
+                current_season = p['season']
+                current_game = p['gameID']
+            if int(p['gameID']) > int(current_game):
+                pitches = []
+                deltas = []
+                x_legend = []
+                current_game = p['gameID']
+            if int(p['season']) == int(current_season) and int(p['gameID']) == int(current_game):
+                pitches.append(p['pitch'])
+
+            delta = ""
+            if i == 0 or not same_game:
+                deltas.append(None)
+            else:
+                delta = abs(int(p['pitch']) - previous_pitch)
+                if delta > 500:
+                    delta = 1000 - delta
+                deltas.append(delta)
+
+            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}\nD: {delta}")
+
+        number_of_pitches = len(pitches)
+
+        if number_of_pitches == 0:
+            await ctx.send(f"No matches")
+            return
+
+        await ctx.send(f"You asked to see the current game pitch/delta details for {pitcher_name}. ({league})")
+
+        plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
+        plt.title(f"Current game pitch/delta details for {pitcher_name}. ({league})")
+        plt.ylim(0, 1000)
+        plt.yticks(grid_ticks)
+        plt.grid(axis='y', alpha=0.7)
+        plt.xticks(range(number_of_pitches), x_legend, size='small')
+        plt.plot(pitches, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(deltas, label='Delta', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig('graph.png')
+        plt.close()
+
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
+
     @commands.command(aliases=['charts'])
     @guild_only()
     async def chart(self,
@@ -49,7 +138,7 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_pitch = None
             if i > 0:
-                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
                 previous_pitch = int(data[i - 1]['pitch'])
 
             delta = ""
@@ -149,7 +238,7 @@ class Pitchers(commands.Cog):
             previous_result = None
             previous_pitch = None
             if i > 0:
-                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
                 previous_result = data[i - 1]['exactResult']
                 previous_pitch = int(data[i - 1]['pitch'])
 
@@ -299,7 +388,7 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_result = None
             if i > 0:
-                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
                 previous_result = data[i - 1]['exactResult']
 
             match situation:
@@ -488,7 +577,7 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_result = None
             if i > 0:
-                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
                 previous_result = data[i - 1]['exactResult']
 
             match situation:
