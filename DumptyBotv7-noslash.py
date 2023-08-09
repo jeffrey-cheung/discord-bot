@@ -766,7 +766,7 @@ async def player(ctx, *, arg):
                 await ctx.send("One moment, while I pull up " + xstat.upper() + " vs " + ystat.upper()  + " for all of " + league.upper() )
             
             client = pygsheets.authorize('client_secret.json')
-            token = "10pQGKuqO7GEBcQ3-Wr5boPFVw0ehj9PXAFaAaQ2jVC0" # My sheet copy of gamelogs/with importrange
+            token = "REDACTED" # My sheet copy of gamelogs/with importrange
             sheet = client.open_by_key(token)
             mlrstats = sheet.worksheet_by_title('MLRStats7')
             rows = mlrstats.rows
@@ -907,7 +907,7 @@ async def stats(ctx, *, arg):
         # SLG = index 19
         # OPS = index 20
         client    = pygsheets.authorize('client_secret.json')
-        token    = "10pQGKuqO7GEBcQ3-Wr5boPFVw0ehj9PXAFaAaQ2jVC0" # My sheet copy of gamelogs/with importrange
+        token    = "REDACTED" # My sheet copy of gamelogs/with importrange
         sheet    = client.open_by_key(token)
         mlrsheetname = mlrsheetname + season.upper()
         milrsheetname = milrsheetname + season.upper()
@@ -1172,7 +1172,7 @@ async def pstats(ctx, *, arg):
         # WHIP = index 70
         # D/BF = index 77
         client    = pygsheets.authorize('client_secret.json')
-        token    = "10pQGKuqO7GEBcQ3-Wr5boPFVw0ehj9PXAFaAaQ2jVC0" # My sheet copy of gamelogs/with importrange
+        token    = "REDACTED" # My sheet copy of gamelogs/with importrange
         sheet    = client.open_by_key(token)
         mlrsheetname = mlrsheetname + season.upper()
         milrsheetname = milrsheetname + season.upper()

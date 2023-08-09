@@ -10,17 +10,17 @@ search_term_milr = 'Santa Fe'
 #  Create a webhook in your server by going to Server Settings > Integrations > Webhooks, and create a new Webhook. Set
 #  the name and channel, and add an icon if you'd like. Click the Copy Webhook URL button and paste it below inside the 
 #  quotes.
-webhook_MLR = Webhook('https://discord.com/api/webhooks/898697239290056734/0AQdKiMTzMJtPFwvyJzULqWqK9kBWk7IYR5WRjc3-5kRITJ9ofNSPp0SXUXm9cQ1tLvY')
-webhook_MiLR = Webhook('https://discord.com/api/webhooks/898698714506477598/YlNryfAg_j3sXwXrhzD2KtbD29mxdqCXsuMIQi4acd2ryk-qzmOX0X0KXmk53aQPjBcN')
+webhook_MLR = Webhook('REDACTED')
+webhook_MiLR = Webhook('REDACTED')
 
 #  To generate a client ID and secret, go here: https://www.reddit.com/prefs/apps scroll all the way to the bottom, and
 #  hit the create an app button. Enter something for name and redirect URL, and make sure the script radio button is
 #  selected. Hit the create app button, and then paste the client ID and secret below. The user_agent string literally 
 #  just needs to have some text in it, does not matter what. 
 reddit = praw.Reddit(
-    client_id='xkOJ6e5QJvsoaDWgE8LVaA',
-    client_secret='wSNSCz4HC9-HU0wJrd-lbdZBCzSZtA',
-    user_agent='ThatIsMe'
+    client_id='REDACTED',
+    client_secret='REDACTED',
+    user_agent='REDACTED'
 )
 
 # Don't change anything after here.
