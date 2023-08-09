@@ -383,8 +383,6 @@ class Pitchers(commands.Cog):
 
         y = []
         x = []
-        result = []
-        inning = []
         pitch = []
         matches_count = 0
         pitcher = ""
@@ -467,8 +465,6 @@ class Pitchers(commands.Cog):
             pitch.append(the_pitch)
             y.append(int(the_pitch / 100) * 100)  # 100s on the y axis of heatmap
             x.append(int(the_pitch % 100))  # 10s/1s on the x axis of heatmap
-            result.append(p['exactResult'])  # result (ie: 1B, 2B, HR, RGO, etc.)
-            inning.append(p['inning'])  # inning (T# for top of inning, B# for bottom of inning)
             matches_count += 1
 
         if matches_count == 0:
