@@ -14,6 +14,7 @@ os.environ['MILR_SEARCH_TEST'] = ""
 os.environ['MILR_WEBHOOK_TEST'] = ""
 os.environ['FCFB_SEARCH_TEST'] = ""
 os.environ['FCFB_WEBHOOK_TEST'] = ""
+os.environ['FCFB_SEARCH_TEST'] = "Lafayette"
 
 # play_by_play Credentials (Prod)
 os.environ['MLR_SEARCH'] = ""

@@ -198,7 +198,7 @@ class Batters(commands.Cog):
             pitches.append(p['pitch'])
             swings.append(p['swing'])
             diffs.append(p['diff'])
-            x_legend.append(f"S: {p['swing']}\nD: {p['diff']}")
+            x_legend.append(f"S: {p['swing']}\nP: {p['pitch']}\nD: {p['diff']}")
 
         number_of_pitches = len(pitches)
 

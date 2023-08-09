@@ -80,7 +80,7 @@ class Pitchers(commands.Cog):
                     delta = 1000 - delta
                 deltas.append(delta)
 
-            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}\nD: {delta}")
+            x_legend.append(f"S{p['season']}.{p['session']}\nP: {p['pitch']}\nS: {p['swing']}\nD: {delta}")
 
         number_of_pitches = len(pitches)
 
@@ -161,7 +161,7 @@ class Pitchers(commands.Cog):
 
             pitches.append(p['pitch'])
             swings.append(p['swing'])
-            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}\nD: {delta}")
+            x_legend.append(f"S{p['season']}.{p['session']}\nP: {p['pitch']}\nS: {p['swing']}\nD: {delta}")
 
         number_of_pitches = len(pitches)
 
@@ -655,7 +655,7 @@ class Pitchers(commands.Cog):
 
             pitches.append(p['pitch'])
             swings.append(p['swing'])
-            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}")
+            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}\nS: {p['swing']}")
 
         x_legend = x_legend[-number_of_pitches:]
         pitches = pitches[-number_of_pitches:]
@@ -770,9 +770,9 @@ class Pitchers(commands.Cog):
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(matches_count), x_legend, size='small')
-        plt.plot(after, label='After', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(match, label='Match', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(match, label='Match', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(after, label='After', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         for i, txt in enumerate(after):
             plt.annotate(f" {txt}", (i, after[i]))
         plt.legend()
