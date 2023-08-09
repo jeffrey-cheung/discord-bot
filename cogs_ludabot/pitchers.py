@@ -663,8 +663,7 @@ class Pitchers(commands.Cog):
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(number_of_pitches), x_legend, size='small')
         plt.plot(pitches, label='Pitch', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(swings, label='Swing', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7,
-                 alpha=0.4)
+        plt.plot(swings, label='Swing', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
         for i, txt in enumerate(pitches):
             plt.annotate(f" {txt}", (i, pitches[i]))
         plt.legend()
@@ -726,9 +725,7 @@ class Pitchers(commands.Cog):
 
         # now let's go through and look for matches
         for p in range(len(pitch) - 1):
-            if (upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (
-                    upper_pitch < lower_pitch and (
-                    upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p]))):  # it's a match for a range
+            if (upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (upper_pitch < lower_pitch and (upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p]))):  # it's a match for a range
                 if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
                     legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                     if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
