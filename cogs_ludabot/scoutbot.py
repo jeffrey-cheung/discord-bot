@@ -355,6 +355,9 @@ class ScoutBot(commands.Cog):
             await ctx.send(f"No matches")
             return
 
+        if season is None:
+            season = "all"
+
         await ctx.send(f"You asked to see the pitch/delta details for {pitcher_name}. ({league}) ({season})")
 
         plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
