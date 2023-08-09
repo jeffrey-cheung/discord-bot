@@ -26,7 +26,7 @@ class Pitchers(commands.Cog):
                  league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]")):
         """
             <pitcher_id> <league>
-            Shows current game pitcher pitch/delta sequences
+            Shows current game pitcher pitch/swing/delta sequences
         """
         if pitcher_id is None or league is None:
             await ctx.send(f"Missing argument(s)")
@@ -40,6 +40,7 @@ class Pitchers(commands.Cog):
 
         x_legend = []
         pitches = []
+        swings = []
         deltas = []
         pitcher_name = ""
         current_season = -1
@@ -55,17 +56,20 @@ class Pitchers(commands.Cog):
 
             if int(p['season']) > int(current_season):
                 pitches = []
+                swings = []
                 deltas = []
                 x_legend = []
                 current_season = p['season']
                 current_game = p['gameID']
             if int(p['gameID']) > int(current_game):
                 pitches = []
+                swings = []
                 deltas = []
                 x_legend = []
                 current_game = p['gameID']
             if int(p['season']) == int(current_season) and int(p['gameID']) == int(current_game):
                 pitches.append(p['pitch'])
+                swings.append(p['swing'])
 
             delta = ""
             if i == 0 or not same_game:
@@ -84,16 +88,19 @@ class Pitchers(commands.Cog):
             await ctx.send(f"No matches")
             return
 
-        await ctx.send(f"You asked to see the current game pitch/delta details for {pitcher_name}. ({league})")
+        await ctx.send(f"You asked to see the current game pitch/swing/delta details for {pitcher_name}. ({league})")
 
         plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
-        plt.title(f"Current game pitch/delta details for {pitcher_name}. ({league})")
+        plt.title(f"Current game pitch/swing/delta details for {pitcher_name}. ({league})")
         plt.ylim(0, 1000)
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(number_of_pitches), x_legend, size='small')
         plt.plot(pitches, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(deltas, label='Delta', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(swings, label='Swing', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(deltas, label='Delta', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        for i, txt in enumerate(pitches):
+            plt.annotate(f" {txt}", (i, pitches[i]))
         plt.legend()
         plt.tight_layout()
         plt.savefig('graph.png')
@@ -116,7 +123,7 @@ class Pitchers(commands.Cog):
                     season: int = commands.parameter(default=None, description="Season #")):
         """
             <pitcher_id> <league> [optional:season]
-            Shows pitcher pitch/delta sequences
+            Shows pitcher pitch/swing/delta sequences
         """
         if pitcher_id is None or league is None:
             await ctx.send(f"Missing argument(s)")
@@ -130,6 +137,7 @@ class Pitchers(commands.Cog):
 
         x_legend = []
         pitches = []
+        swings = []
         deltas = []
         pitcher_name = ""
 
@@ -151,6 +159,7 @@ class Pitchers(commands.Cog):
                 deltas.append(delta)
 
             pitches.append(p['pitch'])
+            swings.append(p['swing'])
             x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}\nD: {delta}")
 
         number_of_pitches = len(pitches)
@@ -162,16 +171,19 @@ class Pitchers(commands.Cog):
         if season is None:
             season = "all"
 
-        await ctx.send(f"You asked to see the pitch/delta details for {pitcher_name}. ({league}) ({season})")
+        await ctx.send(f"You asked to see the pitch/swing/delta details for {pitcher_name}. ({league}) ({season})")
 
         plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
-        plt.title(f"Pitch/delta details for {pitcher_name}. ({league}) ({season})")
+        plt.title(f"Pitch/swing/delta details for {pitcher_name}. ({league}) ({season})")
         plt.ylim(0, 1000)
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(number_of_pitches), x_legend, size='small')
         plt.plot(pitches, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(deltas, label='Delta', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(swings, label='Swing', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(deltas, label='Delta', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        for i, txt in enumerate(pitches):
+            plt.annotate(f" {txt}", (i, pitches[i]))
         plt.legend()
         plt.tight_layout()
         plt.savefig('graph.png')
@@ -318,7 +330,7 @@ class Pitchers(commands.Cog):
         plt.xlim(0, 500)
         plt.xticks(rotation=90)
         plt.xticks(delta_ticks)
-        values, bins, bars = plt.hist(deltas, bins=range(0, 525, 25), density=False, rwidth=0.8)
+        values, bins, bars = plt.hist(deltas, color='grey', bins=range(0, 525, 25), density=False, rwidth=0.8)
         plt.bar_label(bars)
         plt.tight_layout()
         plt.savefig('graph.png')
@@ -509,7 +521,7 @@ class Pitchers(commands.Cog):
         plt.xlim(1, 1000)
         plt.xticks(rotation=90)
         plt.xticks(pitch_ticks)
-        values, bins, bars = plt.hist(pitch, bins=range(1, 1025, 25), density=False, rwidth=0.8)
+        values, bins, bars = plt.hist(pitch, color="blue", bins=range(1, 1025, 25), density=False, rwidth=0.8)
         plt.bar_label(bars)
         plt.tight_layout()
         plt.savefig('graph.png')
@@ -662,8 +674,8 @@ class Pitchers(commands.Cog):
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(number_of_pitches), x_legend, size='small')
-        plt.plot(pitches, label='Pitch', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(swings, label='Swing', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
+        plt.plot(pitches, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(swings, label='Swing', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         for i, txt in enumerate(pitches):
             plt.annotate(f" {txt}", (i, pitches[i]))
         plt.legend()
@@ -757,9 +769,9 @@ class Pitchers(commands.Cog):
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(matches_count), x_legend, size='small')
-        plt.plot(after, label='After', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
-        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
+        plt.plot(after, label='After', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(match, label='Match', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
         plt.legend()
         plt.tight_layout()
         plt.savefig("graph.png", bbox_inches='tight')
