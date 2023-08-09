@@ -165,6 +165,122 @@ class Batters(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
+    @commands.command(brief="Shows last N swings and pitches for batter", aliases=['batterlast'])
+    @guild_only()
+    async def blast(self,
+                   ctx,
+                   batter_id: int = commands.parameter(default=None, description="Batter ID"),
+                   league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                   number_of_swings: int = commands.parameter(default=None, description="Number of Swings"),
+                   situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
+        """
+            Shows last N swings and pitches for batter
+
+            !blast <batter_id> <league> <number_of_swings> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
+
+            Possible situations:
+            all - All pitches
+            empty - Bases empty
+            onbase - At least 1 runner on base
+            risp - Runner on 2nd and/or 3rd
+            corners - Runner on 1st and 3rd
+            loaded - Bases load
+            dp - Runner on 1st with less than 2 outs
+            0out - 0 out(s)
+            1out - 1 out(s)
+            2out - 2 out(s)
+        """
+        if batter_id is None or league is None or number_of_swings is None:
+            await ctx.send(f"Missing argument(s)")
+            return
+
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/batting/{league}/{batter_id}")).json()
+
+        x_legend = []
+        pitches = []
+        swings = []
+        batter_name = ""
+        for p in data[:]:
+            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
+                data.remove(p)
+
+        for i, p in enumerate(data):
+            batter_name = p['hitterName']
+            outs = int(p['outs'])
+            obc = int(p['obc'])
+
+            match situation:
+                case "all":
+                    pass
+                case "empty":
+                    if obc >= 1:
+                        continue
+                case "onbase":
+                    if obc == 0:
+                        continue
+                case "risp":
+                    if obc <= 1:
+                        continue
+                case "corners":
+                    if obc != 5:
+                        continue
+                case "loaded":
+                    if obc <= 6:
+                        continue
+                case "dp":
+                    if outs == 2 or not (obc == 1 or obc == 4 or obc == 5 or obc == 7):
+                        continue
+                case "0out":
+                    if outs != 0:
+                        continue
+                case "1out":
+                    if outs != 1:
+                        continue
+                case "2out":
+                    if outs != 2:
+                        continue
+                case _:
+                    await ctx.send(f"Unrecognized situation")
+                    return
+
+            pitches.append(p['pitch'])
+            swings.append(p['swing'])
+            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nS: {p['swing']}\nP: {p['pitch']}")
+
+        x_legend = x_legend[-number_of_swings:]
+        pitches = pitches[-number_of_swings:]
+        swings = swings[-number_of_swings:]
+        number_of_swings = len(swings)
+
+        if number_of_swings == 0:
+            await ctx.send(f"No matches")
+            return
+
+        await ctx.send(f"You asked for last {number_of_swings} swings for {batter_name}. ({league}) ({situation})")
+
+        plt.figure(figsize=(max(number_of_swings / 1.5, 10.0), 5.0))
+        plt.title(f"Last {number_of_swings} swings for {batter_name}. ({league}) ({situation})")
+        plt.ylim(0, 1000)
+        plt.yticks(grid_ticks)
+        plt.grid(axis='y', alpha=0.7)
+        plt.xticks(range(number_of_swings), x_legend, size='small')
+        plt.plot(swings, label='Swing', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(pitches, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        for i, txt in enumerate(swings):
+            plt.annotate(f" {txt}", (i, swings[i]))
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig('graph.png')
+        plt.close()
+
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
+
     @commands.command(brief="Shows batter swing/pitch/diff sequences", aliases=['swings'])
     @guild_only()
     async def swing(self,

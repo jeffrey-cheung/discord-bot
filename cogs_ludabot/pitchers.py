@@ -669,7 +669,7 @@ class Pitchers(commands.Cog):
         await ctx.send(f"You asked for last {number_of_pitches} pitches for {pitcher_name}. ({league}) ({situation})")
 
         plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
-        plt.title(f"Last {number_of_pitches} pitches for {pitcher_name}. ({league})")
+        plt.title(f"Last {number_of_pitches} pitches for {pitcher_name}. ({league}) ({situation})")
         plt.ylim(0, 1000)
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
