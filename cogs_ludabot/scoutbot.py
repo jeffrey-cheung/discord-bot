@@ -45,7 +45,7 @@ class ScoutBot(commands.Cog):
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
-        for i, p in enumerate(data):
+        for p in data[:]:
             pitcher_name = p['pitcherName']
             if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
                 pitch.append(p['pitch'])
@@ -53,7 +53,7 @@ class ScoutBot(commands.Cog):
                 session.append(p['session'])
                 inning.append(p['inning'])
             else:
-                data.pop(i)
+                data.remove(p)
 
         before = []  # pitch before the match
         match = []  # the match
@@ -155,9 +155,9 @@ class ScoutBot(commands.Cog):
         pitch = []
         matches_count = 0
         pitcher = ""
-        for i, p in enumerate(data):
+        for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:  # just skip the non/auto resulted pitches
-                data.pop(i)
+                data.remove(p)
 
         for i, p in enumerate(data):
             pitcher = p['pitcherName']
@@ -418,9 +418,9 @@ class ScoutBot(commands.Cog):
         deltas = []
         matches_count = 0
         pitcher = ""
-        for i, p in enumerate(data):
+        for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
-                data.pop(i)
+                data.remove(p)
 
         for i, p in enumerate(data):
             pitcher = p['pitcherName']
@@ -571,9 +571,9 @@ class ScoutBot(commands.Cog):
         pitches = []
         swings = []
         pitcher_name = ""
-        for i, p in enumerate(data):
+        for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:  # just skip the non/auto resulted pitches
-                data.pop(i)
+                data.remove(p)
 
         for i, p in enumerate(data):
             pitcher_name = p['pitcherName']
