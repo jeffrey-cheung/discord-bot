@@ -318,126 +318,65 @@ class ScoutBot(commands.Cog):
 
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
-        totaldelta = 0
-        deltacount = 0
-        inningno = 0
+        x_legend = []
+        pitches = []
+        deltas = []
+        pitcher_name = ""
+        for p in data[:]:
+            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:  # just skip the non/auto resulted pitches
+                data.remove(p)
+            elif season is not None and season != int(p['season']):
+                data.remove(p)
 
-        res = len(data)
-        if res > 0:
-            # Grab player name for chart
-            pname = data[0]['pitcherName']
-            await ctx.send(f"You asked to see the pitch/delta details for {pname}. ({league})")
-            pitch = []  # actual pitch
-            swing = []  # actual swing
-            diff = []  # actual diff
-            pitchseq = []  # x-axis zero-indexed
-            pitchno = []  # x-axis 1-indexed (to display in human friendly on the graph)
-            delta = []  # pitch deltas
-            x_legend = []  # x-axis to display pitch and delta values
-            inning = []  # inning, for x-axis display
-            seasons = []  # season for x-axis display
-            sessions = []  # session for x-axis display
-            delta.append(0)
-            i = 0
+        for i, p in enumerate(data):
+            pitcher_name = p['pitcherName']
+            same_game = False
+            previous_pitch = None
+            if i > 0:
+                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                previous_pitch = int(data[i - 1]['pitch'])
 
-            # Read it all in
-            for p in data:
-                if p['pitch'] is not None:  # there was a pitch (not an auto)
-                    if season is not None:  # they specified a season
-                        if p['season'] == int(season):  # so limit to that season only
-                            pitch.append(p['pitch'])
-                            swing.append(p['swing'])
-                            diff.append(p['diff'])
-                            inning.append(p['inning'])
-                            seasons.append(p['season'])
-                            sessions.append(p['session'])
-                            i = i + 1
-                    else:  # they didn't specify a season, so get them all
-                        pitch.append(p['pitch'])
-                        swing.append(p['swing'])
-                        diff.append(p['diff'])
-                        inning.append(p['inning'])
-                        seasons.append(p['season'])
-                        sessions.append(p['session'])
-                        i = i + 1
+            thed = ""
+            if i == 0 or not same_game:
+                deltas.append(None)
+            else:
+                delta = abs(int(p['pitch']) - previous_pitch)
+                if delta > 500:
+                    delta = 1000 - delta
+                deltas.append(delta)
+                thed = delta
 
-            # they want to limit to a specific inning for the given season.
-            # This requires a different graph, with overlayed game sequences,
-            # like the old Excel pivot chart
-            if int(inningno) > 0:
-                limgame = 0
-                for t in pitch:
-                    if inning[limgame] == "B" + str(inningno) or inning[limgame] == "T" + str(inningno):
-                        pass  # need to flesh this out
-                    limgame = limgame + 1
+            pitches.append(p['pitch'])
+            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}\nD: {thed}")
 
-            # populate with the number of PAs/pitches
-            for s in range(i):
-                pitchseq.append(s)
-                pitchno.append(s + 1)  # for x-axis of the chart
+        number_of_pitches = len(pitches)
 
-            # calculate diffs
-            for d in range(len(pitch)):  # range -> just the pitches picked up from the opposing pitcher (does not include autos)
-                if d > 0:
-                    pitchd = abs(pitch[d] - pitch[d - 1])
-                    if pitchd > 500:
-                        pitchd = 1000 - pitchd
-                    delta.append(pitchd)
-                    totaldelta = totaldelta + pitchd
-                    deltacount = deltacount + 1
+        if number_of_pitches == 0:
+            await ctx.send(f"No matches")
+            return
 
-            if deltacount == 0:
-                nonefound = "No pitches for " + pname + " in " + league
-                nonefound = nonefound + "."
-                await ctx.send(nonefound)
-            avgdelta = round(totaldelta / deltacount)
-            title = "Pitch sequence for " + pname + " in " + league + ". " + str(i) + " pitches" + " (avg delta=" + str(
-                avgdelta) + ")"
-            if season is not None:
-                title = title + " (S" + str(season) + " only)"
-            for p in range(len(swing)):
-                if pitch[p] < 10:
-                    thep = "   " + str(pitch[p])
-                elif pitch[p] < 100:
-                    thep = " " + str(pitch[p])
-                else:
-                    thep = str(pitch[p])
+        await ctx.send(f"You asked to see the pitch/delta details for {pitcher_name}. ({league}) ({season})")
 
-                if delta[p] < 10:
-                    thed = "   " + str(delta[p])
-                elif delta[p] < 100:
-                    thed = " " + str(delta[p])
-                else:
-                    thed = str(delta[p])
-                x_legend.append("S" + str(seasons[p]) + "." + str(sessions[p]) + "   \n" + inning[
-                    p] + "     \nP: " + thep + "\nD: " + thed)
-            data1 = pitch
-            data2 = delta
-            x_axis = x_legend
+        plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
+        plt.title(f"Pitch/delta details for {pitcher_name}. ({league}) ({season})")
+        plt.ylim(0, 1000)
+        plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
+        plt.grid(axis='y', alpha=0.7)
+        plt.xticks(range(number_of_pitches), x_legend, size='small')
+        plt.plot(pitches, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(deltas, label='Delta', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig('graph.png')
+        plt.close()
 
-            plt.figure(figsize=(max(len(pitch) / 1.5, 10.0), 5.0))  # Creates a new figure
-            plt.title(title)
-            plt.ylim(0, 1000)
-            plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
-            plt.grid(axis='y', alpha=0.7)
-            plt.xticks(range(len(data2)), x_axis, size='small')
-            plt.plot(data1, label='Pitch', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-            plt.plot(data2, label='Delta', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-            plt.legend()
-            plt.tight_layout()
-            plt.savefig("graph.png", bbox_inches='tight')
-            plt.close()
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
 
-            with open('graph.png', 'rb') as f:
-                file = io.BytesIO(f.read())
+        image = discord.File(file, filename='graph.png')
 
-            image = discord.File(file, filename='graph.png')
-
-            await ctx.send(file=image)
-            os.remove('graph.png')
-
-        else:
-            await ctx.send(f"No pitching data for Pitcher ID {pitcher_id}. Please try again.")
+        await ctx.send(file=image)
+        os.remove('graph.png')
 
     @commands.command(aliases=['delta'])
     @guild_only()
