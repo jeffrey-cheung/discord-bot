@@ -21,10 +21,10 @@ class Batters(commands.Cog):
     @commands.command(aliases=['bheatmap', 'batterhm', 'batterheatmap'])
     @guild_only()
     async def bhm(self,
-                 ctx,
-                 batter_id: int = commands.parameter(default=None, description="Batter ID"),
-                 league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                 situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
+                  ctx,
+                  batter_id: int = commands.parameter(default=None, description="Batter ID"),
+                  league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                  situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
         """
             <batter_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
             Shows batter heatmap
