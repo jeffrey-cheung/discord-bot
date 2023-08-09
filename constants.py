@@ -71,7 +71,7 @@ MLR_ICONS = '{' \
              '"STL":"https://cdn.discordapp.com/emojis/346133114701086730.png",' \
              '"TBR":"https://cdn.discordapp.com/emojis/892600974437417041.png",' \
              '"TEX":"https://cdn.discordapp.com/emojis/346133289012297728.png",' \
-             '"TOR":"https://cdn.discordapp.com/emojis/475322395003977728.png",' \
+             '"TOR":"https://cdn.discordapp.com/emojis/475322395003977728.png"' \
              '}'
 
 
