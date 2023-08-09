@@ -712,8 +712,7 @@ class Pitchers(commands.Cog):
         # get pitcher name and read it all in
         for p in data[:]:
             pitcher_name = p['pitcherName']
-            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p[
-                'swing'] != 0:  # just skip the non/auto resulted pitches
+            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
                 pitch.append(p['pitch'])
                 season.append(p['season'])
                 session.append(p['session'])
@@ -740,10 +739,9 @@ class Pitchers(commands.Cog):
                         legend += "\nB: "
 
                     match.append(pitch[p])
-                    legend += f"\nM: {pitch[p]}"
-
                     after.append(pitch[p + 1])
-                    legend += f"\nA: {pitch[p + 1]}"
+
+                    legend += f"\nM: {pitch[p]}\nA: {pitch[p + 1]}"
 
                     matches_count += 1  # count matches
                     x_legend.append(legend)
@@ -757,17 +755,14 @@ class Pitchers(commands.Cog):
         await ctx.send(f"You asked for pitches for {pitcher_name} before & after pitching {range_title}. ({league})")
 
         plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
-        plt.title(
-            f"Pitches for {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
+        plt.title(f"Pitches for {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
         plt.ylim(0, 1000)
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(matches_count), x_legend, size='small')
         plt.plot(after, label='After', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7,
-                 alpha=0.4)
-        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7,
-                 alpha=0.4)
+        plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
+        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
         plt.legend()
         plt.tight_layout()
         plt.savefig("graph.png", bbox_inches='tight')
