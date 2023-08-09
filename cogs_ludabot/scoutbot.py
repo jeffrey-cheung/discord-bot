@@ -243,103 +243,6 @@ class ScoutBot(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(aliases=['reacts'])
-    @guild_only()
-    async def react(self,
-                    ctx,
-                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
-                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                    lower_pitch: int = commands.parameter(default=None, description="Lower Pitch"),
-                    upper_pitch: int = commands.parameter(default=None, description="optional:Upper Pitch")):
-        """
-            <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]
-            Shows reactions before & after pitching a certain range
-        """
-        if pitcher_id is None or league is None or lower_pitch is None:
-            await ctx.send(f"Missing argument(s)")
-            return
-
-        if upper_pitch is None:
-            upper_pitch = lower_pitch
-
-        x_legend = []
-        pitch = []  # all non-autoed pitches
-        season = []  # all non-autoed seasons
-        session = []  # all non-autoed sessions
-        inning = []  # all non-autoed innings
-        pitcher_name = ""
-        matches_count = 0
-
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
-
-        # get pitcher name and read it all in
-        for p in data[:]:
-            pitcher_name = p['pitcherName']
-            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
-                pitch.append(p['pitch'])
-                season.append(p['season'])
-                session.append(p['session'])
-                inning.append(p['inning'])
-            else:
-                data.remove(p)
-
-        before = []  # pitch before the match
-        match = []  # the match
-        after = []  # pitch after the match
-
-        # now let's go through and look for matches
-        for p in range(len(pitch) - 1):
-            if (upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (
-                    upper_pitch < lower_pitch and (
-                    upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p]))):  # it's a match for a range
-                if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
-                    legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
-                    if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
-                        before.append(pitch[p - 1])
-                        legend += f"\nB: {pitch[p - 1]}"
-                    else:
-                        before.append(None)
-                        legend += "\nB: "
-
-                    match.append(pitch[p])
-                    legend += f"\nM: {pitch[p]}"
-
-                    after.append(pitch[p + 1])
-                    legend += f"\nA: {pitch[p + 1]}"
-
-                    matches_count += 1  # count matches
-                    x_legend.append(legend)
-
-        if matches_count == 0:
-            await ctx.send(f"No matches")
-            return
-
-        # Quick check to report reactions
-        range_title = f"{lower_pitch} - {upper_pitch}"
-        await ctx.send(f"You asked for pitches for {pitcher_name} before & after pitching {range_title}. ({league})")
-
-        plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
-        plt.title(f"Pitches for {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
-        plt.ylim(0, 1000)
-        plt.yticks(grid_ticks)
-        plt.grid(axis='y', alpha=0.7)
-        plt.xticks(range(matches_count), x_legend, size='small')
-        plt.plot(after, label='After', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
-        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
-        plt.legend()
-        plt.tight_layout()
-        plt.savefig("graph.png", bbox_inches='tight')
-        plt.close()
-
-        with open('graph.png', 'rb') as f:
-            file = io.BytesIO(f.read())
-
-        image = discord.File(file, filename='graph.png')
-
-        await ctx.send(file=image)
-        os.remove('graph.png')
-
     @commands.command(aliases=['heatmap'])
     @guild_only()
     async def hm(self,
@@ -531,6 +434,21 @@ class ScoutBot(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
+    @commands.command(aliases=['hmmm', 'hmmmmm'])
+    @guild_only()
+    async def hmmmm(self, ctx):
+        """
+            Helps you think
+        """
+        think_quotes = [
+            "Whatever you're thinking - I'M IN!",
+            "...yes?",
+            "Hmmmm indeed.",
+            ":thinking:"
+        ]
+
+        await ctx.send(rdm.choice(think_quotes))
+
     @commands.command()
     @guild_only()
     async def last(self,
@@ -688,21 +606,6 @@ class ScoutBot(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(aliases=['hmmm', 'hmmmmm'])
-    @guild_only()
-    async def hmmmm(self, ctx):
-        """
-            Helps you think
-        """
-        think_quotes = [
-            "Whatever you're thinking - I'M IN!",
-            "...yes?",
-            "Hmmmm indeed.",
-            ":thinking:"
-        ]
-
-        await ctx.send(rdm.choice(think_quotes))
-
     @commands.command()
     @guild_only()
     async def rando(self, ctx):
@@ -710,6 +613,107 @@ class ScoutBot(commands.Cog):
             Gives you a random number
         """
         await ctx.send(rdm.randint(1, 1000))
+
+    @commands.command(aliases=['reacts'])
+    @guild_only()
+    async def react(self,
+                    ctx,
+                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                    lower_pitch: int = commands.parameter(default=None, description="Lower Pitch"),
+                    upper_pitch: int = commands.parameter(default=None, description="optional:Upper Pitch")):
+        """
+            <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]
+            Shows reactions before & after pitching a certain range
+        """
+        if pitcher_id is None or league is None or lower_pitch is None:
+            await ctx.send(f"Missing argument(s)")
+            return
+
+        if upper_pitch is None:
+            upper_pitch = lower_pitch
+
+        x_legend = []
+        pitch = []  # all non-autoed pitches
+        season = []  # all non-autoed seasons
+        session = []  # all non-autoed sessions
+        inning = []  # all non-autoed innings
+        pitcher_name = ""
+        matches_count = 0
+
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+
+        # get pitcher name and read it all in
+        for p in data[:]:
+            pitcher_name = p['pitcherName']
+            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p[
+                'swing'] != 0:  # just skip the non/auto resulted pitches
+                pitch.append(p['pitch'])
+                season.append(p['season'])
+                session.append(p['session'])
+                inning.append(p['inning'])
+            else:
+                data.remove(p)
+
+        before = []  # pitch before the match
+        match = []  # the match
+        after = []  # pitch after the match
+
+        # now let's go through and look for matches
+        for p in range(len(pitch) - 1):
+            if (upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (
+                    upper_pitch < lower_pitch and (
+                    upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p]))):  # it's a match for a range
+                if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
+                    legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
+                    if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
+                        before.append(pitch[p - 1])
+                        legend += f"\nB: {pitch[p - 1]}"
+                    else:
+                        before.append(None)
+                        legend += "\nB: "
+
+                    match.append(pitch[p])
+                    legend += f"\nM: {pitch[p]}"
+
+                    after.append(pitch[p + 1])
+                    legend += f"\nA: {pitch[p + 1]}"
+
+                    matches_count += 1  # count matches
+                    x_legend.append(legend)
+
+        if matches_count == 0:
+            await ctx.send(f"No matches")
+            return
+
+        # Quick check to report reactions
+        range_title = f"{lower_pitch} - {upper_pitch}"
+        await ctx.send(f"You asked for pitches for {pitcher_name} before & after pitching {range_title}. ({league})")
+
+        plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
+        plt.title(
+            f"Pitches for {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
+        plt.ylim(0, 1000)
+        plt.yticks(grid_ticks)
+        plt.grid(axis='y', alpha=0.7)
+        plt.xticks(range(matches_count), x_legend, size='small')
+        plt.plot(after, label='After', color='black', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(match, label='Match', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7,
+                 alpha=0.4)
+        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7,
+                 alpha=0.4)
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig("graph.png", bbox_inches='tight')
+        plt.close()
+
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
 
     @commands.command()
     @guild_only()
