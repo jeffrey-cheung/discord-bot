@@ -15,7 +15,7 @@ class ScoutBot(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command()
+    @commands.command(aliases=['reacts'])
     @guild_only()
     async def react(self,
                     ctx,
@@ -110,7 +110,7 @@ class ScoutBot(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command()
+    @commands.command(aliases=['heatmap'])
     @guild_only()
     async def hm(self,
                  ctx,
@@ -301,7 +301,7 @@ class ScoutBot(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command()
+    @commands.command(aliases=['charts'])
     @guild_only()
     async def chart(self,
                     ctx,
@@ -440,7 +440,7 @@ class ScoutBot(commands.Cog):
         else:
             await ctx.send(f"No pitching data for Pitcher ID {pitcher_id}. Please try again.")
 
-    @commands.command()
+    @commands.command(aliases=['delta'])
     @guild_only()
     async def deltas(self,
                      ctx,
@@ -746,7 +746,7 @@ class ScoutBot(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command()
+    @commands.command(aliases=['hmmm', 'hmmmmm'])
     @guild_only()
     async def hmmmm(self, ctx):
         """
