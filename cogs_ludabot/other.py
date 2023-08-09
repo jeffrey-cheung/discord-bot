@@ -63,7 +63,7 @@ class Other(commands.Cog):
             embed.add_field(name="Position", value=position, inline=True)
             embed.add_field(name="Batting Type", value=player['batType'], inline=True)
             embed.add_field(name="Pitching Type", value=player['pitchType'], inline=True)
-            embed.add_field(name="", value="", inline=True)
+            embed.add_field(name="Hand Bonus", value=player['pitchBonus'], inline=True)
             embed.add_field(name="Discord", value=player['discordName'], inline=True)
             embed.add_field(name="Reddit", value=player['redditName'], inline=True)
             embed.add_field(name="Player ID", value=player['playerID'], inline=True)
