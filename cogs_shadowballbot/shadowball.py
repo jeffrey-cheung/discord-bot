@@ -134,10 +134,10 @@ class ShadowBall(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases=['start'])
     @guild_only()
     async def startgame(self, ctx):
-        """Starts a new game of Shadow Ball"""
+        """Starts a new game of Beer Pong"""
         global game_started
         if game_started is True:
             await ctx.send(f"A game is currently in progress")
@@ -192,10 +192,10 @@ class ShadowBall(commands.Cog):
                 time.sleep(10)
         await reddit.close()
 
-    @commands.command()
+    @commands.command(aliases=['end'])
     @guild_only()
     async def endgame(self, ctx):
-        """Ends a game of Shadow Ball"""
+        """Ends a game of Beer Pong"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -239,7 +239,7 @@ class ShadowBall(commands.Cog):
         await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
         current_guesses.clear()
 
-    @commands.command()
+    @commands.command(aliases=['score', 'scores'])
     @guild_only()
     async def scoreboard(self, ctx):
         """Shows current scoreboard"""
