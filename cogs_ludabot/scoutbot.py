@@ -25,7 +25,7 @@ class ScoutBot(commands.Cog):
                     upper_pitch: int = commands.parameter(default=None, description="optional:Upper Pitch")):
         """
             <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]
-            Reactions before & after pitching a certain range
+            Shows reactions before & after pitching a certain range
         """
         if pitcher_id is None or league is None or lower_pitch is None:
             await ctx.send(f"Missing argument(s)")
@@ -119,7 +119,7 @@ class ScoutBot(commands.Cog):
                  situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
             <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
-            Pitcher heatmap
+            Shows pitcher heatmap
 
             Possible situations:
             all - All pitches
@@ -449,7 +449,7 @@ class ScoutBot(commands.Cog):
                      situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
         """
             <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]
-            Pitcher delta histogram
+            Shows pitcher delta histogram
 
             Possible situations:
             all - All pitches
@@ -596,38 +596,132 @@ class ScoutBot(commands.Cog):
                    ctx,
                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                   number_of_pitches: int = commands.parameter(default=30, description="Number of Pitches"),
+                   number_of_pitches: int = commands.parameter(default=None, description="Number of Pitches"),
                    situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
             <pitcher_id> <league> <number_of_pitches> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
+            Shows last N pitches and swings
+
+            Possible situations:
+            all - All pitches
+            empty - Bases empty
+            onbase - At least 1 runner on base
+            risp - Runner on 2nd and/or 3rd
+            corners - Runner on 1st and 3rd
+            loaded - Bases load
+            dp - Runner on 1st with less than 2 outs
+            hit - After allowing a hit (walks included)
+            out - After getting an out
+            hr - After allowing a Home Run
+            3b - After allowing a Triple
+            2b - After allowing a Double
+            1b - After allowing a Single
+            bb - After allowing a Walk
+            0out - 0 out(s)
+            1out - 1 out(s)
+            2out - 2 out(s)
+            firstgame - First pitch of game
+            firstinning - First pitch of inning
         """
-        if pitcher_id is None or league is None:
+        if pitcher_id is None or league is None or number_of_pitches is None:
             await ctx.send(f"Missing argument(s)")
             return
 
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         x_legend = []
-        list_of_pitches = []
-        list_of_swings = []
+        pitches = []
+        swings = []
         pitcher_name = ""
-        for p in data:
+        for i, p in enumerate(data):
+            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:  # just skip the non/auto resulted pitches
+                data.pop(i)
+
+        for i, p in enumerate(data):
             pitcher_name = p['pitcherName']
-            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:
-                list_of_pitches.append(p['pitch'])
-                list_of_swings.append(p['swing'])
-                x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}")
+            outs = int(p['outs'])
+            obc = int(p['obc'])
+            same_game = False
+            previous_result = None
+            if i > 0:
+                same_game = data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                previous_result = data[i - 1]['exactResult']
+
+            match situation:
+                case "all":
+                    pass
+                case "empty":
+                    if obc >= 1:
+                        continue
+                case "onbase":
+                    if obc == 0:
+                        continue
+                case "risp":
+                    if obc <= 1:
+                        continue
+                case "corners":
+                    if obc != 5:
+                        continue
+                case "loaded":
+                    if obc <= 6:
+                        continue
+                case "dp":
+                    if outs == 2 or not (obc == 1 or obc == 4 or obc == 5 or obc == 7):
+                        continue
+                case "hit":
+                    if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "out":
+                    if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "hr":
+                    if i == 0 or not same_game or previous_result != "HR":
+                        continue
+                case "3b":
+                    if i == 0 or not same_game or previous_result != "3B":
+                        continue
+                case "2b":
+                    if i == 0 or not same_game or previous_result != "2B":
+                        continue
+                case "1b":
+                    if i == 0 or not same_game or previous_result != "1B":
+                        continue
+                case "bb":
+                    if i == 0 or not same_game or previous_result != "BB":
+                        continue
+                case "0out":
+                    if outs != 0:
+                        continue
+                case "1out":
+                    if outs != 1:
+                        continue
+                case "2out":
+                    if outs != 2:
+                        continue
+                case "firstgame":
+                    if same_game:
+                        continue
+                case "firstinning":
+                    if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
+                        continue
+                case _:
+                    await ctx.send(f"Unrecognized situation")
+                    return
+
+            pitches.append(p['pitch'])
+            swings.append(p['swing'])
+            x_legend.append(f"S{p['season']}.{p['session']}\n{p['inning']}\nP: {p['pitch']}")
 
         x_legend = x_legend[-number_of_pitches:]
-        list_of_pitches = list_of_pitches[-number_of_pitches:]
-        list_of_swings = list_of_swings[-number_of_pitches:]
-        number_of_pitches = len(list_of_pitches)
+        pitches = pitches[-number_of_pitches:]
+        swings = swings[-number_of_pitches:]
+        number_of_pitches = len(pitches)
 
         if number_of_pitches == 0:
             await ctx.send(f"No matches")
             return
 
-        await ctx.send(f"You asked for last {number_of_pitches} pitches for {pitcher_name}. ({league})")
+        await ctx.send(f"You asked for last {number_of_pitches} pitches for {pitcher_name}. ({league}) ({situation})")
 
         plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
         plt.title(f"Last {number_of_pitches} pitches for {pitcher_name}. ({league})")
@@ -635,10 +729,10 @@ class ScoutBot(commands.Cog):
         plt.yticks([0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000])
         plt.grid(axis='y', alpha=0.7)
         plt.xticks(range(number_of_pitches), x_legend, size='small')
-        plt.plot(list_of_pitches, label='Pitch', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
-        plt.plot(list_of_swings, label='Swing', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
-        for i, txt in enumerate(list_of_pitches):
-            plt.annotate(f" {txt}", (i, list_of_pitches[i]))
+        plt.plot(pitches, label='Pitch', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(swings, label='Swing', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7, alpha=0.4)
+        for i, txt in enumerate(pitches):
+            plt.annotate(f" {txt}", (i, pitches[i]))
         plt.legend()
         plt.tight_layout()
         plt.savefig('graph.png')
