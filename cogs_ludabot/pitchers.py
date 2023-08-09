@@ -17,15 +17,16 @@ class Pitchers(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(aliases=['current', 'currentgame'])
+    @commands.command(brief="Shows current game pitcher pitch/swing/delta sequences", aliases=['current', 'currentgame'])
     @guild_only()
     async def cg(self,
                  ctx,
                  pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                  league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]")):
         """
-            <pitcher_id> <league>
             Shows current game pitcher pitch/swing/delta sequences
+
+            !cg <pitcher_id> <league>
         """
         if pitcher_id is None or league is None:
             await ctx.send(f"Missing argument(s)")
@@ -113,7 +114,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(aliases=['charts'])
+    @commands.command(brief="Shows pitcher pitch/swing/delta sequences", aliases=['charts'])
     @guild_only()
     async def chart(self,
                     ctx,
@@ -121,8 +122,9 @@ class Pitchers(commands.Cog):
                     league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                     season: int = commands.parameter(default=None, description="Season #")):
         """
-            <pitcher_id> <league> [optional:season]
             Shows pitcher pitch/swing/delta sequences
+
+            !chart <pitcher_id> <league> [optional:season]
         """
         if pitcher_id is None or league is None:
             await ctx.send(f"Missing argument(s)")
@@ -196,7 +198,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(aliases=['delta'])
+    @commands.command(brief="Shows pitcher delta histogram", aliases=['delta'])
     @guild_only()
     async def deltas(self,
                      ctx,
@@ -204,8 +206,9 @@ class Pitchers(commands.Cog):
                      league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                      situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
         """
-            <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]
             Shows pitcher delta histogram
+
+            !deltas <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]
 
             Possible situations:
             all - All pitches
@@ -343,7 +346,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(aliases=['heat', 'heatmap'])
+    @commands.command(brief="Shows pitcher heatmap", aliases=['heat', 'heatmap'])
     @guild_only()
     async def hm(self,
                  ctx,
@@ -351,8 +354,9 @@ class Pitchers(commands.Cog):
                  league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                  situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
-            <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
             Shows pitcher heatmap
+
+            !hm <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
 
             Possible situations:
             all - All pitches
@@ -530,7 +534,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command()
+    @commands.command(brief="Shows last N pitches and swings")
     @guild_only()
     async def last(self,
                    ctx,
@@ -539,8 +543,9 @@ class Pitchers(commands.Cog):
                    number_of_pitches: int = commands.parameter(default=None, description="Number of Pitches"),
                    situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
-            <pitcher_id> <league> <number_of_pitches> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
             Shows last N pitches and swings
+
+            !last <pitcher_id> <league> <number_of_pitches> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
 
             Possible situations:
             all - All pitches
@@ -686,7 +691,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(aliases=['reacts'])
+    @commands.command(brief="Shows reactions before & after pitching a certain range", aliases=['reacts'])
     @guild_only()
     async def react(self,
                     ctx,
@@ -695,8 +700,9 @@ class Pitchers(commands.Cog):
                     lower_pitch: int = commands.parameter(default=None, description="Lower Pitch"),
                     upper_pitch: int = commands.parameter(default=None, description="optional:Upper Pitch")):
         """
-            <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]
             Shows reactions before & after pitching a certain range
+
+            !react <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]
         """
         if pitcher_id is None or league is None or lower_pitch is None:
             await ctx.send(f"Missing argument(s)")

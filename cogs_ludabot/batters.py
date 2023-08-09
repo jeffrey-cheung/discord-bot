@@ -18,7 +18,7 @@ class Batters(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(aliases=['bheatmap', 'batterhm', 'batterheatmap'])
+    @commands.command(brief="Shows batter swing heatmap", aliases=['bheatmap', 'batterhm', 'batterheatmap'])
     @guild_only()
     async def bhm(self,
                   ctx,
@@ -26,8 +26,9 @@ class Batters(commands.Cog):
                   league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                   situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
         """
-            <batter_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
-            Shows batter heatmap
+            Shows batter swing heatmap
+
+            !bhm <batter_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
 
             Possible situations:
             all - All pitches
@@ -105,9 +106,9 @@ class Batters(commands.Cog):
             await ctx.send(f"No matches")
             return
 
-        await ctx.send(f"You asked for heatmap for {batter}. ({league}) ({situation})")
+        await ctx.send(f"You asked for swing heatmap for {batter}. ({league}) ({situation})")
 
-        title = f"Heatmap for {batter}. ({league}) ({situation}) ({matches_count} swings)"
+        title = f"Swing heatmap for {batter}. ({league}) ({situation}) ({matches_count} swings)"
         annotations = [dict(xref='paper', yref='paper', x=0.0, y=1.05,
                             xanchor='left', yanchor='bottom',
                             text=title,
@@ -164,7 +165,7 @@ class Batters(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(aliases=['swings'])
+    @commands.command(brief="Shows batter swing/pitch/diff sequences", aliases=['swings'])
     @guild_only()
     async def swing(self,
                     ctx,
@@ -172,8 +173,9 @@ class Batters(commands.Cog):
                     league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                     season: int = commands.parameter(default=None, description="Season #")):
         """
-            <batter_id> <league> [optional:season]
             Shows batter swing/pitch/diff sequences
+
+            !swing <batter_id> <league> [optional:season]
         """
         if batter_id is None or league is None:
             await ctx.send(f"Missing argument(s)")

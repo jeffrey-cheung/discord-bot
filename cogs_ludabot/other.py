@@ -14,11 +14,13 @@ class Other(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(aliases=['hmmm', 'hmmmmm'])
+    @commands.command(brief="Helps you think", aliases=['hmmm', 'hmmmmm'])
     @guild_only()
     async def hmmmm(self, ctx):
         """
             Helps you think
+
+            !hmmmm
         """
         think_quotes = [
             "Whatever you're thinking - I'M IN!",
@@ -29,11 +31,13 @@ class Other(commands.Cog):
 
         await ctx.send(rdm.choice(think_quotes))
 
-    @commands.command()
+    @commands.command(brief="Shows player information")
     @guild_only()
-    async def player(self, ctx, *, name):
+    async def player(self, ctx, *, name: str = commands.parameter(default=None, description="Player name")):
         """
-            <name>
+            Shows player information
+
+            !player <name>
         """
         playerList = (requests.get("https://www.swing420.com/api/players")).json()
         matchList = []
@@ -74,11 +78,13 @@ class Other(commands.Cog):
         else:
             await ctx.send(tooManyResults)
 
-    @commands.command(aliases=['random'])
+    @commands.command(brief="Gives you a random number", aliases=['random'])
     @guild_only()
     async def rando(self, ctx):
         """
             Gives you a random number
+
+            !rando
         """
         await ctx.send(rdm.randint(1, 1000))
 
