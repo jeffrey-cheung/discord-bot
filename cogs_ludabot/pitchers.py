@@ -241,7 +241,6 @@ class Pitchers(commands.Cog):
                 data.remove(p)
 
         deltas = []
-        swing_deltas = []
         matches_count = 0
         pitcher = ""
 
@@ -252,12 +251,10 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_result = None
             previous_pitch = None
-            previous_swing = None
             if i > 0:
                 same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
                 previous_result = data[i - 1]['exactResult']
                 previous_pitch = int(data[i - 1]['pitch'])
-                previous_swing = int(data[i - 1]['swing'])
 
             match situation:
                 case "all":
@@ -322,11 +319,6 @@ class Pitchers(commands.Cog):
             if delta > 500:
                 delta = 1000 - delta
             deltas.append(delta)
-
-            swing_delta = abs(int(p['pitch']) - previous_swing)
-            if swing_delta > 500:
-                swing_delta = 1000 - swing_delta
-            swing_deltas.append(swing_delta)
             matches_count += 1
 
         if matches_count == 0:
