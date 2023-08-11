@@ -31,6 +31,17 @@ class Other(commands.Cog):
 
         await ctx.send(rdm.choice(think_quotes))
 
+    @commands.command(brief="Returns pong if bot is up")
+    @guild_only()
+    async def ping(self, ctx):
+        """
+            Returns pong if bot is up
+
+            !ping
+        """
+
+        await ctx.send("pong")
+
     @commands.command(brief="Shows player information")
     @guild_only()
     async def player(self, ctx, *, name: str = commands.parameter(default=None, description="Player name")):

@@ -134,6 +134,13 @@ class ShadowBall(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
+    @guild_only()
+    async def ping(self, ctx):
+        """Returns pong if bot is up"""
+
+        await ctx.send("pong")
+
     @commands.command(aliases=['start'])
     @guild_only()
     async def startgame(self, ctx):
