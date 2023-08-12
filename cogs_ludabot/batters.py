@@ -18,17 +18,17 @@ class Batters(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief="Shows batter swing heatmap", aliases=['bheatmap', 'batterhm', 'batterheatmap'])
+    @commands.command(brief="Shows batter swing heatmap", aliases=['bhm', 'bheatmap', 'batterhm'])
     @guild_only()
-    async def bhm(self,
-                  ctx,
-                  batter_id: int = commands.parameter(default=None, description="Batter ID"),
-                  league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                  situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
+    async def batterheatmap(self,
+                            ctx,
+                            batter_id: int = commands.parameter(default=None, description="Batter ID"),
+                            league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                            situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
         """
             Shows batter swing heatmap
 
-            !bhm <batter_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
+            !batterheatmap <batter_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
 
             Possible situations:
             all - All pitches
@@ -165,18 +165,18 @@ class Batters(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows last N swings and pitches for batter", aliases=['batterlast'])
+    @commands.command(brief="Shows last N swings and pitches for batter", aliases=['blast'])
     @guild_only()
-    async def blast(self,
-                   ctx,
-                   batter_id: int = commands.parameter(default=None, description="Batter ID"),
-                   league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                   number_of_swings: int = commands.parameter(default=None, description="Number of Swings"),
-                   situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
+    async def batterlast(self,
+                         ctx,
+                         batter_id: int = commands.parameter(default=None, description="Batter ID"),
+                         league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                         number_of_swings: int = commands.parameter(default=None, description="Number of Swings"),
+                         situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
         """
             Shows last N swings and pitches for batter
 
-            !blast <batter_id> <league> <number_of_swings> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
+            !batterlast <batter_id> <league> <number_of_swings> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
 
             Possible situations:
             all - All pitches

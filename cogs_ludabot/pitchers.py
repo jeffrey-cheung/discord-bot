@@ -13,20 +13,21 @@ pitch_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 
 delta_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500]
 grid_ticks = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
+
 class Pitchers(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief="Shows current game pitcher pitch/swing/delta sequences", aliases=['current', 'currentgame'])
+    @commands.command(brief="Shows current game pitcher pitch/swing/delta sequences", aliases=['cg', 'current'])
     @guild_only()
-    async def cg(self,
-                 ctx,
-                 pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
-                 league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]")):
+    async def currentgame(self,
+                          ctx,
+                          pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                          league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]")):
         """
             Shows current game pitcher pitch/swing/delta sequences
 
-            !cg <pitcher_id> <league>
+            !currentgame <pitcher_id> <league>
         """
         if pitcher_id is None or league is None:
             await ctx.send(f"Missing argument(s)")
@@ -201,10 +202,10 @@ class Pitchers(commands.Cog):
     @commands.command(brief="Shows pitcher pitch delta histogram", aliases=['deltas'])
     @guild_only()
     async def delta(self,
-                     ctx,
-                     pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
-                     league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                     situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
+                    ctx,
+                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                    situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
         """
             Shows pitcher pitch delta histogram
 
@@ -495,17 +496,17 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows pitcher heatmap", aliases=['heat', 'heatmap'])
+    @commands.command(brief="Shows pitcher heatmap", aliases=['hm', 'heat'])
     @guild_only()
-    async def hm(self,
-                 ctx,
-                 pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
-                 league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                 situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
+    async def heatmap(self,
+                      ctx,
+                      pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                      league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                      situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
             Shows pitcher heatmap
 
-            !hm <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
+            !heatmap <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]
 
             Possible situations:
             all - All pitches
