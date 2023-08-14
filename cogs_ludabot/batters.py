@@ -116,7 +116,12 @@ class Batters(commands.Cog):
                                       size=18,
                                       color='rgb(37,37,37)'),
                             showarrow=False)]
-        fig = go.Figure()
+        layout = go.Layout(
+            autosize=False,
+            width=1000,
+            height=500,
+        )
+        fig = go.Figure(layout=layout)
         fig.add_trace(go.Histogram2d(
             colorscale=[[0, 'rgb(253,34,5)'], [0.25, 'rgb(253,192,5)'], [0.5, 'rgb(233,253,5)'],
                         [0.75, 'rgb(113,196,5)'], [1, 'rgb(5,196,19)']],
@@ -135,7 +140,7 @@ class Batters(commands.Cog):
         fig.update_xaxes(dtick=25)
         fig.update_yaxes(dtick=100)
         fig.update_traces(colorbar=dict(title="Num swings"))
-        fig.update_layout(annotations=annotations)
+        fig.update_layout(annotations=annotations, margin_l=200, margin_r=200)
         fig.write_image("graph.png")
 
         with open('graph.png', 'rb') as f:

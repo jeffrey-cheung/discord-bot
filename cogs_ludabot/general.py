@@ -10,9 +10,19 @@ from discord.ext.commands import guild_only
 colors = json.loads(constants.MLR_COLORS)
 
 
-class Other(commands.Cog):
+class General(commands.Cog):
     def __init__(self, client):
         self.client = client
+
+    @commands.command(brief="Gives you link to the scout bot documentation", aliases=['doc', 'document'])
+    @guild_only()
+    async def documentation(self, ctx):
+        """
+            Gives you link to the scout bot documentation
+
+            !documentation
+        """
+        await ctx.send("https://docs.google.com/document/d/1dOT0iBuqpyH0IlS3OBsWLC5J0ZcagCK47WgeBSqpweg/edit?usp=sharing")
 
     @commands.command(brief="Helps you think", aliases=['hmmm', 'hmmmmm'])
     @guild_only()
@@ -100,4 +110,4 @@ class Other(commands.Cog):
         await ctx.send(rdm.randint(1, 1000))
 
 async def setup(client):
-    await client.add_cog(Other(client))
+    await client.add_cog(General(client))
