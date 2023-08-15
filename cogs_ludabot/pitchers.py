@@ -18,7 +18,7 @@ class Pitchers(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief="Shows current game pitcher pitch/swing/delta sequences", aliases=['cg', 'current'])
+    @commands.command(brief="!cg <pitcher_id> <league>", aliases=['cg', 'current'])
     @guild_only()
     async def currentgame(self,
                           ctx,
@@ -115,7 +115,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows pitcher pitch/swing/delta sequences", aliases=['charts'])
+    @commands.command(brief="!chart <pitcher_id> <league> [optional:season]", aliases=['charts'])
     @guild_only()
     async def chart(self,
                     ctx,
@@ -199,7 +199,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows pitcher pitch delta histogram", aliases=['deltas'])
+    @commands.command(brief="!delta <pitcher_id> <league> [optional:situation:all]", aliases=['deltas'])
     @guild_only()
     async def delta(self,
                     ctx,
@@ -209,7 +209,7 @@ class Pitchers(commands.Cog):
         """
             Shows pitcher pitch delta histogram
 
-            !deltas <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]
+            !delta <pitcher_id> <league> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]
 
             Possible situations:
             all - All pitches
@@ -347,7 +347,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows pitcher swing delta histogram", aliases=['deltaswings'])
+    @commands.command(brief="!deltaswing <pitcher_id> <league> [optional:situation]", aliases=['deltaswings'])
     @guild_only()
     async def deltaswing(self,
                          ctx,
@@ -496,7 +496,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows pitcher heatmap", aliases=['hm', 'heat'])
+    @commands.command(brief="!hm <pitcher_id> <league> [optional:situation]", aliases=['hm', 'heat'])
     @guild_only()
     async def heatmap(self,
                       ctx,
@@ -689,7 +689,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows last N pitches and swings")
+    @commands.command(brief="!last <pitcher_id> <league> <number_of_pitches> [optional:situation]")
     @guild_only()
     async def last(self,
                    ctx,
@@ -846,7 +846,7 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows reactions before & after pitching a certain range", aliases=['reacts'])
+    @commands.command(brief="!react <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]", aliases=['reacts'])
     @guild_only()
     async def react(self,
                     ctx,

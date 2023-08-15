@@ -18,7 +18,7 @@ class Batters(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief="Shows batter swing heatmap", aliases=['bhm', 'bheatmap', 'batterhm'])
+    @commands.command(brief="!bhm <batter_id> <league> [optional:situation]", aliases=['bhm', 'bheatmap', 'batterhm'])
     @guild_only()
     async def batterheatmap(self,
                             ctx,
@@ -170,7 +170,7 @@ class Batters(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows last N swings and pitches for batter", aliases=['blast'])
+    @commands.command(brief="!blast <batter_id> <league> <number_of_swings> [optional:situation]", aliases=['blast'])
     @guild_only()
     async def batterlast(self,
                          ctx,
@@ -286,7 +286,7 @@ class Batters(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="Shows batter swing/pitch/diff sequences", aliases=['swings'])
+    @commands.command(brief="!swing <batter_id> <league> [optional:season]", aliases=['swings'])
     @guild_only()
     async def swing(self,
                     ctx,

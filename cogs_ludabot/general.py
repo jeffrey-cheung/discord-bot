@@ -14,17 +14,17 @@ class General(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief="Gives you link to the scout bot documentation", aliases=['doc', 'document'])
+    @commands.command(brief="!doc Gives you link to the scout bot documentation", aliases=['doc', 'document'])
     @guild_only()
     async def documentation(self, ctx):
         """
             Gives you link to the scout bot documentation
 
-            !documentation
+            !doc
         """
         await ctx.send("https://docs.google.com/document/d/1dOT0iBuqpyH0IlS3OBsWLC5J0ZcagCK47WgeBSqpweg/edit?usp=sharing")
 
-    @commands.command(brief="Helps you think", aliases=['hmmm', 'hmmmmm'])
+    @commands.command(brief="!hmmmm Helps you think", aliases=['hmmm', 'hmmmmm'])
     @guild_only()
     async def hmmmm(self, ctx):
         """
@@ -41,7 +41,7 @@ class General(commands.Cog):
 
         await ctx.send(rdm.choice(think_quotes))
 
-    @commands.command(brief="Returns pong if bot is up")
+    @commands.command(brief="!ping Returns pong if bot is up")
     @guild_only()
     async def ping(self, ctx):
         """
@@ -52,7 +52,7 @@ class General(commands.Cog):
 
         await ctx.send("pong")
 
-    @commands.command(brief="Shows player information")
+    @commands.command(brief="!player <name>")
     @guild_only()
     async def player(self, ctx, *, name: str = commands.parameter(default=None, description="Player name")):
         """
@@ -99,7 +99,7 @@ class General(commands.Cog):
         else:
             await ctx.send(tooManyResults)
 
-    @commands.command(brief="Gives you a random number", aliases=['random'])
+    @commands.command(brief="!rando Gives you a random number", aliases=['random'])
     @guild_only()
     async def rando(self, ctx):
         """
