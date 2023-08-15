@@ -130,21 +130,21 @@ def result_pitch(pitch):
     save_dict()
 
 
-class ShadowBall(commands.Cog):
+class BeerPong(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     @guild_only()
     async def ping(self, ctx):
-        """Returns pong if bot is up"""
+        """Sb.ping Returns pong if bot is up"""
 
         await ctx.send("pong")
 
     @commands.command(aliases=['start'])
     @guild_only()
     async def startgame(self, ctx):
-        """Starts a new game of Beer Pong"""
+        """Sb.startgame Starts a new game of Beer Pong"""
         global game_started
         if game_started is True:
             await ctx.send(f"A game is currently in progress")
@@ -202,7 +202,7 @@ class ShadowBall(commands.Cog):
     @commands.command(aliases=['end'])
     @guild_only()
     async def endgame(self, ctx):
-        """Ends a game of Beer Pong"""
+        """Sb.endgame Ends a game of Beer Pong"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -214,7 +214,7 @@ class ShadowBall(commands.Cog):
     @commands.command()
     @guild_only()
     async def guess(self, ctx, guess):
-        """[guess] Submit/Update a guess"""
+        """Sb.guess <guess> Submit/Update a guess"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -233,7 +233,7 @@ class ShadowBall(commands.Cog):
     @commands.command()
     @guild_only()
     async def pitch(self, ctx, pitch):
-        """[pitch] Resolve a pitch manually"""
+        """Sb.pitch <pitch> Resolve a pitch manually"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -249,7 +249,7 @@ class ShadowBall(commands.Cog):
     @commands.command(aliases=['score', 'scores'])
     @guild_only()
     async def scoreboard(self, ctx):
-        """Shows current scoreboard"""
+        """Sb.scoreboard Shows current scoreboard"""
         if game_started is False:
             await ctx.send(f"There is no game in progress")
             return
@@ -275,4 +275,4 @@ class ShadowBall(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(ShadowBall(bot))
+    await bot.add_cog(BeerPong(bot))
