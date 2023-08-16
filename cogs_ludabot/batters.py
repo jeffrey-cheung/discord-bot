@@ -98,8 +98,8 @@ class Batters(commands.Cog):
 
             the_swing = int(p['swing'])
             swing.append(the_swing)
-            y.append(int(the_swing / 100) * 100)  # 100s on the y axis of heatmap
-            x.append(int(the_swing % 100))  # 10s/1s on the x axis of heatmap
+            y.append(int((the_swing - 1) / 100) * 100)  # 100s on the y axis of heatmap
+            x.append(int((the_swing - 1) % 100))  # 10s/1s on the x axis of heatmap
             matches_count += 1
 
         if matches_count == 0:
@@ -131,7 +131,7 @@ class Batters(commands.Cog):
             ygap=2,
             xgap=2,
             autobinx=False,
-            xbins=dict(start=1, end=100, size=25),
+            xbins=dict(start=0, end=100, size=25),
             autobiny=False,
             ybins=dict(start=0, end=1000, size=100),
             x=x,
