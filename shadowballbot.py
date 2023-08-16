@@ -19,6 +19,8 @@ bot = commands.Bot(command_prefix=("sb.", "SB.", "Sb.", "sB."), case_insensitive
 @bot.event
 async def on_ready():
     print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} Logged in as {bot.user}")
+    for guild in bot.guilds:
+        print(guild)
 
 
 async def load_extensions():
