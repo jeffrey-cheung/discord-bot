@@ -67,21 +67,22 @@ class Pitchers(commands.Cog):
                 swings = []
                 deltas = []
                 x_legend = []
+                current_season = p['season']
                 current_game = p['gameID']
             if int(p['season']) == int(current_season) and int(p['gameID']) == int(current_game):
                 pitches.append(p['pitch'])
                 swings.append(p['swing'])
 
-            delta = ""
-            if i == 0 or not same_game:
-                deltas.append(None)
-            else:
-                delta = abs(int(p['pitch']) - previous_pitch)
-                if delta > 500:
-                    delta = 1000 - delta
-                deltas.append(delta)
+                delta = ""
+                if i == 0 or not same_game:
+                    deltas.append(None)
+                else:
+                    delta = abs(int(p['pitch']) - previous_pitch)
+                    if delta > 500:
+                        delta = 1000 - delta
+                    deltas.append(delta)
 
-            x_legend.append(f"S{p['season']}.{p['session']}\nP: {p['pitch']}\nS: {p['swing']}\nD: {delta}")
+                x_legend.append(f"S{p['season']}.{p['session']}\nP: {p['pitch']}\nS: {p['swing']}\nD: {delta}")
 
         number_of_pitches = len(pitches)
 
