@@ -56,13 +56,20 @@ def parse_comments():
 
         embed.set_thumbnail(url=str(comment.author.icon_img))
 
-        embed.add_field(name="", value=comment.body, inline=False)
+        parts = [comment.body[i:i + 1000] for i in range(0, len(comment.body), 1000)]
+
+        if len(parts) > 0:
+            embed.add_field(name="", value=parts[0], inline=False)
+
+        if len(parts) > 1:
+            embed.add_field(name="", value=parts[1], inline=False)
+
         embed.add_field(name="", value=f"Comment posted to r/fakebaseball at <t:{int(comment.created)}:T>", inline=False)
 
         if mlr_search != "" and mlr_search.lower() in comment.link_title.lower():
             mlr_webhook.send(embed=embed)
             mlr_webhook.close()
-        elif mlr_search_test != "" and mlr_search_test.lower() in comment.link_title.lower():
+        if mlr_search_test != "" and mlr_search_test.lower() in comment.link_title.lower():
             mlr_webhook_test.send(embed=embed)
             mlr_webhook_test.close()
         elif milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
