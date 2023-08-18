@@ -865,6 +865,8 @@ class Pitchers(commands.Cog):
             !react <pitcher_id> <league> <option> [optional:upper_pitch]
 
             Possible situations:
+            hit - After allowing a hit (walks included)
+            out - After getting an out
             hr - After allowing a Home Run
             3b - After allowing a Triple
             2b - After allowing a Double
@@ -932,7 +934,7 @@ class Pitchers(commands.Cog):
                     matches_count += 1  # count matches
                     x_legend.append(legend)
                 elif situation is not None:
-                    if situation.upper() == result[p]:
+                    if (situation.upper() == result[p]) or (situation == "hit" and result[p] in ("HR", "3B", "2B", "1B", "BB")) or (situation == "out" and result[p] not in ("HR", "3B", "2B", "1B", "BB")):
                         legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                         if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
                             before.append(pitch[p - 1])
