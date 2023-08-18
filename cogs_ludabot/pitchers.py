@@ -116,17 +116,18 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="!chart <pitcher_id> <league> [optional:season]", aliases=['charts'])
+    @commands.command(brief="!chart <pitcher_id> <league> [optional:season] [optional:session]", aliases=['charts'])
     @guild_only()
     async def chart(self,
                     ctx,
                     pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                     league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                    season: int = commands.parameter(default=None, description="Season #")):
+                    season: int = commands.parameter(default=None, description="Season #"),
+                    session: int = commands.parameter(default=None, description="Session #")):
         """
             Shows pitcher pitch/swing/delta sequences
 
-            !chart <pitcher_id> <league> [optional:season]
+            !chart <pitcher_id> <league> [optional:season] [optional:session]
         """
         if pitcher_id is None or league is None:
             await ctx.send(f"Missing argument(s)")
@@ -135,7 +136,7 @@ class Pitchers(commands.Cog):
         data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
-            if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (season is not None and season != int(p['season'])):
+            if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (season is not None and season != int(p['season']) or (session is not None and session != int(p['session']))):
                 data.remove(p)
 
         x_legend = []
@@ -174,10 +175,13 @@ class Pitchers(commands.Cog):
         if season is None:
             season = "all"
 
-        await ctx.send(f"You asked to see the pitch/swing/delta details for {pitcher_name}. ({league}) ({season})")
+        if session is None:
+            session = "all"
+
+        await ctx.send(f"You asked to see the pitch/swing/delta details for {pitcher_name}. ({league}) ({season}) ({session})")
 
         plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
-        plt.title(f"Pitch/swing/delta details for {pitcher_name}. ({league}) ({season})")
+        plt.title(f"Pitch/swing/delta details for {pitcher_name}. ({league}) ({season}) ({session})")
         plt.ylim(0, 1000)
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
