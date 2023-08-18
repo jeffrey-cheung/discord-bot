@@ -851,31 +851,46 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
-    @commands.command(brief="!react <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]", aliases=['reacts'])
+    @commands.command(brief="!react <pitcher_id> <league> <option> [optional:upper_pitch]", aliases=['reacts'])
     @guild_only()
     async def react(self,
                     ctx,
                     pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                     league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                    lower_pitch: int = commands.parameter(default=None, description="Lower Pitch"),
+                    option: str = commands.parameter(default=None, description="Lower Pitch or Situation"),
                     upper_pitch: int = commands.parameter(default=None, description="optional:Upper Pitch")):
         """
             Shows reactions before & after pitching a certain range
 
-            !react <pitcher_id> <league> <lower_pitch> [optional:upper_pitch]
+            !react <pitcher_id> <league> <option> [optional:upper_pitch]
+
+            Possible situations:
+            hr - After allowing a Home Run
+            3b - After allowing a Triple
+            2b - After allowing a Double
+            1b - After allowing a Single
+            bb - After allowing a Walk
         """
-        if pitcher_id is None or league is None or lower_pitch is None:
+        if pitcher_id is None or league is None or option is None:
             await ctx.send(f"Missing argument(s)")
             return
 
-        if upper_pitch is None:
-            upper_pitch = lower_pitch
+        lower_pitch = 0
+        situation = None
+
+        if option.isdigit():
+            lower_pitch = int(option)
+            if upper_pitch is None:
+                upper_pitch = lower_pitch
+        else:
+            situation = option
 
         x_legend = []
         pitch = []  # all non-autoed pitches
         season = []  # all non-autoed seasons
         session = []  # all non-autoed sessions
         inning = []  # all non-autoed innings
+        result = []
         pitcher_name = ""
         matches_count = 0
 
@@ -889,6 +904,7 @@ class Pitchers(commands.Cog):
                 season.append(p['season'])
                 session.append(p['session'])
                 inning.append(p['inning'])
+                result.append(p['exactResult'])
             else:
                 data.remove(p)
 
@@ -898,8 +914,8 @@ class Pitchers(commands.Cog):
 
         # now let's go through and look for matches
         for p in range(len(pitch) - 1):
-            if (upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (upper_pitch < lower_pitch and (upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p]))):  # it's a match for a range
-                if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
+            if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
+                if situation is None and ((upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (upper_pitch < lower_pitch and (upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p])))):  # it's a match for a range
                     legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                     if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
                         before.append(pitch[p - 1])
@@ -915,6 +931,23 @@ class Pitchers(commands.Cog):
 
                     matches_count += 1  # count matches
                     x_legend.append(legend)
+                elif situation is not None:
+                    if situation.upper() == result[p]:
+                        legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
+                        if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
+                            before.append(pitch[p - 1])
+                            legend += f"\nB: {pitch[p - 1]}"
+                        else:
+                            before.append(None)
+                            legend += "\nB: "
+
+                        match.append(pitch[p])
+                        after.append(pitch[p + 1])
+
+                        legend += f"\nM: {pitch[p]}\nA: {pitch[p + 1]}"
+
+                        matches_count += 1  # count matches
+                        x_legend.append(legend)
 
         if matches_count == 0:
             await ctx.send(f"No matches")
@@ -922,6 +955,8 @@ class Pitchers(commands.Cog):
 
         # Quick check to report reactions
         range_title = f"{lower_pitch} - {upper_pitch}"
+        if situation is not None:
+            range_title = f"({situation})"
         await ctx.send(f"You asked for pitches for {pitcher_name} before & after pitching {range_title}. ({league})")
 
         plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
