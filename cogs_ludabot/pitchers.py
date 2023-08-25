@@ -985,6 +985,146 @@ class Pitchers(commands.Cog):
         await ctx.send(file=image)
         os.remove('graph.png')
 
+    @commands.command(brief="!reactswing <pitcher_id> <league> <option> [optional:upper_swing]")
+    @guild_only()
+    async def reactswing(self,
+                    ctx,
+                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                    option: str = commands.parameter(default=None, description="Lower Pitch or Situation"),
+                    upper_swing: int = commands.parameter(default=None, description="optional:Upper Swing")):
+        """
+            Shows reactions before & after batter swings a certain range
+
+            !reactswing <pitcher_id> <league> <option> [optional:upper_swing]
+
+            Possible situations:
+            hit - After allowing a hit (walks included)
+            out - After getting an out
+            hr - After allowing a Home Run
+            3b - After allowing a Triple
+            2b - After allowing a Double
+            1b - After allowing a Single
+            bb - After allowing a Walk
+        """
+        if pitcher_id is None or league is None or option is None:
+            await ctx.send(f"Missing argument(s)")
+            return
+
+        lower_swing = 0
+        situation = None
+
+        if option.isdigit():
+            lower_swing = int(option)
+            if upper_swing is None:
+                upper_swing = lower_swing
+        else:
+            situation = option
+
+        x_legend = []
+        swing = []
+        pitch = []  # all non-autoed pitches
+        season = []  # all non-autoed seasons
+        session = []  # all non-autoed sessions
+        inning = []  # all non-autoed innings
+        result = []
+        pitcher_name = ""
+        matches_count = 0
+
+        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+
+        # get pitcher name and read it all in
+        for p in data[:]:
+            pitcher_name = p['pitcherName']
+            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
+                swing.append(p['swing'])
+                pitch.append(p['pitch'])
+                season.append(p['season'])
+                session.append(p['session'])
+                inning.append(p['inning'])
+                result.append(p['exactResult'])
+            else:
+                data.remove(p)
+
+        before = []  # pitch before the match
+        match = []  # the match
+        after = []  # pitch after the match
+
+        # now let's go through and look for matches
+        for p in range(len(pitch) - 1):
+            if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
+                if situation is None and (
+                        (upper_swing >= lower_swing and upper_swing >= int(swing[p]) >= lower_swing) or (upper_swing < lower_swing and (upper_swing >= int(swing[p]) or lower_swing <= int(swing[p])))):  # it's a match for a range
+                    legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
+                    if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
+                        before.append(swing[p - 1])
+                        legend += f"\nB: {swing[p - 1]}"
+                    else:
+                        before.append(None)
+                        legend += "\nB: "
+
+                    match.append(swing[p])
+                    after.append(pitch[p + 1])
+
+                    legend += f"\nM: {swing[p]}\nA: {pitch[p + 1]}"
+
+                    matches_count += 1  # count matches
+                    x_legend.append(legend)
+                elif situation is not None:
+                    if (situation.upper() == result[p]) or (
+                            situation == "hit" and result[p] in ("HR", "3B", "2B", "1B", "BB")) or (
+                            situation == "out" and result[p] not in ("HR", "3B", "2B", "1B", "BB")):
+                        legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
+                        if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
+                            before.append(swing[p - 1])
+                            legend += f"\nB: {swing[p - 1]}"
+                        else:
+                            before.append(None)
+                            legend += "\nB: "
+
+                        match.append(swing[p])
+                        after.append(pitch[p + 1])
+
+                        legend += f"\nM: {swing[p]}\nA: {pitch[p + 1]}"
+
+                        matches_count += 1  # count matches
+                        x_legend.append(legend)
+
+        if matches_count == 0:
+            await ctx.send(f"No matches")
+            return
+
+        # Quick check to report reactions
+        range_title = f"{lower_swing} - {upper_swing}"
+        if situation is not None:
+            range_title = f"({situation})"
+        await ctx.send(f"You asked for pitches for {pitcher_name} before & after batter swings {range_title}. ({league})")
+
+        plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
+        plt.title(
+            f"Pitches for {pitcher_name} before & after batter swings {range_title}. ({league}) ({matches_count} matches)")
+        plt.ylim(0, 1000)
+        plt.yticks(grid_ticks)
+        plt.grid(axis='y', alpha=0.7)
+        plt.xticks(range(matches_count), x_legend, size='small')
+        plt.plot(before, label='Before', color='red', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(match, label='Match', color='grey', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        plt.plot(after, label='After', color='blue', marker='o', linestyle='dashed', linewidth=1, markersize=7)
+        for i, txt in enumerate(after):
+            plt.annotate(f" {txt}", (i, after[i]))
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig("graph.png", bbox_inches='tight')
+        plt.close()
+
+        with open('graph.png', 'rb') as f:
+            file = io.BytesIO(f.read())
+
+        image = discord.File(file, filename='graph.png')
+
+        await ctx.send(file=image)
+        os.remove('graph.png')
+
 
 async def setup(client):
     await client.add_cog(Pitchers(client))
