@@ -48,6 +48,7 @@ def parse_comments():
 
         embed = discord.Embed(title=str(comment.link_title),
                               url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}/?sort=new",
+                              description=comment.body,
                               color=team_color)
 
         embed.set_author(name=str(comment.author.name),
@@ -55,14 +56,6 @@ def parse_comments():
                          icon_url=team_icon)
 
         embed.set_thumbnail(url=str(comment.author.icon_img))
-
-        parts = [comment.body[i:i + 1000] for i in range(0, len(comment.body), 1000)]
-
-        if len(parts) > 0:
-            embed.add_field(name="", value=parts[0], inline=False)
-
-        if len(parts) > 1:
-            embed.add_field(name="", value=parts[1], inline=False)
 
         embed.add_field(name="", value=f"Comment posted to r/fakebaseball at <t:{int(comment.created)}:T>", inline=False)
 
