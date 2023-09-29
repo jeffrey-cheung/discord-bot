@@ -13,6 +13,8 @@ from pprint import pprint
 
 fcfb_search_test = os.getenv("FCFB_SEARCH_TEST")
 fcfb_webhook_test = Webhook(os.getenv("FCFB_WEBHOOK_TEST"))
+wc_search_test = os.getenv("WC_SEARCH_TEST")
+wc_webhook_test = Webhook(os.getenv("WC_WEBHOOK_TEST"))
 
 pytz_utc = pytz.timezone("UTC")
 pytz_pst = pytz.timezone("America/Los_Angeles")
@@ -53,6 +55,9 @@ def parse_comments():
         if fcfb_search_test != "" and fcfb_search_test.lower() in comment.link_title.lower():
             fcfb_webhook_test.send(embed=embed)
             fcfb_webhook_test.close()
+        elif wc_search_test != "" and wc_search_test.lower() in comment.link_title.lower():
+            wc_webhook_test.send(embed=embed)
+            wc_webhook_test.close()
 
 
 while True:
