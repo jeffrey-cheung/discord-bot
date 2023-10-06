@@ -46,7 +46,7 @@ class Batters(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/batting/{league}/{batter_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
 
         y = []
         x = []
@@ -199,7 +199,7 @@ class Batters(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/batting/{league}/{batter_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
 
         x_legend = []
         pitches = []
@@ -302,7 +302,7 @@ class Batters(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/batting/{league}/{batter_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
 
         for p in data[:]:
             if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (season is not None and season != int(p['season'])):

@@ -60,7 +60,7 @@ class General(commands.Cog):
 
             !player <name>
         """
-        playerList = (requests.get("https://www.swing420.com/api/players")).json()
+        playerList = (requests.get("https://www.rslashfakebaseball.com/api/players")).json()
         matchList = []
         tooManyResults = "Your search for " + name + " returned too many results"
 

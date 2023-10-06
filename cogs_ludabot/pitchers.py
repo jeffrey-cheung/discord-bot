@@ -33,7 +33,7 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
@@ -133,7 +133,7 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
             if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (season is not None and season != int(p['season']) or (session is not None and session != int(p['session']))):
@@ -240,7 +240,7 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
@@ -388,7 +388,7 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
@@ -538,7 +538,7 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         y = []
         x = []
@@ -732,7 +732,7 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         x_legend = []
         pitches = []
@@ -896,7 +896,7 @@ class Pitchers(commands.Cog):
         pitcher_name = ""
         matches_count = 0
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
         for p in data[:]:
@@ -1031,7 +1031,7 @@ class Pitchers(commands.Cog):
         pitcher_name = ""
         matches_count = 0
 
-        data = (requests.get(f"https://www.swing420.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
         for p in data[:]:
