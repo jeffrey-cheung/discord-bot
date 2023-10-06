@@ -225,6 +225,7 @@ class Pitchers(commands.Cog):
             loaded - Bases load
             dp - Runner on 1st with less than 2 outs
             hit - After allowing a hit (walks included)
+            xbh - After allowing an extra base hit (HR, 3B, 2B)
             out - After getting an out
             hr - After allowing a Home Run
             3b - After allowing a Triple
@@ -286,6 +287,9 @@ class Pitchers(commands.Cog):
                         continue
                 case "hit":
                     if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "xbh":
+                    if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B"):
                         continue
                 case "out":
                     if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
@@ -373,6 +377,7 @@ class Pitchers(commands.Cog):
             loaded - Bases load
             dp - Runner on 1st with less than 2 outs
             hit - After allowing a hit (walks included)
+            xbh - After allowing an extra base hit (HR, 3B, 2B)
             out - After getting an out
             hr - After allowing a Home Run
             3b - After allowing a Triple
@@ -435,6 +440,9 @@ class Pitchers(commands.Cog):
                         continue
                 case "hit":
                     if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "xbh":
+                    if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B"):
                         continue
                 case "out":
                     if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
@@ -522,6 +530,7 @@ class Pitchers(commands.Cog):
             loaded - Bases load
             dp - Runner on 1st with less than 2 outs
             hit - After allowing a hit (walks included)
+            xbh - After allowing an extra base hit (HR, 3B, 2B)
             out - After getting an out
             hr - After allowing a Home Run
             3b - After allowing a Triple
@@ -582,6 +591,9 @@ class Pitchers(commands.Cog):
                         continue
                 case "hit":
                     if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "xbh":
+                    if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B"):
                         continue
                 case "out":
                     if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
@@ -716,6 +728,7 @@ class Pitchers(commands.Cog):
             loaded - Bases load
             dp - Runner on 1st with less than 2 outs
             hit - After allowing a hit (walks included)
+            xbh - After allowing an extra base hit (HR, 3B, 2B)
             out - After getting an out
             hr - After allowing a Home Run
             3b - After allowing a Triple
@@ -775,6 +788,9 @@ class Pitchers(commands.Cog):
                         continue
                 case "hit":
                     if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B", "1B", "BB"):
+                        continue
+                case "xbh":
+                    if i == 0 or not same_game or previous_result not in ("HR", "3B", "2B"):
                         continue
                 case "out":
                     if i == 0 or not same_game or previous_result in ("HR", "3B", "2B", "1B", "BB"):
@@ -866,6 +882,7 @@ class Pitchers(commands.Cog):
 
             Possible situations:
             hit - After allowing a hit (walks included)
+            xbh - After allowing an extra base hit (HR, 3B, 2B)
             out - After getting an out
             hr - After allowing a Home Run
             3b - After allowing a Triple
@@ -934,7 +951,10 @@ class Pitchers(commands.Cog):
                     matches_count += 1  # count matches
                     x_legend.append(legend)
                 elif situation is not None:
-                    if (situation.upper() == result[p]) or (situation == "hit" and result[p] in ("HR", "3B", "2B", "1B", "BB")) or (situation == "out" and result[p] not in ("HR", "3B", "2B", "1B", "BB")):
+                    if (situation.upper() == result[p]) or (
+                            situation == "hit" and result[p] in ("HR", "3B", "2B", "1B", "BB")) or (
+                            situation == "xbh" and result[p] in ("HR", "3B", "2B")) or (
+                            situation == "out" and result[p] not in ("HR", "3B", "2B", "1B", "BB")):
                         legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                         if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
                             before.append(pitch[p - 1])
@@ -1000,6 +1020,7 @@ class Pitchers(commands.Cog):
 
             Possible situations:
             hit - After allowing a hit (walks included)
+            xbh - After allowing an extra base hit (HR, 3B, 2B)
             out - After getting an out
             hr - After allowing a Home Run
             3b - After allowing a Triple
@@ -1073,6 +1094,7 @@ class Pitchers(commands.Cog):
                 elif situation is not None:
                     if (situation.upper() == result[p]) or (
                             situation == "hit" and result[p] in ("HR", "3B", "2B", "1B", "BB")) or (
+                            situation == "xbh" and result[p] in ("HR", "3B", "2B")) or (
                             situation == "out" and result[p] not in ("HR", "3B", "2B", "1B", "BB")):
                         legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                         if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
