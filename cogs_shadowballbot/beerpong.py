@@ -31,11 +31,14 @@ def save_dict():
         pickle.dump(current_score, f, pickle.HIGHEST_PROTOCOL)
     with open(f"pickle/usernames.pickle", 'wb') as f:
         pickle.dump(usernames, f, pickle.HIGHEST_PROTOCOL)
+    with open(f"pickle/current_guesses.pickle", 'wb') as f:
+        pickle.dump(current_guesses, f, pickle.HIGHEST_PROTOCOL)
 
 
 def load_dict():
     global current_score
     global usernames
+    global current_guesses
 
     if os.path.isfile(f"pickle/current_score.pickle"):
         with open(f"pickle/current_score.pickle", 'rb') as f:
@@ -43,6 +46,9 @@ def load_dict():
     if os.path.isfile(f"pickle/usernames.pickle"):
         with open(f"pickle/usernames.pickle", 'rb') as f:
             usernames = pickle.load(f)
+    if os.path.isfile(f"pickle/current_guesses.pickle"):
+        with open(f"pickle/current_guesses.pickle", 'rb') as f:
+            current_guesses = pickle.load(f)
 
 
 def calculate_diff(swing, pitch):
@@ -116,6 +122,13 @@ def display_scoreboard():
     string = "**Scoreboard**:"
     for user in sorted(current_score, key=current_score.get, reverse=True):
         string += f"```{usernames[user]}: {current_score[user]}```"
+    return string
+
+
+def display_guesses():
+    string = "**Current Guesses**:"
+    for user in sorted(current_guesses, key=current_guesses.get, reverse=True):
+        string += f"```{usernames[user]}: {current_guesses[user]}```"
     return string
 
 
@@ -228,6 +241,7 @@ class BeerPong(commands.Cog):
             usernames.update({ctx.message.author.id: ctx.message.author.nick})
         else:
             usernames.update({ctx.message.author.id: ctx.message.author.name})
+        save_dict()
         await ctx.send(f"Received your guess of **{guess}**")
 
     @commands.command()
@@ -256,6 +270,16 @@ class BeerPong(commands.Cog):
 
         await ctx.send(f"-\n\n{display_scoreboard()}")
 
+    @commands.command()
+    @guild_only()
+    async def showguesses(self, ctx):
+        """Sb.showguesses Shows current guesses"""
+        if game_started is False:
+            await ctx.send(f"There is no game in progress")
+            return
+
+        await ctx.send(f"-\n\n{display_guesses()}")
+
     @commands.command(hidden=True)
     @commands.is_owner()
     @guild_only()
@@ -265,6 +289,17 @@ class BeerPong(commands.Cog):
             return
 
         current_score.update({int(_user): int(_score)})
+        save_dict()
+
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    @guild_only()
+    async def editguess(self, ctx, _user, _guess):
+        if game_started is False:
+            await ctx.send(f"There is no game in progress")
+            return
+
+        current_guesses.update({int(_user): int(_guess)})
         save_dict()
 
     @commands.command(hidden=True)
