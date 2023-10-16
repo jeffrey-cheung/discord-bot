@@ -236,7 +236,7 @@ class BeerPong(commands.Cog):
             await ctx.send(f"Invalid guess")
             return
 
-        current_guesses.update({ctx.message.author.id: guess})
+        current_guesses.update({int(ctx.message.author.id): int(guess)})
         if ctx.message.author.nick is not None:
             usernames.update({ctx.message.author.id: ctx.message.author.nick})
         else:
@@ -300,6 +300,17 @@ class BeerPong(commands.Cog):
             return
 
         current_guesses.update({int(_user): int(_guess)})
+        save_dict()
+
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    @guild_only()
+    async def editusername(self, ctx, _user, _name):
+        if game_started is False:
+            await ctx.send(f"There is no game in progress")
+            return
+
+        usernames.update({int(_user): _name})
         save_dict()
 
     @commands.command(hidden=True)
