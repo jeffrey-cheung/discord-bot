@@ -192,6 +192,9 @@ class BeerPong(commands.Cog):
                         if parent_comment.author == "FakeBaseball_Umpire" and len(parent_comment_lines) >= 3:
                             third_line = parent_comment_lines[2].lstrip()
                             team_abbreviation = third_line[0:3]
+                        elif parent_comment.author == "FakeBaseball_Umpire" and len(parent_comment_lines) == 2:
+                            third_line = parent_comment_lines[1].lstrip()
+                            team_abbreviation = third_line[0:3]
 
                         if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and len(comment_lines) == 3:
                             await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")

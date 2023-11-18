@@ -43,6 +43,9 @@ def parse_comments():
         if parent_comment.author == "FakeBaseball_Umpire" and len(lines) >= 3:
             third_line = lines[2].lstrip()
             team_abbreviation = third_line[0:3]
+        elif parent_comment.author == "FakeBaseball_Umpire" and len(lines) == 2:
+            third_line = lines[1].lstrip()
+            team_abbreviation = third_line[0:3]
         team_color = int(colors.get(team_abbreviation, colors.get("DEFAULT")), 16)
         team_icon = icons.get(team_abbreviation, icons.get("DEFAULT"))
 
