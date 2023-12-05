@@ -11,10 +11,12 @@ from datetime import datetime
 from dhooks import Webhook
 from pprint import pprint
 
-fcfb_search_test = os.getenv("FCFB_SEARCH_TEST")
-fcfb_webhook_test = Webhook(os.getenv("FCFB_WEBHOOK_TEST"))
-wc_search_test = os.getenv("WC_SEARCH_TEST")
-wc_webhook_test = Webhook(os.getenv("WC_WEBHOOK_TEST"))
+fbs_search_test = os.getenv("FBS_SEARCH_TEST")
+fbs_webhook_test = Webhook(os.getenv("FBS_WEBHOOK_TEST"))
+fcs_search_test = os.getenv("FCS_SEARCH_TEST")
+fcs_webhook_test = Webhook(os.getenv("FCS_WEBHOOK_TEST"))
+rice_search_test = os.getenv("RICE_SEARCH_TEST")
+rice_webhook_test = Webhook(os.getenv("RICE_WEBHOOK_TEST"))
 
 pytz_utc = pytz.timezone("UTC")
 pytz_pst = pytz.timezone("America/Los_Angeles")
@@ -35,9 +37,16 @@ def parse_comments():
 
         lines = parent_comment.body.splitlines()
 
-        team_color = int("0x800203", 16)
-        if lines[0].split(" ")[0].lower() == "lafayette":
-            team_color = int("0xffffff", 16)
+        team_color = int("0xf44336", 16)
+        if fbs_search_test != "" and fbs_search_test.lower() in comment.link_title.lower():
+            if lines[0].split(" ")[0].lower() != "california":
+                team_color = int("0xfdb515", 16)
+        elif fcs_search_test != "" and fcs_search_test.lower() in comment.link_title.lower():
+            if lines[0].split(" ")[0].lower() != "western":
+                team_color = int("0x562a84", 16)
+        elif rice_search_test != "" and rice_search_test.lower() in comment.link_title.lower():
+            if lines[0].split(" ")[0].lower() != "rice":
+                team_color = int("0x03205b", 16)
 
         embed = discord.Embed(title=str(comment.link_title),
                               url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}/?sort=new",
@@ -52,12 +61,15 @@ def parse_comments():
 
         embed.add_field(name="", value=f"Comment posted to r/FakeCollegeFootball at <t:{int(comment.created)}:T>", inline=False)
 
-        if fcfb_search_test != "" and fcfb_search_test.lower() in comment.link_title.lower():
-            fcfb_webhook_test.send(embed=embed)
-            fcfb_webhook_test.close()
-        elif wc_search_test != "" and wc_search_test.lower() in comment.link_title.lower():
-            wc_webhook_test.send(embed=embed)
-            wc_webhook_test.close()
+        if fbs_search_test != "" and fbs_search_test.lower() in comment.link_title.lower():
+            fbs_webhook_test.send(embed=embed)
+            fbs_webhook_test.close()
+        elif fcs_search_test != "" and fcs_search_test.lower() in comment.link_title.lower():
+            fcs_webhook_test.send(embed=embed)
+            fcs_webhook_test.close()
+        elif rice_search_test != "" and rice_search_test.lower() in comment.link_title.lower():
+            rice_webhook_test.send(embed=embed)
+            rice_webhook_test.close()
 
 
 while True:
