@@ -68,7 +68,7 @@ def parse_comments():
         if mlr_search_test != "" and mlr_search_test.lower() in comment.link_title.lower():
             mlr_webhook_test.send(embed=embed)
             mlr_webhook_test.close()
-        elif milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
+        if milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
             milr_webhook_test.send(embed=embed)
             milr_webhook_test.close()
 

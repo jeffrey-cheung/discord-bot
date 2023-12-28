@@ -64,10 +64,10 @@ def parse_comments():
         if fbs_search_test != "" and fbs_search_test.lower() in comment.link_title.lower():
             fbs_webhook_test.send(embed=embed)
             fbs_webhook_test.close()
-        elif fcs_search_test != "" and fcs_search_test.lower() in comment.link_title.lower():
+        if fcs_search_test != "" and fcs_search_test.lower() in comment.link_title.lower():
             fcs_webhook_test.send(embed=embed)
             fcs_webhook_test.close()
-        elif rice_search_test != "" and rice_search_test.lower() in comment.link_title.lower():
+        if rice_search_test != "" and rice_search_test.lower() in comment.link_title.lower():
             rice_webhook_test.send(embed=embed)
             rice_webhook_test.close()
 
