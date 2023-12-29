@@ -18,6 +18,8 @@ os.environ['FCS_SEARCH_TEST'] = ""
 os.environ['FCS_WEBHOOK_TEST'] = ""
 os.environ['RICE_SEARCH_TEST'] = ""
 os.environ['RICE_WEBHOOK_TEST'] = ""
+os.environ['MLN_SEARCH_TEST'] = ""
+os.environ['MLN_WEBHOOK_TEST'] = ""
 
 # play_by_play Credentials (Prod)
 os.environ['MLR_SEARCH'] = ""
