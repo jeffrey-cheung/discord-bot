@@ -42,8 +42,8 @@ def parse_comments():
             if lines[0].split(" ")[0].lower() != "california":
                 team_color = int("0xfdb515", 16)
         elif fcs_search_test != "" and fcs_search_test.lower() in comment.link_title.lower():
-            if lines[0].split(" ")[0].lower() != "western":
-                team_color = int("0x562a84", 16)
+            if lines[0].split(" ")[0].lower() != "alabama":
+                team_color = int("0xC99700", 16)
         elif rice_search_test != "" and rice_search_test.lower() in comment.link_title.lower():
             if lines[0].split(" ")[0].lower() != "rice":
                 team_color = int("0x03205b", 16)
