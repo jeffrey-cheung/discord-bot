@@ -196,7 +196,7 @@ class BeerPong(commands.Cog):
                             third_line = parent_comment_lines[1].lstrip()
                             team_abbreviation = third_line[0:3]
 
-                        if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and len(comment_lines) == 3:
+                        if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and (len(comment_lines) == 3 or len(comment_lines) == 2):
                             await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")
                         elif team_abbreviation == team_abbrev and len(comment_lines) >= 5:
                             fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
