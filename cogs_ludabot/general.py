@@ -65,7 +65,11 @@ class General(commands.Cog):
         tooManyResults = "Your search for " + name + " returned too many results"
 
         for i in playerList:
-            if name.replace(" ", "").lower() in i['playerName'].replace(" ", "").lower():
+            if name.replace(" ", "").lower() == i['playerName'].replace(" ", "").lower():
+                matchList.clear()
+                matchList.append(i)
+                break
+            elif name.replace(" ", "").lower() in i['playerName'].replace(" ", "").lower():
                 matchList.append(i)
                 tooManyResults += "\n" + i['playerName']
 
