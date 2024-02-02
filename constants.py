@@ -84,12 +84,12 @@ MLR_ICONS = '{' \
 
 MLN_COLORS = '{' \
              '"DEFAULT":"0xffffff",' \
-             '"CAR":"0xcdc5c5",' \
+             '"CAR":"0xcdc5c5"' \
              '}'
 
 MLN_ICONS = '{' \
              '"DEFAULT":"https://media.discordapp.net/attachments/734950735418228756/911121370207911957/reddit.png",' \
-             '"CAR":"https://cdn.discordapp.com/emojis/1103360070554767500.png",' \
+             '"CAR":"https://cdn.discordapp.com/emojis/1103360070554767500.png"' \
              '}'
 
 GUILD_IDS = [1025523635877851166]
