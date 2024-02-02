@@ -22,14 +22,14 @@ reddit = praw.Reddit(
     client_secret=os.getenv("CLIENT_SECRET"),
     user_agent=os.getenv("USER_AGENT_PLAY_BY_PLAY")
 )
-colors = json.loads(constants.MLR_COLORS)
-icons = json.loads(constants.MLR_ICONS)
+colors = json.loads(constants.MLN_COLORS)
+icons = json.loads(constants.MLN_ICONS)
 
 
 def parse_comments():
     for comment in reddit.subreddit("BaseballbytheNumbers").stream.comments(skip_existing=True):
-        team_color = int("0xff5119", 16)
-        team_icon = icons.get("DEFAULT")
+        team_color = int(colors.get("CAR"), 16)
+        team_icon = icons.get("CAR")
 
         embed = discord.Embed(title=str(comment.link_title),
                               url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}/?sort=new",
