@@ -17,6 +17,8 @@ mlr_search_test = os.getenv("MLR_SEARCH_TEST")
 mlr_webhook_test = Webhook(os.getenv("MLR_WEBHOOK_TEST"))
 milr_search_test = os.getenv("MILR_SEARCH_TEST")
 milr_webhook_test = Webhook(os.getenv("MILR_WEBHOOK_TEST"))
+watch_party_search = json.loads(os.getenv("MLR_WATCH_PARTY_SEARCH"))
+watch_party_webhook = Webhook(os.getenv("MLR_WATCH_PARTY_WEBHOOK"))
 
 pytz_utc = pytz.timezone("UTC")
 pytz_pst = pytz.timezone("America/Los_Angeles")
@@ -71,6 +73,9 @@ def parse_comments():
         if milr_search_test != "" and milr_search_test.lower() in comment.link_title.lower():
             milr_webhook_test.send(embed=embed)
             milr_webhook_test.close()
+        if watch_party_search and any(word in comment.link_title.lower() for word in watch_party_search):
+            watch_party_webhook.send(embed=embed)
+            watch_party_webhook.close()
 
 
 while True:
