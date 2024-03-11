@@ -26,6 +26,8 @@ os.environ['MLR_SEARCH'] = ""
 os.environ['MLR_WEBHOOK'] = ""
 os.environ['MILR_SEARCH'] = ""
 os.environ['MILR_WEBHOOK'] = ""
+os.environ['MLR_WATCH_PARTY_SEARCH'] = '[]'
+os.environ['MLR_WATCH_PARTY_WEBHOOK'] = ""
 
 # shadowball Credentials
 os.environ['ROLE_ID'] = ""
