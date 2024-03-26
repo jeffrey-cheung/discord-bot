@@ -5,7 +5,7 @@ to_search = json.loads('["easy layup", "steal and score", "smooth layup", "compo
 reb_search = json.loads('["rebound", "offensive board"]')
 
 # Opening JSON file
-f = open('fcbb_json.json')
+f = open('fake_sports_json.json')
 
 # returns JSON object as
 # a dictionary
