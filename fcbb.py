@@ -1,7 +1,7 @@
 import json
 
-ft_search = json.loads('["and one", "shooting foul", "foul on the shot", "chance for", "and get fouled!", "foul strategy", "intentional foul", "fouling tactic", "strategically fouling", "fouling on purpose"]')
-to_search = json.loads('["easy layup", "steal and score", "smooth layup", "composed layup", "uncontested layup", "effortless layup", "easy two points"]')
+ft_search = json.loads('["and draw the foul", "contact on the", "and one", "shooting foul", "foul on the shot", "chance for", "and get fouled!", "foul strategy", "intentional foul", "fouling tactic", "strategically fouling", "fouling on purpose"]')
+to_search = json.loads('["steal, score, and the free throw", "easy layup", "steal and score", "smooth layup", "composed layup", "uncontested layup", "effortless layup", "easy two points"]')
 reb_search = json.loads('["rebound", "offensive board"]')
 
 # Opening JSON file
