@@ -30,14 +30,16 @@ MLR_COLORS = '{' \
              '"TBR":"0x64af88",' \
              '"TEX":"0x012dff",' \
              '"TOR":"0x003da5",' \
-             '"AND":"0xdcdcdc",' \
-             '"ARR":"0x5f9a98",' \
-             '"BIR":"0xd3fa95",' \
-             '"FLB":"0x22a607",' \
-             '"GOP":"0x7b2c88",' \
-             '"KGB":"0xfc5200",' \
-             '"NNL":"0x6c9b7f",' \
-             '"POS":"0x999b9d"' \
+             '"ACK":"0xd6df00",' \
+             '"BEE":"0xdbf4c6",' \
+             '"CRN":"0xfbec5d",' \
+             '"GOB":"0x73c80a",' \
+             '"GRS":"0x951212",' \
+             '"KIR":"0xe791bf",' \
+             '"KRK":"0xff3131",' \
+             '"SEO":"0x559af2",' \
+             '"SSS":"0x32276b",' \
+             '"ZAH":"0xa9a8ab"' \
              '}'
 
 MLR_ICONS = '{' \
@@ -72,14 +74,16 @@ MLR_ICONS = '{' \
              '"TBR":"https://cdn.discordapp.com/emojis/892600974437417041.png",' \
              '"TEX":"https://cdn.discordapp.com/emojis/346133289012297728.png",' \
              '"TOR":"https://cdn.discordapp.com/emojis/475322395003977728.png",' \
-             '"AND":"https://cdn.discordapp.com/emojis/1141579052679954472.png",' \
-             '"ARR":"https://cdn.discordapp.com/emojis/1142263125215813653.png",' \
-             '"BIR":"https://cdn.discordapp.com/emojis/1141578998753800203.png",' \
-             '"FLB":"https://cdn.discordapp.com/emojis/1141580441418203136.png",' \
-             '"GOP":"https://cdn.discordapp.com/emojis/1140817420999737374.png",' \
-             '"KGB":"https://cdn.discordapp.com/emojis/1141580686097125376.png",' \
-             '"NNL":"https://cdn.discordapp.com/emojis/1141580865898561537.png",' \
-             '"POS":"https://cdn.discordapp.com/emojis/1142262660994449419.png"' \
+             '"ACK":"https://cdn.discordapp.com/emojis/1235810826074591353.png",' \
+             '"BEE":"https://cdn.discordapp.com/emojis/1235104951076917289.png",' \
+             '"CRN":"https://cdn.discordapp.com/emojis/1235105479060099152.png",' \
+             '"GOB":"https://cdn.discordapp.com/emojis/1235813312839553077.png",' \
+             '"GRS":"https://cdn.discordapp.com/emojis/1236502276722659399.png",' \
+             '"KIR":"https://cdn.discordapp.com/emojis/1236502016302518312.png",' \
+             '"KRK":"https://cdn.discordapp.com/emojis/1235811299632353312.png",' \
+             '"SEO":"https://cdn.discordapp.com/emojis/1236501938233802784.png",' \
+             '"SSS":"https://cdn.discordapp.com/emojis/1235810514471489556.png",' \
+             '"ZAH":"https://cdn.discordapp.com/emojis/1236502302064513035.png"' \
              '}'
 
 MLN_COLORS = '{' \
