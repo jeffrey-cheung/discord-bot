@@ -181,7 +181,7 @@ class Batters(commands.Cog):
         """
             Shows last N swings and pitches for batter
 
-            !batterlast <batter_id> <league> <number_of_swings> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]
+            !batterlast <batter_id> <league> <number_of_swings> [optional:situation:all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out, firstgame]
 
             Possible situations:
             all - All pitches
@@ -194,6 +194,7 @@ class Batters(commands.Cog):
             0out - 0 out(s)
             1out - 1 out(s)
             2out - 2 out(s)
+            firstgame - First pitch of game
         """
         if batter_id is None or league is None or number_of_swings is None:
             await ctx.send(f"Missing argument(s)")
@@ -213,6 +214,10 @@ class Batters(commands.Cog):
             batter_name = p['hitterName']
             outs = int(p['outs'])
             obc = int(p['obc'])
+            same_game = False
+
+            if i > 0:
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
 
             match situation:
                 case "all":
@@ -243,6 +248,9 @@ class Batters(commands.Cog):
                         continue
                 case "2out":
                     if outs != 2:
+                        continue
+                case "firstgame":
+                    if same_game:
                         continue
                 case _:
                     await ctx.send(f"Unrecognized situation")
