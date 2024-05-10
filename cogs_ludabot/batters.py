@@ -194,7 +194,7 @@ class Batters(commands.Cog):
             0out - 0 out(s)
             1out - 1 out(s)
             2out - 2 out(s)
-            firstgame - First pitch of game
+            firstgame - First swing of game
         """
         if batter_id is None or league is None or number_of_swings is None:
             await ctx.send(f"Missing argument(s)")
