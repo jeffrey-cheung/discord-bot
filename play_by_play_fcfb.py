@@ -17,6 +17,8 @@ fcs_search_test = os.getenv("FCS_SEARCH_TEST")
 fcs_webhook_test = Webhook(os.getenv("FCS_WEBHOOK_TEST"))
 rice_search_test = os.getenv("RICE_SEARCH_TEST")
 rice_webhook_test = Webhook(os.getenv("RICE_WEBHOOK_TEST"))
+morgan_search_test = os.getenv("MORGAN_SEARCH_TEST")
+morgan_webhook_test = Webhook(os.getenv("MORGAN_WEBHOOK_TEST"))
 
 pytz_utc = pytz.timezone("UTC")
 pytz_pst = pytz.timezone("America/Los_Angeles")
@@ -47,6 +49,9 @@ def parse_comments():
         elif rice_search_test != "" and rice_search_test.lower() in comment.link_title.lower():
             if lines[0].split(" ")[0].lower() != "rice":
                 team_color = int("0x03205b", 16)
+        elif morgan_search_test != "" and morgan_search_test.lower() in comment.link_title.lower():
+            if lines[0].split(" ")[0].lower() != "morgan":
+                team_color = int("0xF47937", 16)
 
         embed = discord.Embed(title=str(comment.link_title),
                               url=f"https://old.reddit.com{comment.permalink.rsplit('/', 2)[0]}/?sort=new",
@@ -70,6 +75,9 @@ def parse_comments():
         if rice_search_test != "" and rice_search_test.lower() in comment.link_title.lower():
             rice_webhook_test.send(embed=embed)
             rice_webhook_test.close()
+        if morgan_search_test != "" and morgan_search_test.lower() in comment.link_title.lower():
+            morgan_webhook_test.send(embed=embed)
+            morgan_webhook_test.close()
 
 
 while True:
