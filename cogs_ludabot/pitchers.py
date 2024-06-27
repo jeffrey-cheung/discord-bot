@@ -901,6 +901,9 @@ class Pitchers(commands.Cog):
             2b - After allowing a Double
             1b - After allowing a Single
             bb - After allowing a Walk
+            sa - After a steal attempt (regardless of outcome)
+            sb - After a stolen base
+            cs - After a caught stealing
         """
         if pitcher_id is None or league is None or option is None:
             await ctx.send(f"Missing argument(s)")
@@ -966,7 +969,10 @@ class Pitchers(commands.Cog):
                     if (situation.upper() == result[p]) or (
                             situation == "hit" and result[p] in ("HR", "3B", "2B", "1B", "BB")) or (
                             situation == "xbh" and result[p] in ("HR", "3B", "2B")) or (
-                            situation == "out" and result[p] not in ("HR", "3B", "2B", "1B", "BB")):
+                            situation == "out" and result[p] not in ("HR", "3B", "2B", "1B", "BB")) or (
+                            situation == "sa" and ("STEAL" in result[p] or "CS" in result[p])) or (
+                            situation == "sb" and "STEAL" in result[p]) or (
+                            situation == "cs" and "CS" in result[p]):
                         legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                         if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
                             before.append(pitch[p - 1])
