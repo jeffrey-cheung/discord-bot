@@ -236,6 +236,9 @@ class Pitchers(commands.Cog):
             1out - 1 out(s)
             2out - 2 out(s)
             firstinning - First pitch of inning
+            sa - After a steal attempt (regardless of outcome)
+            sb - After a stolen base
+            cs - After a caught stealing
         """
         if pitcher_id is None or league is None:
             await ctx.send(f"Missing argument(s)")
@@ -320,6 +323,15 @@ class Pitchers(commands.Cog):
                         continue
                 case "firstinning":
                     if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
+                        continue
+                case "sa":
+                    if i == 0 or not same_game or ("STEAL" not in previous_result and "CS" not in previous_result):
+                        continue
+                case "sb":
+                    if i == 0 or not same_game or "STEAL" not in previous_result:
+                        continue
+                case "cs":
+                    if i == 0 or not same_game or "CS" not in previous_result:
                         continue
                 case _:
                     await ctx.send(f"Unrecognized situation")
