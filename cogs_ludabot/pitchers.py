@@ -322,7 +322,7 @@ class Pitchers(commands.Cog):
                     if i == 0 or not same_game or outs != 2:
                         continue
                 case "firstinning":
-                    if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
+                    if i == 0 or not same_game or outs != 0 or data[i]['inning'] == data[i - 1]['inning']:
                         continue
                 case "sa":
                     if i == 0 or not same_game or ("STEAL" not in previous_result and "CS" not in previous_result):
@@ -484,7 +484,7 @@ class Pitchers(commands.Cog):
                     if i == 0 or not same_game or outs != 2:
                         continue
                 case "firstinning":
-                    if outs != 0 or (i > 0 and same_game and data[i]['inning'] == data[i - 1]['inning']):
+                    if i == 0 or not same_game or outs != 0 or data[i]['inning'] == data[i - 1]['inning']:
                         continue
                 case _:
                     await ctx.send(f"Unrecognized situation")
