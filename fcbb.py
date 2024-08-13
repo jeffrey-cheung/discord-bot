@@ -1,7 +1,7 @@
 import json
 
 ft_search = json.loads('["resorting to fouling", "Foul on purpose", "chance to score from the line", "free throws, a chance to increase their lead", "foul on the three", "fouled on the three", "potential four-point play", "tactical foul", "a four-point play chance", "strategic foul", "and draw the foul", "contact on the", "and one", "shooting foul", "foul on the shot", "chance for", "and get fouled!", "foul strategy", "intentional foul", "fouling tactic", "strategically fouling", "fouling on purpose"]')
-to_search = json.loads('["turnover into points with a swift layup", "score the layup, and sink the free throw", "layup and the free throw", "turnover with a swift layup", "a layup, and they make the free throw", "turnover with a layup and a successful free throw", "steal, score, and the free throw", "steal, layup, and the free throw", "easy layup", "steal and score", "smooth layup", "composed layup", "uncontested layup", "effortless layup", "easy two points"]')
+to_search = json.loads('["steal, a layup, and they convert the free throw", "quick layup!", "turnover into points with a swift layup", "score the layup, and sink the free throw", "layup and the free throw", "turnover with a swift layup", "a layup, and they make the free throw", "turnover with a layup and a successful free throw", "steal, score, and the free throw", "steal, layup, and the free throw", "easy layup", "steal and score", "smooth layup", "composed layup", "uncontested layup", "effortless layup", "easy two points"]')
 reb_search = json.loads('["rebound", "offensive board"]')
 
 # Opening JSON file
