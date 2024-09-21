@@ -132,3 +132,5 @@ dmypy.json
 .DS_Store
 config.py
 *.pickle
+credentials.json
+token.json
