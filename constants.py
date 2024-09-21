@@ -97,3 +97,6 @@ MLN_ICONS = '{' \
              '}'
 
 GUILD_IDS = [1025523635877851166]
+
+SPREADSHEET_ID = "106abIO7hF2IIyPsshPtDdkZ14VRulZh2mLqacEuaxcI"
+SCOREBOARD_RANGE = "Session Scoreboard Backend!B3:K17"
