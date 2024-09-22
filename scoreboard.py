@@ -6,6 +6,7 @@ import discord
 import os.path
 import os
 import pytz
+import sys
 import time
 from discord import Webhook
 from datetime import datetime
