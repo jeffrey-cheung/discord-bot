@@ -105,12 +105,12 @@ print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Pa
 while True:
     try:
         asyncio.run(scoreboard())
-        time.sleep(30)
+        time.sleep(60)
     except Exception as e:
         print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
-        time.sleep(30)
+        time.sleep(60)
     else:
-        time.sleep(30)
+        time.sleep(60)
