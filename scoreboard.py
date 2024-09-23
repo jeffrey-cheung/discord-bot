@@ -55,7 +55,7 @@ async def scoreboard():
             values.sort(key=lambda x: (x[2], x[26], x[6]))
             for row in values:
                 away_team = row[0]
-                if away_team is None:
+                if away_team is None or away_team == "":
                     continue
                 home_team = row[1]
                 away_score = int(row[8])
