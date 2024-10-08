@@ -42,3 +42,4 @@ os.environ['TEAM_ABBREV'] = ""
 # Discord Bot Credentials
 os.environ['TOKEN_LUDABOT'] = ""
 os.environ['TOKEN_SHADOWBALLBOT'] = ""
+os.environ['TOKEN_SCOUTBOTMLN'] = ""
