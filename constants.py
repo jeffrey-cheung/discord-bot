@@ -102,7 +102,6 @@ SPREADSHEET_ID = "1ZAjcyb11cXrmYRdzAfjxN0fKft4LsJj8zFk4g47FAA0"
 SCOREBOARD_RANGE = "Session Scoreboard Backend!B3:AC17"
 
 MLN_BIBLE_SHEET_ID = "1Eru2lheXJWovWcEK_zTBz1CM9zs1Unx2SAFqWuzMQes"
-
 MLN_BIBLE_ASSETS = {
     'all_pitches': 'Pitching Analysis!A2:A1000',
     'last_result_bad_for_pitcher': 'Pitching Analysis!AJ3:AJ1001',
@@ -110,4 +109,17 @@ MLN_BIBLE_ASSETS = {
     'next_pitch': 'Pitching Analysis!AT1:AT1503',
     'pitch_response_to_bad_result': 'Pitching Analysis!AD3:AD1000',
     'pitch_response_to_good_result': 'Pitching Analysis!AC3:AC1000'
+}
+
+MLN_CALCULATOR = "1J12anU8J6ueSCDupcW5ViWtJY37Dnv0-qJLgW45YQO0"
+MLN_CALCULATOR_ASSETS = {
+    'pitcher': 'Manual Overrides!C7',
+    'batter': 'Manual Overrides!C8',
+    'ranges': 'Game Manager!K23:O32',
+    'matchup_info': 'Game Manager!L18:T19'
+}
+
+MLN_ROSTERS = "1ruSHN-Enj3VLv2qxaizFUfrlY2t5fhHBcw1Rx7rx2O8"
+MLN_ROSTERS_ASSETS = {
+    'persons': 'ImportRosters!B2:B'
 }
