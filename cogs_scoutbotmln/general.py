@@ -48,7 +48,7 @@ class General(commands.Cog):
         """
         await ctx.send(rdm.randint(1, 1000))
 
-    @commands.command(brief='Calculates ranges for a given batter and pitcher')
+    @commands.command(brief='.ranges Calculates ranges for batter and pitcher')
     async def ranges(self, ctx, *, players):
         try:
             players = players.replace(' ;', ';')
@@ -97,6 +97,7 @@ class General(commands.Cog):
                 await ctx.send(too_many_results_pitcher)
                 return
 
+            message = await ctx.send("Calculating...")
             batter = match_list_batter[0]
             pitcher = match_list_pitcher[0]
 
@@ -128,8 +129,8 @@ class General(commands.Cog):
             for val in ranges:
                 response += f"%4s: %3s - %3s\n" % (val[0], val[3], val[4])
             response += '```'
-    
-            await ctx.send(response)
+
+            await message.edit(content=response)
         except Exception as e:
             print(e)
 
