@@ -102,7 +102,7 @@ SPREADSHEET_ID = "1ZAjcyb11cXrmYRdzAfjxN0fKft4LsJj8zFk4g47FAA0"
 SCOREBOARD_RANGE = "Session Scoreboard Backend!B3:AC17"
 
 MLN_BIBLE_SHEET_ID = "1Eru2lheXJWovWcEK_zTBz1CM9zs1Unx2SAFqWuzMQes"
-MLN_BIBLE_ASSETS = {
+MLN_BIBLE_PITCHER_ASSETS = {
     'all_pitches': 'Pitching Analysis!A2:A1000',
     'last_result_bad_for_pitcher': 'Pitching Analysis!AJ3:AJ1001',
     'last_result_good_for_pitcher': 'Pitching Analysis!AI3:AI1001',
