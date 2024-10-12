@@ -103,6 +103,7 @@ SCOREBOARD_RANGE = "Session Scoreboard Backend!B3:AC17"
 
 MLN_BIBLE_SHEET_ID = "1Eru2lheXJWovWcEK_zTBz1CM9zs1Unx2SAFqWuzMQes"
 MLN_BIBLE_PITCHER_ASSETS = {
+    'name': 'Pitching Analysis!L2',
     'all_pitches': 'Pitching Analysis!A2:A1000',
     'last_result_bad_for_pitcher': 'Pitching Analysis!AJ3:AJ1001',
     'last_result_good_for_pitcher': 'Pitching Analysis!AI3:AI1001',
@@ -111,6 +112,7 @@ MLN_BIBLE_PITCHER_ASSETS = {
     'pitcher_response_to_good_result': 'Pitching Analysis!AC3:AC1000'
 }
 MLN_BIBLE_BATTER_ASSETS = {
+    'name': 'Batting Analysis!L2',
     'all_ab': 'Batting Analysis!B2:B1000',
     'last_result_bad_for_batter': 'Batting Analysis!AJ3:AJ1001',
     'last_result_good_for_batter': 'Batting Analysis!AI3:AI1001',
@@ -118,6 +120,7 @@ MLN_BIBLE_BATTER_ASSETS = {
     'batter_response_to_good_result': 'Batting Analysis!AC3:AC1001'
 }
 MLN_BIBLE_SELF_PITCHER_ASSETS = {
+    'self_name': 'Self Scouting Pitcher!L2',
     'self_all_pitches': 'Self Scouting Pitcher!A2:A1000',
     'self_last_result_bad_for_pitcher': 'Self Scouting Pitcher!AJ3:AJ1001',
     'self_last_result_good_for_pitcher': 'Self Scouting Pitcher!AI3:AI1001',

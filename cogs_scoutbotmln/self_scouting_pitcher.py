@@ -65,11 +65,12 @@ class SelfScoutingPitcher(commands.Cog):
 async def histogram(ctx, title, page_name, color, x_ticks, x_min_limit, x_max_limit, bin_size):
     sheet_id = constants.MLN_BIBLE_SHEET_ID
     data = sheets.read_sheet(sheet_id, page_name, 'COLUMNS')[0]
+    name = sheets.read_sheet(sheet_id, constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_name'], 'COLUMNS')[0][0]
     data = list(filter(None, data))
     data = list(map(int, data))
 
     plt.figure(figsize=(10.0, 5.0))
-    plt.title(title)
+    plt.title(f"{name} - {title}")
     plt.xlim(x_min_limit, x_max_limit)
     plt.xticks(rotation=45)
     plt.xticks(x_ticks)
