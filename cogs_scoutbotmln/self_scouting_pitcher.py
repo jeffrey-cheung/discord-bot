@@ -19,42 +19,42 @@ class SelfScoutingPitcher(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief=".self_all_pitches", aliases=['sap'])
+    @commands.command(brief=".sap", aliases=['sap'])
     @guild_only()
     async def self_all_pitches(self, ctx):
         await histogram(ctx, "All Pitches", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_all_pitches'],
                         blue,
                         pitch_ticks_50, 1, 1000, 50)
 
-    @commands.command(brief=".self_last_result_bad_for_pitcher", aliases=['slrbfp'])
+    @commands.command(brief=".slrbfp", aliases=['slrbfp'])
     @guild_only()
     async def self_last_result_bad_for_pitcher(self, ctx):
         await histogram(ctx, "Last Result Bad for Pitcher", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_last_result_bad_for_pitcher'],
                         red,
                         pitch_ticks_100, 1, 1000, 100)
 
-    @commands.command(brief=".self_last_result_good_for_pitcher", aliases=['slrgfp'])
+    @commands.command(brief=".slrgfp", aliases=['slrgfp'])
     @guild_only()
     async def self_last_result_good_for_pitcher(self, ctx):
         await histogram(ctx, "Last Result Good for Pitcher", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_last_result_good_for_pitcher'],
                         green,
                         pitch_ticks_100, 1, 1000, 100)
 
-    @commands.command(brief=".self_next_pitch", aliases=['snp'])
+    @commands.command(brief=".snp", aliases=['snp'])
     @guild_only()
     async def self_next_pitch(self, ctx):
         await histogram(ctx, "Next Pitch\nWhen Last Pitch and Last Pitch - 1 Were Within 50 of Current Last Pitch and Last Pitch - 1", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_next_pitch'],
                         blue,
                         pitch_ticks_negative_100, -500, 500, 100)
 
-    @commands.command(brief=".self_pitcher_response_to_bad_result", aliases=['sprtbr'])
+    @commands.command(brief=".sprtbr", aliases=['sprtbr'])
     @guild_only()
     async def self_pitcher_response_to_bad_result(self, ctx):
         await histogram(ctx, "Pitcher Response to Bad Result", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_pitcher_response_to_bad_result'],
                         red,
                         pitch_ticks_negative_100, -500, 500, 100)
 
-    @commands.command(brief=".self_pitcher_response_to_good_result", aliases=['sprtgr'])
+    @commands.command(brief=".sprtgr", aliases=['sprtgr'])
     @guild_only()
     async def self_pitcher_response_to_good_result(self, ctx):
         await histogram(ctx, "Pitcher Response to Good Result", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_pitcher_response_to_good_result'],

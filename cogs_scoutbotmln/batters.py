@@ -19,35 +19,35 @@ class Batters(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(brief=".all_ab", aliases=['ab'])
+    @commands.command(brief=".ab", aliases=['ab'])
     @guild_only()
     async def all_ab(self, ctx):
         await histogram(ctx, "All AB", constants.MLN_BIBLE_BATTER_ASSETS['all_ab'],
                         blue,
                         swing_ticks_50, 1, 1000, 50)
 
-    @commands.command(brief=".last_result_bad_for_batter", aliases=['lrbfb'])
+    @commands.command(brief=".lrbfb, aliases=['lrbfb'])
     @guild_only()
     async def last_result_bad_for_batter(self, ctx):
         await histogram(ctx, "Last Result Bad for Batter", constants.MLN_BIBLE_BATTER_ASSETS['last_result_bad_for_batter'],
                         red,
                         swing_ticks_50, 1, 1000, 50)
 
-    @commands.command(brief=".last_result_good_for_batter", aliases=['lrgfb'])
+    @commands.command(brief=".lrgfb", aliases=['lrgfb'])
     @guild_only()
     async def last_result_good_for_batter(self, ctx):
         await histogram(ctx, "Last Result Good for Batter", constants.MLN_BIBLE_BATTER_ASSETS['last_result_good_for_batter'],
                         green,
                         swing_ticks_50, 1, 1000, 50)
 
-    @commands.command(brief=".batter_response_to_bad_result", aliases=['brtbr'])
+    @commands.command(brief=".brtbr", aliases=['brtbr'])
     @guild_only()
     async def batter_response_to_bad_result(self, ctx):
         await histogram(ctx, "Batter Response to Bad Result", constants.MLN_BIBLE_BATTER_ASSETS['batter_response_to_bad_result'],
                         red,
                         swing_ticks_negative_50, -500, 500, 50)
 
-    @commands.command(brief=".batter_response_to_good_result", aliases=['brtgr'])
+    @commands.command(brief=".brtgr", aliases=['brtgr'])
     @guild_only()
     async def batter_response_to_good_result(self, ctx):
         await histogram(ctx, "Batter Response to Good Result", constants.MLN_BIBLE_BATTER_ASSETS['batter_response_to_good_result'],
