@@ -107,8 +107,23 @@ MLN_BIBLE_PITCHER_ASSETS = {
     'last_result_bad_for_pitcher': 'Pitching Analysis!AJ3:AJ1001',
     'last_result_good_for_pitcher': 'Pitching Analysis!AI3:AI1001',
     'next_pitch': 'Pitching Analysis!AT1:AT1503',
-    'pitch_response_to_bad_result': 'Pitching Analysis!AD3:AD1000',
-    'pitch_response_to_good_result': 'Pitching Analysis!AC3:AC1000'
+    'pitcher_response_to_bad_result': 'Pitching Analysis!AD3:AD1000',
+    'pitcher_response_to_good_result': 'Pitching Analysis!AC3:AC1000'
+}
+MLN_BIBLE_BATTER_ASSETS = {
+    'all_ab': 'Batting Analysis!B2:B1000',
+    'last_result_bad_for_batter': 'Batting Analysis!AJ3:AJ1001',
+    'last_result_good_for_batter': 'Batting Analysis!AI3:AI1001',
+    'batter_response_to_bad_result': 'Batting Analysis!AD3:AD1001',
+    'batter_response_to_good_result': 'Batting Analysis!AC3:AC1001'
+}
+MLN_BIBLE_SELF_PITCHER_ASSETS = {
+    'self_all_pitches': 'Self Scouting Pitcher!A2:A1000',
+    'self_last_result_bad_for_pitcher': 'Self Scouting Pitcher!AJ3:AJ1001',
+    'self_last_result_good_for_pitcher': 'Self Scouting Pitcher!AI3:AI1001',
+    'self_next_pitch': 'Self Scouting Pitcher!AT1:AT1503',
+    'self_pitcher_response_to_bad_result': 'Self Scouting Pitcher!AD3:AD1000',
+    'self_pitcher_response_to_good_result': 'Self Scouting Pitcher!AC3:AC1000'
 }
 
 MLN_CALCULATOR = "1J12anU8J6ueSCDupcW5ViWtJY37Dnv0-qJLgW45YQO0"
