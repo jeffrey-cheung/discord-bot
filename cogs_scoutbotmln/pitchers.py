@@ -49,14 +49,14 @@ class Pitchers(commands.Cog):
 
     @commands.command(brief=".pitcher_response_to_bad_result", aliases=['prtbr'])
     @guild_only()
-    async def pitch_response_to_bad_result(self, ctx):
+    async def pitcher_response_to_bad_result(self, ctx):
         await histogram(ctx, "Pitcher Response to Bad Result", constants.MLN_BIBLE_PITCHER_ASSETS['pitcher_response_to_bad_result'],
                         red,
                         pitch_ticks_negative_100, -500, 500, 100)
 
     @commands.command(brief=".pitcher_response_to_good_result", aliases=['prtgr'])
     @guild_only()
-    async def pitch_response_to_good_result(self, ctx):
+    async def pitcher_response_to_good_result(self, ctx):
         await histogram(ctx, "Pitcher Response to Good Result", constants.MLN_BIBLE_PITCHER_ASSETS['pitcher_response_to_good_result'],
                         green,
                         pitch_ticks_negative_100, -500, 500, 100)
