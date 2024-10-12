@@ -26,7 +26,7 @@ class Batters(commands.Cog):
                         blue,
                         swing_ticks_50, 1, 1000, 50)
 
-    @commands.command(brief=".lrbfb, aliases=['lrbfb'])
+    @commands.command(brief=".lrbfb", aliases=['lrbfb'])
     @guild_only()
     async def last_result_bad_for_batter(self, ctx):
         await histogram(ctx, "Last Result Bad for Batter", constants.MLN_BIBLE_BATTER_ASSETS['last_result_bad_for_batter'],
