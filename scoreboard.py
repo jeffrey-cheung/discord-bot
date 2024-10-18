@@ -101,7 +101,7 @@ async def scoreboard():
             print(err)
 
 
-print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing scores")
+print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing MLR scores")
 while True:
     try:
         asyncio.run(scoreboard())
