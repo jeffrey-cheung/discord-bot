@@ -140,7 +140,6 @@ def result_pitch(pitch):
             current_score.update({user: int(score)})
         else:
             current_score.update({user: int(current_score[user]) + int(score)})
-    save_dict()
 
 
 class BeerPong(commands.Cog):
@@ -205,6 +204,7 @@ class BeerPong(commands.Cog):
                                 result_pitch(pitch)
                                 await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
                                 current_guesses.clear()
+                                save_dict()
             except Exception as e:
                 print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
                 exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -262,6 +262,7 @@ class BeerPong(commands.Cog):
         result_pitch(pitch)
         await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
         current_guesses.clear()
+        save_dict()
 
     @commands.command(aliases=['score', 'scores'])
     @guild_only()
