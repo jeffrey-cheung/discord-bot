@@ -3,7 +3,7 @@ import discord
 import io
 import matplotlib.pyplot as plt
 import os
-import sheets_reader as sheets
+from controllers import sheets_reader as sheets
 from discord.ext import commands
 from discord.ext.commands import guild_only
 

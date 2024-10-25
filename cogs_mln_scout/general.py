@@ -1,7 +1,6 @@
 import constants
-import discord
 import random as rdm
-import sheets_reader as sheets
+from controllers import sheets_reader as sheets
 from discord.ext import commands
 from discord.ext.commands import guild_only
 
