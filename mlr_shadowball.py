@@ -15,24 +15,18 @@ pytz_pst = pytz.timezone('America/Los_Angeles')
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = commands.Bot(command_prefix="!!!", case_insensitive=True, help_command=commands.DefaultHelpCommand(),
-                      intents=intents)
+bot = commands.Bot(command_prefix=("sb.", "SB.", "Sb.", "sB."), case_insensitive=True,
+                   help_command=commands.DefaultHelpCommand(), intents=intents)
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} Logged in as {client.user}")
-    for guild in client.guilds:
+    print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} Logged in as {bot.user}")
+    for guild in bot.guilds:
         print(guild)
 
 
-async def load_extensions():
-    for file in listdir('cogs_mlrscoutbot/'):
-        if file.endswith('.py'):
-            await client.load_extension(f'cogs_mlrscoutbot.{file[:-3]}')
-
-
-@client.event
+@bot.event
 async def on_command_error(ctx, error):
     if ctx.command is not None:
         print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {ctx.command}")
@@ -42,10 +36,16 @@ async def on_command_error(ctx, error):
         await ctx.send("An error occurred while processing your command.")
 
 
+async def load_extensions():
+    for file in listdir('cogs_mlr_shadowball/'):
+        if file.endswith('.py'):
+            await bot.load_extension(f'cogs_mlr_shadowball.{file[:-3]}')
+
+
 async def main():
-    async with client:
+    async with bot:
         await load_extensions()
-        await client.start(os.getenv("DISCORD_TOKEN_MLRSCOUTBOT"))
+        await bot.start(os.getenv("MLR_SHADOWBALL_DISCORD_TOKEN"))
 
 
 asyncio.run(main())

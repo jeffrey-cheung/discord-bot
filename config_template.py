@@ -1,45 +1,37 @@
 import os
 
-# Reddit Credentials
-os.environ['CLIENT_ID'] = ""
-os.environ['CLIENT_SECRET'] = ""
-os.environ['USER_AGENT_FCFB'] = ""
-os.environ['USER_AGENT_PLAY_BY_PLAY'] = ""
-os.environ['USER_AGENT_SHADOWBALLBOT'] = ""
+# Reddit
+os.environ['REDDIT_CLIENT_ID'] = ""
+os.environ['REDDIT_CLIENT_SECRET'] = ""
+os.environ['MLR_PLAY_BY_PLAY_REDDIT_USER_AGENT'] = ""
+os.environ['MLR_SHADOWBALL_REDDIT_USER_AGENT'] = ""
+os.environ['FCFB_PLAY_BY_PLAY_REDDIT_USER_AGENT'] = ""
 
-# play_by_play Credentials (Test)
-os.environ['MLR_SEARCH_TEST'] = ""
-os.environ['MLR_WEBHOOK_TEST'] = ""
-os.environ['MILR_SEARCH_TEST'] = ""
-os.environ['MILR_WEBHOOK_TEST'] = ""
-os.environ['FBS_SEARCH_TEST'] = ""
-os.environ['FBS_WEBHOOK_TEST'] = ""
-os.environ['FCS_SEARCH_TEST'] = ""
-os.environ['FCS_WEBHOOK_TEST'] = ""
-os.environ['RICE_SEARCH_TEST'] = ""
-os.environ['RICE_WEBHOOK_TEST'] = ""
-os.environ['MORGAN_SEARCH_TEST'] = ""
-os.environ['MORGAN_WEBHOOK_TEST'] = ""
-os.environ['MLN_SEARCH_TEST'] = ""
-os.environ['MLN_WEBHOOK_TEST'] = ""
+# MLR play_by_play
+os.environ['MLR_PLAY_BY_PLAY_SEARCH'] = ""
+os.environ['MLR_PLAY_BY_PLAY_WEBHOOK'] = ""
+os.environ['MILR_PLAY_BY_PLAY_SEARCH'] = ""
+os.environ['MILR_PLAY_BY_PLAY_WEBHOOK'] = ""
+os.environ['MLR_PLAY_BY_PLAY_WATCH_PARTY_SEARCH'] = '[]'
+os.environ['MLR_PLAY_BY_PLAY_WATCH_PARTY_WEBHOOK'] = ""
 
-# play_by_play Credentials (Prod)
-os.environ['MLR_SEARCH'] = ""
-os.environ['MLR_WEBHOOK'] = ""
-os.environ['MILR_SEARCH'] = ""
-os.environ['MILR_WEBHOOK'] = ""
-os.environ['MLR_WATCH_PARTY_SEARCH'] = '[]'
-os.environ['MLR_WATCH_PARTY_WEBHOOK'] = ""
+# MLR Scout
+os.environ['MLR_SCOUT_DISCORD_TOKEN'] = ""
 
-# scoreboard Credentials
+# MLR Shadowball Bot
+os.environ['MLR_SHADOWBALL_DISCORD_TOKEN'] = ""
+os.environ['MLR_SHADOWBALL_ROLE_ID'] = ""
+os.environ['MLR_SHADOWBALL_TEAM_ABBREV'] = ""
+
+# MLR Scoreboard
 os.environ['MLR_SCOREBOARD_MSG_ID'] = ""
 os.environ['MLR_SCOREBOARD_WEBHOOK'] = ""
 
-# shadowball Credentials
-os.environ['ROLE_ID'] = ""
-os.environ['TEAM_ABBREV'] = ""
+# MLN Scout
+os.environ['MLN_SCOUT_DISCORD_TOKEN'] = ""
 
-# Discord Bot Credentials
-os.environ['DISCORD_TOKEN_MLRSCOUTBOT'] = ""
-os.environ['TOKEN_SHADOWBALLBOT'] = ""
-os.environ['TOKEN_SCOUTBOTMLN'] = ""
+# FCFB play_by_play
+os.environ['FBS_PLAY_BY_PLAY_SEARCH'] = ""
+os.environ['FBS_PLAY_BY_PLAY_WEBHOOK'] = ""
+os.environ['FBS2_PLAY_BY_PLAY_SEARCH'] = ""
+os.environ['FBS2_PLAY_BY_PLAY_WEBHOOK'] = ""

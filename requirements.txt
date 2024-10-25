@@ -2,17 +2,13 @@ discord
 requests
 matplotlib
 DateTime
-Flask
 praw
 dhooks
-beautifulsoup4
 pytz
 asyncpraw
-pygsheets
 numpy
 google-api-python-client
 plotly
-kaleido
 aiohttp
 google
 pandas

@@ -15,9 +15,9 @@ pytz_utc = pytz.timezone('UTC')
 pytz_pst = pytz.timezone('America/Los_Angeles')
 
 reddit = asyncpraw.Reddit(
-    client_id=os.getenv("CLIENT_ID"),
-    client_secret=os.getenv("CLIENT_SECRET"),
-    user_agent=os.getenv("USER_AGENT_SHADOWBALLBOT")
+    client_id=os.getenv("REDDIT_CLIENT_ID"),
+    client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
+    user_agent=os.getenv("MLR_SHADOWBALL_REDDIT_USER_AGENT")
 )
 
 current_guesses = {}
