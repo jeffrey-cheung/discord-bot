@@ -44,7 +44,7 @@ async def scoreboard():
         # Call the Sheets API
         sheet = service.spreadsheets()
         result = (
-            sheet.values().get(spreadsheetId=constants.SPREADSHEET_ID, range=constants.SCOREBOARD_RANGE).execute())
+            sheet.values().get(spreadsheetId=constants.MLR_SCOREBOARD_SPREADSHEET_ID, range=constants.MLR_SCOREBOARD_RANGE).execute())
         values = result.get("values", [])
 
         if not values:
