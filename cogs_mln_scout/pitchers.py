@@ -1,11 +1,13 @@
-import constants
-import discord
 import io
-import matplotlib.pyplot as plt
 import os
-from controllers import sheets_reader as sheets
+
+import discord
+import matplotlib.pyplot as plt
 from discord.ext import commands
 from discord.ext.commands import guild_only
+
+import constants
+from controllers import sheets_reader as sheets
 
 pitch_ticks_50 = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000]
 pitch_ticks_100 = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
@@ -37,7 +39,8 @@ class Pitchers(commands.Cog):
             result = await update_pitcher(ctx, name)
             if result is False:
                 return
-        await histogram(ctx, "Last Result Bad for Pitcher", constants.MLN_BIBLE_PITCHER_ASSETS['last_result_bad_for_pitcher'],
+        await histogram(ctx, "Last Result Bad for Pitcher",
+                        constants.MLN_BIBLE_PITCHER_ASSETS['last_result_bad_for_pitcher'],
                         red,
                         pitch_ticks_100, 1, 1000, 100)
 
@@ -48,7 +51,8 @@ class Pitchers(commands.Cog):
             result = await update_pitcher(ctx, name)
             if result is False:
                 return
-        await histogram(ctx, "Last Result Good for Pitcher", constants.MLN_BIBLE_PITCHER_ASSETS['last_result_good_for_pitcher'],
+        await histogram(ctx, "Last Result Good for Pitcher",
+                        constants.MLN_BIBLE_PITCHER_ASSETS['last_result_good_for_pitcher'],
                         green,
                         pitch_ticks_100, 1, 1000, 100)
 
@@ -59,7 +63,9 @@ class Pitchers(commands.Cog):
             result = await update_pitcher(ctx, name)
             if result is False:
                 return
-        await histogram(ctx, "Next Pitch\nWhen Last Pitch and Last Pitch - 1 Were Within 50 of Current Last Pitch and Last Pitch - 1", constants.MLN_BIBLE_PITCHER_ASSETS['next_pitch'],
+        await histogram(ctx,
+                        "Next Pitch\nWhen Last Pitch and Last Pitch - 1 Were Within 50 of Current Last Pitch and Last Pitch - 1",
+                        constants.MLN_BIBLE_PITCHER_ASSETS['next_pitch'],
                         blue,
                         pitch_ticks_negative_100, -500, 500, 100)
 
@@ -70,7 +76,8 @@ class Pitchers(commands.Cog):
             result = await update_pitcher(ctx, name)
             if result is False:
                 return
-        await histogram(ctx, "Pitcher Response to Bad Result", constants.MLN_BIBLE_PITCHER_ASSETS['pitcher_response_to_bad_result'],
+        await histogram(ctx, "Pitcher Response to Bad Result",
+                        constants.MLN_BIBLE_PITCHER_ASSETS['pitcher_response_to_bad_result'],
                         red,
                         pitch_ticks_negative_100, -500, 500, 100)
 
@@ -81,7 +88,8 @@ class Pitchers(commands.Cog):
             result = await update_pitcher(ctx, name)
             if result is False:
                 return
-        await histogram(ctx, "Pitcher Response to Good Result", constants.MLN_BIBLE_PITCHER_ASSETS['pitcher_response_to_good_result'],
+        await histogram(ctx, "Pitcher Response to Good Result",
+                        constants.MLN_BIBLE_PITCHER_ASSETS['pitcher_response_to_good_result'],
                         green,
                         pitch_ticks_negative_100, -500, 500, 100)
 
@@ -99,7 +107,8 @@ async def histogram(ctx, title, page_name, color, x_ticks, x_min_limit, x_max_li
     plt.xlim(x_min_limit, x_max_limit)
     plt.xticks(rotation=45)
     plt.xticks(x_ticks)
-    values, bins, bars = plt.hist(data, color=color, bins=range(x_min_limit, x_max_limit + bin_size, bin_size), density=False,
+    values, bins, bars = plt.hist(data, color=color, bins=range(x_min_limit, x_max_limit + bin_size, bin_size),
+                                  density=False,
                                   rwidth=0.8)
     plt.bar_label(bars)
     plt.tight_layout()
@@ -138,6 +147,7 @@ async def update_pitcher(ctx, name):
     else:
         sheets.update_sheet(sheet_id, constants.MLN_BIBLE_PITCHER_ASSETS['name'], match_list_batter[0])
         return True
+
 
 async def setup(client):
     await client.add_cog(Pitchers(client))

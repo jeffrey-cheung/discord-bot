@@ -1,8 +1,10 @@
-import constants
 import random as rdm
-from controllers import sheets_reader as sheets
+
 from discord.ext import commands
 from discord.ext.commands import guild_only
+
+import constants
+from controllers import sheets_reader as sheets
 
 
 class General(commands.Cog):
@@ -60,7 +62,7 @@ class General(commands.Cog):
 
             batter = players[0]
             pitcher = players[1]
-            player_list = sheets.read_sheet(constants.MLN_ROSTERS, constants.MLN_ROSTERS_ASSETS['persons'],'COLUMNS')[0]
+            player_list = sheets.read_sheet(constants.MLN_ROSTERS, constants.MLN_ROSTERS_ASSETS['persons'], 'COLUMNS')[0]
 
             match_list_batter = []
             too_many_results_batter = "Your search for " + batter + " returned too many results"
@@ -132,6 +134,7 @@ class General(commands.Cog):
             await message.edit(content=response)
         except Exception as e:
             print(e)
+
 
 async def setup(client):
     await client.add_cog(General(client))

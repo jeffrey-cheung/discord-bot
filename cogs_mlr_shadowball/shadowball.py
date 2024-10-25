@@ -1,10 +1,11 @@
-import asyncpraw
 import os
 import pickle
-import pytz
 import sys
 import time
 from datetime import datetime
+
+import asyncpraw
+import pytz
 from discord.ext import commands
 from discord.ext.commands import guild_only
 
@@ -195,14 +196,16 @@ class Shadowball(commands.Cog):
                             third_line = parent_comment_lines[1].lstrip()
                             team_abbreviation = third_line[0:3]
 
-                        if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and (len(comment_lines) == 3 or len(comment_lines) == 2):
+                        if team_abbreviation == team_abbrev and comment.parent_id[0:3] != "t1_" and (
+                                len(comment_lines) == 3 or len(comment_lines) == 2):
                             await ctx.send(f"<@&{role_id}> AB Posted```{comment.body}```")
                         elif team_abbreviation == team_abbrev and len(comment_lines) >= 5:
                             fifth_to_last_line = comment_lines[len(comment_lines) - 5].lstrip()
                             if fifth_to_last_line[0:6] == "Pitch:" and fifth_to_last_line.split(" ")[1].isdigit():
                                 pitch = fifth_to_last_line.split(" ")[1]
                                 result_pitch(pitch)
-                                await ctx.send(f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
+                                await ctx.send(
+                                    f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
                                 current_guesses.clear()
                                 save_dict()
             except Exception as e:

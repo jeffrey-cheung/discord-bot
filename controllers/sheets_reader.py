@@ -1,10 +1,11 @@
 import os.path
 import time
+
 from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
@@ -25,7 +26,8 @@ def read_sheet(spreadsheet_id, page_name, major_dimension='ROWS'):
     max_retries = 3  # Max retry attempts
     for attempt in range(max_retries):
         try:
-            return get_service_sheets().get(spreadsheetId=spreadsheet_id, range=page_name, majorDimension=major_dimension).execute().get('values', [])
+            return get_service_sheets().get(spreadsheetId=spreadsheet_id, range=page_name,
+                                            majorDimension=major_dimension).execute().get('values', [])
         except HttpError as error:
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)  # Backoff
@@ -39,7 +41,8 @@ def update_sheet(spreadsheet_id, page_name, data):
     max_retries = 3  # Max retry attempts
     for attempt in range(max_retries):
         try:
-            return get_service_sheets().update(spreadsheetId=spreadsheet_id, range=page_name, valueInputOption='USER_ENTERED', body={"values": [[data]]}).execute()
+            return get_service_sheets().update(spreadsheetId=spreadsheet_id, range=page_name,
+                                               valueInputOption='USER_ENTERED', body={"values": [[data]]}).execute()
         except HttpError as error:
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)  # Backoff
@@ -56,7 +59,8 @@ def batch_update_sheet(spreadsheet_id, batch_update_data):
         data.append({'range': key, 'values': [[value]]})
     for attempt in range(max_retries):
         try:
-            return get_service_sheets().batchUpdate(spreadsheetId=spreadsheet_id, body={'valueInputOption': 'USER_ENTERED', 'data': [data]}).execute()
+            return get_service_sheets().batchUpdate(spreadsheetId=spreadsheet_id,
+                                                    body={'valueInputOption': 'USER_ENTERED', 'data': [data]}).execute()
         except HttpError as error:
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)  # Backoff
