@@ -1,11 +1,12 @@
-import constants
-import discord
 import json
 import random as rdm
+
+import discord
 import requests
-import sys
 from discord.ext import commands
 from discord.ext.commands import guild_only
+
+import constants
 
 colors = json.loads(constants.MLR_COLORS)
 
@@ -22,7 +23,8 @@ class General(commands.Cog):
 
             !doc
         """
-        await ctx.send("https://docs.google.com/document/d/1dOT0iBuqpyH0IlS3OBsWLC5J0ZcagCK47WgeBSqpweg/edit?usp=sharing")
+        await ctx.send(
+            "https://docs.google.com/document/d/1dOT0iBuqpyH0IlS3OBsWLC5J0ZcagCK47WgeBSqpweg/edit?usp=sharing")
 
     @commands.command(brief="!hmmmm Helps you think", aliases=['hmmm', 'hmmmmm'])
     @guild_only()
@@ -49,7 +51,6 @@ class General(commands.Cog):
 
             !ping
         """
-
         await ctx.send("pong")
 
     @commands.command(brief="!player <name>")
@@ -112,6 +113,7 @@ class General(commands.Cog):
             !rando
         """
         await ctx.send(rdm.randint(1, 1000))
+
 
 async def setup(client):
     await client.add_cog(General(client))

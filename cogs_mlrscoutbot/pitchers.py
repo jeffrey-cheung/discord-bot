@@ -1,15 +1,15 @@
-import constants
-import discord
 import io
-import matplotlib.pyplot as plt
 import os
+
+import discord
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import requests
-import sys
 from discord.ext import commands
 from discord.ext.commands import guild_only
 
-pitch_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000]
+pitch_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525,
+               550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000]
 delta_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500]
 grid_ticks = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
@@ -33,7 +33,8 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
@@ -52,7 +53,8 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_pitch = None
             if i > 0:
-                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1][
+                    'season'] and data[i]['session'] == data[i - 1]['session']
                 previous_pitch = int(data[i - 1]['pitch'])
 
             if int(p['season']) > int(current_season):
@@ -133,10 +135,13 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
-            if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (season is not None and season != int(p['season']) or (session is not None and session != int(p['session']))):
+            if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (
+                    season is not None and season != int(p['season']) or (
+                    session is not None and session != int(p['session']))):
                 data.remove(p)
 
         x_legend = []
@@ -150,7 +155,8 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_pitch = None
             if i > 0:
-                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1][
+                    'season'] and data[i]['session'] == data[i - 1]['session']
                 previous_pitch = int(data[i - 1]['pitch'])
 
             delta = ""
@@ -178,7 +184,8 @@ class Pitchers(commands.Cog):
         if session is None:
             session = "all"
 
-        await ctx.send(f"You asked to see the pitch/swing/delta details for {pitcher_name}. ({league}) ({season}) ({session})")
+        await ctx.send(
+            f"You asked to see the pitch/swing/delta details for {pitcher_name}. ({league}) ({season}) ({session})")
 
         plt.figure(figsize=(max(number_of_pitches / 1.5, 10.0), 5.0))
         plt.title(f"Pitch/swing/delta details for {pitcher_name}. ({league}) ({season}) ({session})")
@@ -210,7 +217,8 @@ class Pitchers(commands.Cog):
                     ctx,
                     pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                     league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                    situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
+                    situation: str = commands.parameter(default="all",
+                                                        description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
         """
             Shows pitcher pitch delta histogram
 
@@ -244,7 +252,8 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
@@ -262,7 +271,8 @@ class Pitchers(commands.Cog):
             previous_result = None
             previous_pitch = None
             if i > 0:
-                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1][
+                    'season'] and data[i]['session'] == data[i - 1]['session']
                 previous_result = data[i - 1]['exactResult']
                 previous_pitch = int(data[i - 1]['pitch'])
 
@@ -374,7 +384,8 @@ class Pitchers(commands.Cog):
                          ctx,
                          pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                          league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                         situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
+                         situation: str = commands.parameter(default="all",
+                                                             description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstinning]")):
         """
             Shows pitcher swing delta histogram
 
@@ -405,7 +416,8 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         for p in data[:]:
             if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:
@@ -527,7 +539,8 @@ class Pitchers(commands.Cog):
                       ctx,
                       pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                       league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                      situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
+                      situation: str = commands.parameter(default="all",
+                                                          description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
             Shows pitcher heatmap
 
@@ -559,7 +572,8 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         y = []
         x = []
@@ -567,7 +581,8 @@ class Pitchers(commands.Cog):
         matches_count = 0
         pitcher = ""
         for p in data[:]:
-            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0:  # just skip the non/auto resulted pitches
+            if p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p[
+                'swing'] == 0:  # just skip the non/auto resulted pitches
                 data.remove(p)
 
         for i, p in enumerate(data):
@@ -577,7 +592,8 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_result = None
             if i > 0:
-                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1][
+                    'season'] and data[i]['session'] == data[i - 1]['session']
                 previous_result = data[i - 1]['exactResult']
 
             match situation:
@@ -725,7 +741,8 @@ class Pitchers(commands.Cog):
                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                    number_of_pitches: int = commands.parameter(default=None, description="Number of Pitches"),
-                   situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
+                   situation: str = commands.parameter(default="all",
+                                                       description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, hit, out, hr, 3b, 2b, 1b, bb, 0out, 1out, 2out, firstgame, firstinning]")):
         """
             Shows last N pitches and swings
 
@@ -757,7 +774,8 @@ class Pitchers(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         x_legend = []
         pitches = []
@@ -774,7 +792,8 @@ class Pitchers(commands.Cog):
             same_game = False
             previous_result = None
             if i > 0:
-                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1][
+                    'season'] and data[i]['session'] == data[i - 1]['session']
                 previous_result = data[i - 1]['exactResult']
 
             match situation:
@@ -928,12 +947,14 @@ class Pitchers(commands.Cog):
         pitcher_name = ""
         matches_count = 0
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
         for p in data[:]:
             pitcher_name = p['pitcherName']
-            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
+            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p[
+                'swing'] != 0:  # just skip the non/auto resulted pitches
                 pitch.append(p['pitch'])
                 season.append(p['season'])
                 session.append(p['session'])
@@ -949,7 +970,10 @@ class Pitchers(commands.Cog):
         # now let's go through and look for matches
         for p in range(len(pitch) - 1):
             if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
-                if situation is None and ((upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (upper_pitch < lower_pitch and (upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p])))):  # it's a match for a range
+                if situation is None and (
+                        (upper_pitch >= lower_pitch and upper_pitch >= int(pitch[p]) >= lower_pitch) or (
+                        upper_pitch < lower_pitch and (
+                        upper_pitch >= int(pitch[p]) or lower_pitch <= int(pitch[p])))):  # it's a match for a range
                     legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                     if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
                         before.append(pitch[p - 1])
@@ -1000,7 +1024,8 @@ class Pitchers(commands.Cog):
         await ctx.send(f"You asked for pitches for {pitcher_name} before & after pitching {range_title}. ({league})")
 
         plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
-        plt.title(f"Pitches for {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
+        plt.title(
+            f"Pitches for {pitcher_name} before & after pitching {range_title}. ({league}) ({matches_count} matches)")
         plt.ylim(0, 1000)
         plt.yticks(grid_ticks)
         plt.grid(axis='y', alpha=0.7)
@@ -1026,11 +1051,11 @@ class Pitchers(commands.Cog):
     @commands.command(brief="!reactswing <pitcher_id> <league> <option> [optional:upper_swing]")
     @guild_only()
     async def reactswing(self,
-                    ctx,
-                    pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
-                    league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                    option: str = commands.parameter(default=None, description="Lower Pitch or Situation"),
-                    upper_swing: int = commands.parameter(default=None, description="optional:Upper Swing")):
+                         ctx,
+                         pitcher_id: int = commands.parameter(default=None, description="Pitcher ID"),
+                         league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
+                         option: str = commands.parameter(default=None, description="Lower Pitch or Situation"),
+                         upper_swing: int = commands.parameter(default=None, description="optional:Upper Swing")):
         """
             Shows reactions before & after batter swings a certain range
 
@@ -1070,12 +1095,14 @@ class Pitchers(commands.Cog):
         pitcher_name = ""
         matches_count = 0
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/pitching/{league}/{pitcher_id}")).json()
 
         # get pitcher name and read it all in
         for p in data[:]:
             pitcher_name = p['pitcherName']
-            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p['swing'] != 0:  # just skip the non/auto resulted pitches
+            if p['pitch'] is not None and p['swing'] is not None and p['pitch'] != 0 and p[
+                'swing'] != 0:  # just skip the non/auto resulted pitches
                 swing.append(p['swing'])
                 pitch.append(p['pitch'])
                 season.append(p['season'])
@@ -1093,7 +1120,9 @@ class Pitchers(commands.Cog):
         for p in range(len(pitch) - 1):
             if p < len(pitch) - 1 and season[p] == season[p + 1] and session[p] == session[p + 1]:
                 if situation is None and (
-                        (upper_swing >= lower_swing and upper_swing >= int(swing[p]) >= lower_swing) or (upper_swing < lower_swing and (upper_swing >= int(swing[p]) or lower_swing <= int(swing[p])))):  # it's a match for a range
+                        (upper_swing >= lower_swing and upper_swing >= int(swing[p]) >= lower_swing) or (
+                        upper_swing < lower_swing and (
+                        upper_swing >= int(swing[p]) or lower_swing <= int(swing[p])))):  # it's a match for a range
                     legend = f"S{season[p]}.{session[p]}\n{inning[p]}"
                     if p > 0 and season[p] == season[p - 1] and session[p] == session[p - 1]:
                         before.append(swing[p - 1])
@@ -1138,7 +1167,8 @@ class Pitchers(commands.Cog):
         range_title = f"{lower_swing} - {upper_swing}"
         if situation is not None:
             range_title = f"({situation})"
-        await ctx.send(f"You asked for pitches for {pitcher_name} before & after batter swings {range_title}. ({league})")
+        await ctx.send(
+            f"You asked for pitches for {pitcher_name} before & after batter swings {range_title}. ({league})")
 
         plt.figure(figsize=(max(matches_count / 1.5, 10.0), 5.0))  # Creates a new figure
         plt.title(

@@ -1,15 +1,15 @@
-import constants
-import discord
 import io
-import matplotlib.pyplot as plt
 import os
+
+import discord
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import requests
-import sys
 from discord.ext import commands
 from discord.ext.commands import guild_only
 
-pitch_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000]
+pitch_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525,
+               550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000]
 delta_ticks = [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500]
 grid_ticks = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
@@ -23,8 +23,10 @@ class Batters(commands.Cog):
     async def batterheatmap(self,
                             ctx,
                             batter_id: int = commands.parameter(default=None, description="Batter ID"),
-                            league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
-                            situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
+                            league: str = commands.parameter(default=None,
+                                                             description="League [MLR, MiLR, FCB, Scrim]"),
+                            situation: str = commands.parameter(default="all",
+                                                                description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
         """
             Shows batter swing heatmap
 
@@ -46,7 +48,8 @@ class Batters(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
 
         y = []
         x = []
@@ -177,7 +180,8 @@ class Batters(commands.Cog):
                          batter_id: int = commands.parameter(default=None, description="Batter ID"),
                          league: str = commands.parameter(default=None, description="League [MLR, MiLR, FCB, Scrim]"),
                          number_of_swings: int = commands.parameter(default=None, description="Number of Swings"),
-                         situation: str = commands.parameter(default="all", description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
+                         situation: str = commands.parameter(default="all",
+                                                             description="optional:Situation [all, empty, onbase, risp, corners, loaded, dp, 0out, 1out, 2out]")):
         """
             Shows last N swings and pitches for batter
 
@@ -200,7 +204,8 @@ class Batters(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
 
         x_legend = []
         pitches = []
@@ -217,7 +222,8 @@ class Batters(commands.Cog):
             same_game = False
 
             if i > 0:
-                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1]['season'] and data[i]['session'] == data[i - 1]['session']
+                same_game = data[i]['gameID'] == data[i - 1]['gameID'] and data[i]['season'] == data[i - 1][
+                    'season'] and data[i]['session'] == data[i - 1]['session']
 
             match situation:
                 case "all":
@@ -310,10 +316,12 @@ class Batters(commands.Cog):
             await ctx.send(f"Missing argument(s)")
             return
 
-        data = (requests.get(f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
+        data = (requests.get(
+            f"https://www.rslashfakebaseball.com/api/plateappearances/batting/{league}/{batter_id}")).json()
 
         for p in data[:]:
-            if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (season is not None and season != int(p['season'])):
+            if (p['pitch'] is None or p['swing'] is None or p['pitch'] == 0 or p['swing'] == 0) or (
+                    season is not None and season != int(p['season'])):
                 data.remove(p)
 
         x_legend = []
