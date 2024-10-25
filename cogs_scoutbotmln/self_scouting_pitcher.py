@@ -21,42 +21,66 @@ class SelfScoutingPitcher(commands.Cog):
 
     @commands.command(brief=".sap", aliases=['sap'])
     @guild_only()
-    async def self_all_pitches(self, ctx):
+    async def self_all_pitches(self, ctx, *, name=None):
+        if name:
+            result = await update_self_scouting_pitcher(ctx, name)
+            if result is False:
+                return
         await histogram(ctx, "All Pitches", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_all_pitches'],
                         blue,
                         pitch_ticks_50, 1, 1000, 50)
 
     @commands.command(brief=".slrbfp", aliases=['slrbfp'])
     @guild_only()
-    async def self_last_result_bad_for_pitcher(self, ctx):
+    async def self_last_result_bad_for_pitcher(self, ctx, *, name=None):
+        if name:
+            result = await update_self_scouting_pitcher(ctx, name)
+            if result is False:
+                return
         await histogram(ctx, "Last Result Bad for Pitcher", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_last_result_bad_for_pitcher'],
                         red,
                         pitch_ticks_100, 1, 1000, 100)
 
     @commands.command(brief=".slrgfp", aliases=['slrgfp'])
     @guild_only()
-    async def self_last_result_good_for_pitcher(self, ctx):
+    async def self_last_result_good_for_pitcher(self, ctx, *, name=None):
+        if name:
+            result = await update_self_scouting_pitcher(ctx, name)
+            if result is False:
+                return
         await histogram(ctx, "Last Result Good for Pitcher", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_last_result_good_for_pitcher'],
                         green,
                         pitch_ticks_100, 1, 1000, 100)
 
     @commands.command(brief=".snp", aliases=['snp'])
     @guild_only()
-    async def self_next_pitch(self, ctx):
+    async def self_next_pitch(self, ctx, *, name=None):
+        if name:
+            result = await update_self_scouting_pitcher(ctx, name)
+            if result is False:
+                return
         await histogram(ctx, "Next Pitch\nWhen Last Pitch and Last Pitch - 1 Were Within 50 of Current Last Pitch and Last Pitch - 1", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_next_pitch'],
                         blue,
                         pitch_ticks_negative_100, -500, 500, 100)
 
     @commands.command(brief=".sprtbr", aliases=['sprtbr'])
     @guild_only()
-    async def self_pitcher_response_to_bad_result(self, ctx):
+    async def self_pitcher_response_to_bad_result(self, ctx, *, name=None):
+        if name:
+            result = await update_self_scouting_pitcher(ctx, name)
+            if result is False:
+                return
         await histogram(ctx, "Pitcher Response to Bad Result", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_pitcher_response_to_bad_result'],
                         red,
                         pitch_ticks_negative_100, -500, 500, 100)
 
     @commands.command(brief=".sprtgr", aliases=['sprtgr'])
     @guild_only()
-    async def self_pitcher_response_to_good_result(self, ctx):
+    async def self_pitcher_response_to_good_result(self, ctx, *, name=None):
+        if name:
+            result = await update_self_scouting_pitcher(ctx, name)
+            if result is False:
+                return
         await histogram(ctx, "Pitcher Response to Good Result", constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_pitcher_response_to_good_result'],
                         green,
                         pitch_ticks_negative_100, -500, 500, 100)
@@ -67,6 +91,7 @@ async def histogram(ctx, title, page_name, color, x_ticks, x_min_limit, x_max_li
     data = sheets.read_sheet(sheet_id, page_name, 'COLUMNS')[0]
     name = sheets.read_sheet(sheet_id, constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_name'], 'COLUMNS')[0][0]
     data = list(filter(None, data))
+    data = [x for x in data if x.isdigit()]
     data = list(map(int, data))
 
     plt.figure(figsize=(10.0, 5.0))
@@ -88,6 +113,32 @@ async def histogram(ctx, title, page_name, color, x_ticks, x_min_limit, x_max_li
 
     await ctx.send(file=image)
     os.remove('graph.png')
+
+
+async def update_self_scouting_pitcher(ctx, name):
+    sheet_id = constants.MLN_BIBLE_SHEET_ID
+    player_list = sheets.read_sheet(constants.MLN_ROSTERS, constants.MLN_ROSTERS_ASSETS['persons'], 'COLUMNS')[0]
+
+    match_list_batter = []
+    too_many_results_batter = "Your search for " + name + " returned too many results"
+    for i in player_list:
+        if name.replace(" ", "").lower() == i.replace(" ", "").lower():
+            match_list_batter.clear()
+            match_list_batter.append(i)
+            break
+        elif name.replace(" ", "").lower() in i.replace(" ", "").lower():
+            match_list_batter.append(i)
+            too_many_results_batter += "\n" + i
+    if len(match_list_batter) == 0:
+        await ctx.send("No results found for " + name)
+        return False
+    elif len(match_list_batter) > 1:
+        await ctx.send(too_many_results_batter)
+        return False
+    else:
+        sheets.update_sheet(sheet_id, constants.MLN_BIBLE_SELF_PITCHER_ASSETS['self_name'], match_list_batter[0])
+        return True
+
 
 
 async def setup(client):
