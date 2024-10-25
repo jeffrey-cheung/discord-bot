@@ -84,7 +84,11 @@ class Batters(commands.Cog):
 
 async def histogram(ctx, title, page_name, color, x_ticks, x_min_limit, x_max_limit, bin_size):
     sheet_id = constants.MLN_BIBLE_SHEET_ID
-    data = sheets.read_sheet(sheet_id, page_name, 'COLUMNS')[0]
+    data = sheets.read_sheet(sheet_id, page_name, 'COLUMNS')
+    if not data:
+        await ctx.send("No results found")
+        return
+    data = data[0]
     name = sheets.read_sheet(sheet_id, constants.MLN_BIBLE_BATTER_ASSETS['name'], 'COLUMNS')[0][0]
     data = list(filter(None, data))
     data = [x for x in data if x.isdigit()]
