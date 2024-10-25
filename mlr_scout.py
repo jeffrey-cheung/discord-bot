@@ -33,7 +33,6 @@ async def on_command_error(ctx, error):
         traceback_lines = traceback.format_exception(type(error), error, error.__traceback__)
         traceback_text = "".join(traceback_lines)
         print(traceback_text)
-        await ctx.send("An error occurred while processing your command.")
 
 
 async def load_extensions():
