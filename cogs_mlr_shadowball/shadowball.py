@@ -142,7 +142,7 @@ def result_pitch(pitch):
             current_score.update({user: int(current_score[user]) + int(score)})
 
 
-class BeerPong(commands.Cog):
+class Shadowball(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -325,4 +325,4 @@ class BeerPong(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(BeerPong(bot))
+    await bot.add_cog(Shadowball(bot))
