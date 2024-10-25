@@ -15,7 +15,7 @@ pytz_pst = pytz.timezone('America/Los_Angeles')
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix="!!!", case_insensitive=True, help_command=commands.DefaultHelpCommand(),
+bot = commands.Bot(command_prefix="!", case_insensitive=True, help_command=commands.DefaultHelpCommand(),
                       intents=intents)
 
 
