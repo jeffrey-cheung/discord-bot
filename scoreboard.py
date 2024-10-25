@@ -1,21 +1,21 @@
 import config
-import aiohttp
 import asyncio
-import constants
-import discord
-import os.path
 import os
-import pytz
-import sys
+import os.path
 import time
 import traceback
-from discord import Webhook
 from datetime import datetime
+
+import aiohttp
+import discord
+import pytz
+from discord import Webhook
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+
+import constants
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
@@ -105,8 +105,8 @@ async def main():
     while True:
         try:
             await scoreboard()
-        except Exception as e:
-            print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
+        except Exception as error:
+            print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {error}")
             print(traceback.format_exc())
         finally:
             time.sleep(120)
