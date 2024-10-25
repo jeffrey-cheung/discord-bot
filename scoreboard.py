@@ -100,12 +100,16 @@ async def scoreboard():
         await webhook.edit_message(int(os.getenv("MLR_SCOREBOARD_MSG_ID")), embed=embed)
 
 
-print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing MLR scores")
-while True:
-    try:
-        asyncio.run(scoreboard())
-    except Exception as e:
-        print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
-        print(traceback.format_exc())
-    finally:
-        time.sleep(120)
+async def main():
+    print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing MLR scores")
+    while True:
+        try:
+            await scoreboard()
+        except Exception as e:
+            print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
+            print(traceback.format_exc())
+        finally:
+            time.sleep(120)
+
+
+asyncio.run(main())
