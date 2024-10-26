@@ -10,12 +10,9 @@ import aiohttp
 import discord
 import pytz
 from discord import Webhook
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
 
 import constants
+from controllers import sheets_reader as sheets
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
@@ -26,27 +23,7 @@ pytz_pst = pytz.timezone("America/Los_Angeles")
 async def scoreboard():
     async with aiohttp.ClientSession() as session:
         webhook = Webhook.from_url(os.getenv("MLR_SCOREBOARD_WEBHOOK"), session=session)
-        creds = None
-        if os.path.exists("token.json"):
-            creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-                creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run
-            with open("token.json", "w") as token:
-                token.write(creds.to_json())
-
-        service = build("sheets", "v4", credentials=creds)
-
-        # Call the Sheets API
-        sheet = service.spreadsheets()
-        result = (
-            sheet.values().get(spreadsheetId=constants.MLR_SCOREBOARD_SPREADSHEET_ID, range=constants.MLR_SCOREBOARD_RANGE).execute())
-        values = result.get("values", [])
-
+        values = sheets.read_sheet(constants.MLR_SCOREBOARD_SPREADSHEET_ID, constants.MLR_SCOREBOARD_RANGE)
         if not values:
             print("No data found.")
             return
