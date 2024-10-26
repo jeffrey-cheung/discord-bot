@@ -91,7 +91,7 @@ async def histogram(ctx, title, page_name, color, x_ticks, x_min_limit, x_max_li
     data = data[0]
     name = sheets.read_sheet(sheet_id, constants.MLN_BIBLE_BATTER_ASSETS['name'], 'COLUMNS')[0][0]
     data = list(filter(None, data))
-    data = [x for x in data if x.startswith('-') and x[1:].isdigit()]
+    data = [x for x in data if (x.startswith('-') and x[1:].isdigit()) or x.isdigit()]
     data = list(map(int, data))
 
     plt.figure(figsize=(10.0, 5.0))
