@@ -1,7 +1,7 @@
 import os
 import pickle
-import sys
 import time
+import traceback
 from datetime import datetime
 
 import asyncpraw
@@ -208,13 +208,10 @@ class Shadowball(commands.Cog):
                                     f"Pitch was **{pitch}**.\n{display_guess_results(pitch)}\n\n{display_scoreboard()}")
                                 current_guesses.clear()
                                 save_dict()
-            except Exception as e:
-                print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {e}")
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                print(exc_type, fname, exc_tb.tb_lineno)
-                time.sleep(10)
-            else:
+            except Exception as error:
+                print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - {error}")
+                print(traceback.format_exc())
+            finally:
                 time.sleep(10)
         await reddit.close()
 
