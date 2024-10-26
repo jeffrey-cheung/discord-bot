@@ -9,8 +9,8 @@ import pytz
 from discord.ext import commands
 from discord.ext.commands import guild_only
 
-role_id = os.getenv("ROLE_ID")
-team_abbrev = os.getenv("TEAM_ABBREV")
+role_id = os.getenv("MLR_SHADOWBALL_ROLE_ID")
+team_abbrev = os.getenv("MLR_SHADOWBALL_TEAM_ABBREV")
 
 pytz_utc = pytz.timezone('UTC')
 pytz_pst = pytz.timezone('America/Los_Angeles')
