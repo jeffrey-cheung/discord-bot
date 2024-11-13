@@ -168,7 +168,8 @@ class Shadowball(commands.Cog):
         game_started = True
         while game_started is True:
             try:
-                print(f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing comments")
+                print(
+                    f"{datetime.now().astimezone(pytz_pst).strftime('%Y-%m-%d %H:%M:%S')} - Parsing Shadowball comments")
                 subreddit = await reddit.subreddit("fakebaseball")
                 async for comment in subreddit.stream.comments(skip_existing=True):
                     if game_started is False:
