@@ -125,7 +125,7 @@ MLN_CALCULATOR_ASSETS = {
     'matchup_info': 'Game Manager!L18:T19'
 }
 
-MLN_ROSTERS = "1ruSHN-Enj3VLv2qxaizFUfrlY2t5fhHBcw1Rx7rx2O8"
+MLN_ROSTERS = "1NQ4l0EjwFYVdIjlYIkycYfuWw_jdZKiWsNURTcTy4AA"
 MLN_ROSTERS_ASSETS = {
-    'persons': 'ImportRosters!B2:B'
+    'persons': 'Players!D2:D'
 }
